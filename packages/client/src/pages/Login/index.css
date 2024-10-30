@@ -1,0 +1,17 @@
+.login {
+    width: 440px;
+    margin: 100px auto 0 auto;
+  }
+  
+  .login .links {
+    display: flex;
+    justify-content: center;
+  }
+  .login .title {
+   text-align: center;
+  }
+  
+  .login .btn {
+    width: 100%;
+  }
+  
