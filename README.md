@@ -1,1 +1,1 @@
-# pnpm-monorepo-test
+# pnpm-monorepo-project
