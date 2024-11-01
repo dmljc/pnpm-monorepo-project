@@ -1,8 +1,4 @@
-import {
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Book {
@@ -11,23 +7,23 @@ export class Book {
 
     @Column({
         length: 50,
-        comment: '名称',
+        comment: "名称",
     })
     name: string;
 
     @Column({
         length: 50,
-        comment: '字',
+        comment: "字",
     })
     word: string;
 
     @Column({
-        comment: '简介',
+        comment: "简介",
     })
     description: string;
 
     @Column({
-        comment: '头像',
+        comment: "头像",
     })
     avatar: string;
 }

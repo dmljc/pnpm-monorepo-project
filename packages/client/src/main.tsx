@@ -3,21 +3,21 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import BookManage from "./pages/Book/index";
 import Login from "./pages/Login/index";
 import Register from "./pages/Register";
-import './index.css'
+import "./index.css";
 
 const routes = [
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/book",
-    element: <BookManage />,
-  },
+    {
+        path: "/login",
+        element: <Login />,
+    },
+    {
+        path: "/register",
+        element: <Register />,
+    },
+    {
+        path: "/book",
+        element: <BookManage />,
+    },
 ];
 
 const router = createBrowserRouter(routes);

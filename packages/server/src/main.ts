@@ -1,22 +1,22 @@
-import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { join } from "path";
+import { AppModule } from "./app.module";
+import { ValidationPipe } from "@nestjs/common";
 
-import { HttpExceptionFilter } from './common/http-exception.filter';
-import { HttpResppnseInterceptor } from './common/http-response.interceptor';
+import { HttpExceptionFilter } from "./common/http-exception.filter";
+import { HttpResppnseInterceptor } from "./common/http-response.interceptor";
 
 async function bootstrap() {
     // const app = await NestFactory.create(AppModule);
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
         // logger: false
-        logger: ['log', 'warn', 'error'], // 日志的不同级别的区, 可控制是否打印
+        logger: ["log", "warn", "error"], // 日志的不同级别的区, 可控制是否打印
     });
 
     // 设置全局路由前缀
-    app.setGlobalPrefix('api');
-    app.useStaticAssets(join(__dirname, '../uploads'), {prefix: '/uploads'});
+    app.setGlobalPrefix("api");
+    app.useStaticAssets(join(__dirname, "../uploads"), { prefix: "/uploads" });
 
     // 自定义全局响应拦截器
     app.useGlobalInterceptors(new HttpResppnseInterceptor());

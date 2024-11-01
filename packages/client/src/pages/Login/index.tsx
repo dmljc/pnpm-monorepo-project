@@ -1,6 +1,6 @@
-import { Button, Form, Input, message } from 'antd';
-import { login } from './api';
-import './index.css';
+import { Button, Form, Input, message } from "antd";
+import { login } from "./api";
+import "./index.css";
 interface LoginUser {
     username: string;
     password: string;
@@ -10,10 +10,12 @@ const onFinish = async (values: LoginUser) => {
     try {
         const res = await login(values);
         if (res.success) {
-            message.success('登录成功');
+            message.success("登录成功");
+            console.log("xxxxxxxx");
+            console.log("🌟🌟🌟🌟🌟TEO");
 
             setTimeout(() => {
-                window.location.href = '/book';
+                window.location.href = "/book";
             }, 1000);
         }
     } catch (e) {
@@ -41,15 +43,15 @@ const Login = () => {
                 colon={false}
                 autoComplete="off"
                 initialValues={{
-                    username: 'zfc',
-                    password: '123456',
-                    password2: '123456',
+                    username: "zfc",
+                    password: "123456",
+                    password2: "123456",
                 }}
             >
                 <Form.Item
                     label="用户名"
                     name="username"
-                    rules={[{ required: true, message: '请输入用户名!' }]}
+                    rules={[{ required: true, message: "请输入用户名!" }]}
                 >
                     <Input />
                 </Form.Item>
@@ -57,7 +59,7 @@ const Login = () => {
                 <Form.Item
                     label="密码"
                     name="password"
-                    rules={[{ required: true, message: '请输入密码!' }]}
+                    rules={[{ required: true, message: "请输入密码!" }]}
                 >
                     <Input.Password />
                 </Form.Item>

@@ -1,3 +1,3 @@
-import Coverupload from './Coverupload/index';
+import Coverupload from "./Coverupload/index";
 
 export { Coverupload };

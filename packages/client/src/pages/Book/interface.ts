@@ -1,4 +1,3 @@
-
 export interface CreateBook {
     name: string;
     word: string;
@@ -12,12 +11,11 @@ export interface UpdateBook extends CreateBook {
 export interface ModalProps {
     isOpen: boolean;
     modalType: string;
-    record: UpdateBook,
-    handleClose: Function;
+    record: UpdateBook;
+    handleClose: () => void;
 }
-
 
 export interface ListParams {
     name?: string;
-    word?: string
+    word?: string;
 }

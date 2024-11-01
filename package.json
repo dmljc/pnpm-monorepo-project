@@ -1,5 +1,5 @@
 {
-    "name": "pnpm-monorepo-test",
+    "name": "pnpm-monorepo-project",
     "version": "1.0.0",
     "main": "index.js",
     "private": true,
@@ -8,7 +8,20 @@
         "client:dev": "pnpm -F client dev --host 0.0.0.0",
         "server:dev": "pnpm -F server start:dev",
         "clean:dists": "find . -type d -name 'dist' -exec rm -rf {} +",
-        "clean:node_modules": "find . -type d -name 'node_modules' -exec rm -rf {} +"
+        "clean:node_modules": "find . -type d -name 'node_modules' -exec rm -rf {} +",
+        "lint": "eslint",
+        "lint:fix": "eslint --fix"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.13.0",
+        "eslint": "^9.13.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "eslint-plugin-react-hooks": "^5.0.0",
+        "eslint-plugin-react-refresh": "^0.4.14",
+        "globals": "^15.11.0",
+        "prettier": "^3.3.3",
+        "typescript-eslint": "^8.12.2"
     },
     "keywords": [],
     "author": "",

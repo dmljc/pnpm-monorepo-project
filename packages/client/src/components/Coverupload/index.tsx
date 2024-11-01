@@ -1,27 +1,28 @@
-import { InboxOutlined } from '@ant-design/icons';
-import { Upload, message } from 'antd';
-import type { UploadProps } from 'antd';
+import { InboxOutlined } from "@ant-design/icons";
+import { Upload, message } from "antd";
+import type { UploadProps } from "antd";
 
 const { Dragger } = Upload;
 
 interface CoverUploadProps {
     value?: string;
-    onChange?: Function;
+    onChange?: () => void;
 }
 
-let onChange: Function;
+// let onChange: Function;
+// let onChange: () => void;
+let onChange: <T>(value: T) => T;
 
 const props: UploadProps = {
-    name: 'file',
-    action: 'http://localhost:3000/api/book/upload',
-    method: 'post',
+    name: "file",
+    action: "http://localhost:3000/api/book/upload",
+    method: "post",
     onChange(info) {
         const { status } = info.file;
-        if (status === 'done') {
-            // console.log('info-----', info)
+        if (status === "done") {
             onChange(info.file.response.data);
             message.success(`${info.file.name} 文件上传成功`);
-        } else if (status === 'error') {
+        } else if (status === "error") {
             message.error(`${info.file.name} 文件上传失败`);
         }
     },
@@ -36,13 +37,13 @@ const dragger = (
     </Dragger>
 );
 
-const CoverUpload = (props: CoverUploadProps) =>{
+const CoverUpload = (props: CoverUploadProps) => {
     onChange = props.onChange!;
 
     return props?.value ? (
         <div>
             <img
-                src={'http://localhost:3000/' + props.value}
+                src={"http://localhost:3000/" + props.value}
                 alt="封面"
                 width="100"
                 height="100"
@@ -52,6 +53,6 @@ const CoverUpload = (props: CoverUploadProps) =>{
     ) : (
         <div>{dragger}</div>
     );
-}
+};
 
 export default CoverUpload;

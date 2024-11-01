@@ -19,8 +19,8 @@ import {
     ExecutionContext,
     Injectable,
     NestInterceptor,
-} from '@nestjs/common';
-import { map, Observable } from 'rxjs';
+} from "@nestjs/common";
+import { map, Observable } from "rxjs";
 
 @Injectable()
 export class HttpResppnseInterceptor implements NestInterceptor {
@@ -31,7 +31,7 @@ export class HttpResppnseInterceptor implements NestInterceptor {
                     code: 200,
                     data,
                     success: true,
-                    message: '成功',
+                    message: "成功",
                 };
             }),
         );

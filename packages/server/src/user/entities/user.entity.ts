@@ -1,11 +1,11 @@
 // entities 是封装对应数据库表的实体。
 import {
     Column,
-    CreateDateColumn,
+    // CreateDateColumn,
     Entity,
     PrimaryGeneratedColumn,
-    UpdateDateColumn,
-} from 'typeorm';
+    // UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class User {
@@ -14,13 +14,13 @@ export class User {
 
     @Column({
         length: 50,
-        comment: '账号',
+        comment: "账号",
     })
     username: string;
 
     @Column({
         length: 50,
-        comment: '密码',
+        comment: "密码",
     })
     password: string;
 

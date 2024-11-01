@@ -1,23 +1,23 @@
-import { SetStateAction, useEffect, useState } from 'react';
-import { Button, Card, Avatar, Form, Input, message } from 'antd';
-import CreateModal from './CreateModal.tsx';
-import { UpdateBook } from './interface.ts';
-import { list, detail, del } from './api';
-import './index.css';
+import { SetStateAction, useEffect, useState } from "react";
+import { Button, Card, Avatar, Form, Input, message } from "antd";
+import CreateModal from "./CreateModal.tsx";
+import { UpdateBook } from "./interface.ts";
+import { list, detail, del } from "./api";
+import "./index.css";
 
 const { Meta } = Card;
 
 const BookManage = () => {
     const [bookList, setBookList] = useState<Array<UpdateBook>>([]);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [name, setName] = useState<string>('');
-    const [modalType, setModalType] = useState<string>('create');
+    const [name, setName] = useState<string>("");
+    const [modalType, setModalType] = useState<string>("create");
     const [record, setRecord] = useState<UpdateBook>();
 
     const fetchList = async () => {
         try {
             const resp = await list({
-                name
+                name,
             });
 
             if (resp.success) {
@@ -38,12 +38,12 @@ const BookManage = () => {
 
     const fetchDetail = async (id: number) => {
         const resp = await detail(id);
-        console.log('detail-data:', resp);
+        console.log("detail-data:", resp);
     };
 
     const onDelete = async (id: number) => {
         const resp = await del(id);
-        console.log('resp', resp);
+        console.log("resp", resp);
         fetchList();
     };
 
@@ -68,10 +68,10 @@ const BookManage = () => {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                style={{ background: 'green' }}
+                                style={{ background: "green" }}
                                 onClick={() => {
                                     setModalOpen(true);
-                                    setModalType('create');
+                                    setModalType("create");
                                 }}
                             >
                                 添加英雄
@@ -80,7 +80,7 @@ const BookManage = () => {
                     </Form>
                 </div>
                 <div className="book-list">
-                    {bookList?.map(item => {
+                    {bookList?.map((item) => {
                         return (
                             <Card
                                 className="card"
@@ -114,7 +114,7 @@ const BookManage = () => {
                                     <a
                                         onClick={() => {
                                             setModalOpen(true);
-                                            setModalType('update');
+                                            setModalType("update");
                                             setRecord(item);
                                         }}
                                     >
