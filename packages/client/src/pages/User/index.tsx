@@ -40,7 +40,7 @@ const layout2 = {
     wrapperCol: { span: 24 },
 };
 
-const Register = () => {
+const User = () => {
     return (
         <div className="register">
             <h1 className="title">新三国管理系统</h1>
@@ -95,4 +95,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default User;

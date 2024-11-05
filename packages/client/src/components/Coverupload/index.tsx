@@ -6,12 +6,10 @@ const { Dragger } = Upload;
 
 interface CoverUploadProps {
     value?: string;
-    onChange?: <T>(value: T) => T;
+    onChange?: () => void;
 }
 
-// let onChange: Function;
-// let onChange: () => void;
-let onChange: <T>(value: T) => T;
+let onChange: (data: any) => void;
 
 const props: UploadProps = {
     name: "file",
@@ -38,7 +36,7 @@ const dragger = (
 );
 
 const CoverUpload = (props: CoverUploadProps) => {
-    onChange = props?.onChange!;
+    onChange = props.onChange!;
 
     return props?.value ? (
         <div>

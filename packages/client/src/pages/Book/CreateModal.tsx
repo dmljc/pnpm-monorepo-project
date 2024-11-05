@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Form, Input, message, Modal } from "antd";
-import { useForm } from "antd/es/form/Form";
 import { Coverupload } from "../../components/index";
 import { ModalProps, UpdateBook } from "./interface";
 import { create, update } from "./api";
@@ -14,7 +13,7 @@ const layout = {
 
 const CreateModal = (props: ModalProps) => {
     const { modalType, isOpen, record, handleClose } = props;
-    const [form] = useForm<UpdateBook>();
+    const [form] = Form.useForm<UpdateBook>();
 
     const handleOk = async () => {
         await form.validateFields();
@@ -52,6 +51,7 @@ const CreateModal = (props: ModalProps) => {
             onOk={handleOk}
             onCancel={() => handleClose()}
             okText={"创建"}
+            forceRender
         >
             <Form form={form} {...layout}>
                 <Form.Item

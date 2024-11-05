@@ -34,8 +34,12 @@ export const createAxiosByinterceptors = (
             return data;
         },
         (error) => {
-            const { response } = error;
-            const { data } = response;
+            const data = error?.response?.data;
+
+            if (!data) {
+                message.error("网络异常");
+            }
+
             if (data?.success === false) {
                 message.error(data?.message);
             }

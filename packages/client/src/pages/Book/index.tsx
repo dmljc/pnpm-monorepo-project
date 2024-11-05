@@ -1,5 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
-import { Button, Card, Avatar, Form, Input, message } from "antd";
+import { Button, Card, Avatar, Form, Input } from "antd";
 import CreateModal from "./CreateModal.tsx";
 import { UpdateBook } from "./interface.ts";
 import { list, detail, del } from "./api";
@@ -15,16 +15,12 @@ const BookManage = () => {
     const [record, setRecord] = useState<UpdateBook>();
 
     const fetchList = async () => {
-        try {
-            const resp = await list({
-                name,
-            });
+        const resp = await list({
+            name,
+        });
 
-            if (resp.success) {
-                setBookList(resp.data);
-            }
-        } catch (e) {
-            message.error((e as any).response.data.message);
+        if (resp.success) {
+            setBookList(resp.data);
         }
     };
 
