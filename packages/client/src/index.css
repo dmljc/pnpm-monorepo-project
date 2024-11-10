@@ -73,6 +73,10 @@ button:focus-visible {
     padding: 0;
 }
 
+body {
+    min-height: 100vh;
+}
+
 /* 中菜单时，文字要显示成蓝色！ */
 /* 其实我们也可以利用 NavLink 选中时类名为 active 这个特性来实现 */
 .active {

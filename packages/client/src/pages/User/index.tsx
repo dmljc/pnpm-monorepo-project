@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { Button, Form, Input, message } from "antd";
 import { register } from "./api";
 import "./index.css";
@@ -40,7 +41,7 @@ const layout2 = {
     wrapperCol: { span: 24 },
 };
 
-const User = () => {
+const User: FC = () => {
     return (
         <div className="register">
             <h1 className="title">新三国管理系统</h1>

@@ -1,0 +1,27 @@
+.demo-logo-vertical {
+    background: rgba(255, 255, 255, .2);
+}
+
+.demo-logo-vertical>a {
+    height: 64px;
+    line-height: 64px;
+    font-size: 18px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.88);
+    padding-inline-start: 24px;
+}
+
+.demo-logo-vertical>a>img {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.demo-logo-vertical>a>span {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    vertical-align: middle;
+    padding-inline-start: 8px;
+}

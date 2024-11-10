@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { FC, SetStateAction, useEffect, useState } from "react";
 import { Button, Card, Avatar, Form, Input } from "antd";
 import CreateModal from "./CreateModal.tsx";
 import { UpdateBook } from "./interface.ts";
@@ -7,7 +7,7 @@ import "./index.css";
 
 const { Meta } = Card;
 
-const BookManage = () => {
+const Book: FC = () => {
     const [bookList, setBookList] = useState<Array<UpdateBook>>([]);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [name, setName] = useState<string>("");
@@ -141,4 +141,4 @@ const BookManage = () => {
     );
 };
 
-export default BookManage;
+export default Book;

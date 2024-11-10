@@ -4,39 +4,83 @@ import { AuthComponent, WithLoadingComponent } from "../components";
 import Layout from "../layout";
 
 // 路由懒加载
-const Login = lazy(() => import("../pages/Login"));
-const Home = lazy(() => import("../pages/Home"));
+
+// 仪表盘
+const Workplace = lazy(() => import("../pages/Workplace"));
+const Analysis = lazy(() => import("../pages/Analysis"));
+
+// 系统管理
 const User = lazy(() => import("../pages/User"));
+const Role = lazy(() => import("../pages/Role"));
+const Menu = lazy(() => import("../pages/Menu"));
+const Config = lazy(() => import("../pages/Config"));
+const Person = lazy(() => import("../pages/Person"));
+
+// 业务
 const Book = lazy(() => import("../pages/Book"));
+
+// 全局
+const Login = lazy(() => import("../pages/Login"));
 const NotFound = lazy(() => import("../components/NotFound"));
 
 const routes: RouteObject[] = [
     {
         path: "/",
-        element: <Navigate to="/layout/home" replace />, // 重定向
+        element: <Navigate to="/dashboard/workplace" replace />, // 重定向
     },
     {
-        path: "/layout",
+        path: "/dashboard",
         element: <AuthComponent component={<Layout />} />,
         children: [
             {
-                // path: "/layout/home",
-                index: true,
-                element: WithLoadingComponent(<Home />),
+                path: "/dashboard/workplace",
+                element: WithLoadingComponent(<Workplace />),
             },
             {
-                path: "/layout/user",
+                path: "/dashboard/analysis",
+                element: WithLoadingComponent(<Analysis />),
+            },
+        ],
+    },
+    {
+        path: "/system",
+        element: <AuthComponent component={<Layout />} />,
+        children: [
+            {
+                path: "/system/user",
                 element: WithLoadingComponent(<User />),
             },
             {
-                path: "/layout/book",
-                element: WithLoadingComponent(<Book />),
+                path: "/system/role",
+                element: WithLoadingComponent(<Role />),
             },
             {
-                path: "*",
-                element: WithLoadingComponent(<NotFound />),
+                path: "/system/menu",
+                element: WithLoadingComponent(<Menu />),
+            },
+            {
+                path: "/system/config",
+                element: WithLoadingComponent(<Config />),
+            },
+            {
+                path: "/system/person",
+                element: WithLoadingComponent(<Person />),
             },
         ],
+    },
+    {
+        path: "/yewu",
+        element: <AuthComponent component={<Layout />} />,
+        children: [
+            {
+                path: "/yewu/book",
+                element: WithLoadingComponent(<Book />),
+            },
+        ],
+    },
+    {
+        path: "*",
+        element: WithLoadingComponent(<NotFound />),
     },
     {
         path: "/login",
