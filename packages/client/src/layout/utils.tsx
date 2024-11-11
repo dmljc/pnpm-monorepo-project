@@ -16,6 +16,23 @@ export const siderStyle: CSSProperties = {
     background: "#fff",
 };
 
+export const headerLeftStyle: CSSProperties = {
+    fontSize: "16px",
+    width: 64,
+    height: 64,
+    lineHeight: 64,
+    display: "inline-flex",
+    justifyContent: "center",
+};
+export const headerRightStyle: CSSProperties = {
+    fontSize: "16px",
+    width: 40,
+    height: 64,
+    lineHeight: 64,
+    display: "inline-flex",
+    justifyContent: "center",
+};
+
 export const menuStyle: CSSProperties = {
     borderInlineEnd: "none",
 };

@@ -1,5 +1,5 @@
 import { useState, FC } from "react";
-import { Button, Layout as AntdLayout, Menu, theme } from "antd";
+import { Layout as AntdLayout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import type { MenuProps } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
@@ -9,6 +9,8 @@ import {
     items,
     getLevelKeys,
     LevelKeysProps,
+    headerLeftStyle,
+    headerRightStyle,
 } from "./utils";
 import "./index.css";
 
@@ -85,23 +87,41 @@ const Layout: FC = () => {
                 />
             </Sider>
             <AntdLayout>
-                <Header style={{ padding: 0, background: colorBgContainer }}>
-                    <Button
-                        type="text"
-                        icon={
-                            collapsed ? (
-                                <MenuUnfoldOutlined />
-                            ) : (
-                                <MenuFoldOutlined />
-                            )
-                        }
-                        onClick={() => setCollapsed(!collapsed)}
+                <Header
+                    style={{
+                        padding: "0",
+                        background: colorBgContainer,
+                    }}
+                >
+                    <div
                         style={{
-                            fontSize: "16px",
-                            width: 64,
-                            height: 64,
+                            display: "flex",
                         }}
-                    />
+                    >
+                        <span
+                            style={{ width: 200 }}
+                            onClick={() => setCollapsed(!collapsed)}
+                        >
+                            {collapsed ? (
+                                <MenuUnfoldOutlined style={headerLeftStyle} />
+                            ) : (
+                                <MenuFoldOutlined style={headerLeftStyle} />
+                            )}
+                        </span>
+
+                        <span
+                            style={{
+                                flex: 1,
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                paddingRight: 10,
+                            }}
+                        >
+                            <MenuFoldOutlined style={headerRightStyle} />
+                            <MenuFoldOutlined style={headerRightStyle} />
+                            <MenuFoldOutlined style={headerRightStyle} />
+                        </span>
+                    </div>
                 </Header>
                 <Content
                     style={{
