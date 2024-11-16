@@ -7,6 +7,7 @@ import {
     Button,
     ConfigProvider,
     theme,
+    Card,
 } from "antd";
 import {
     MenuFoldOutlined,
@@ -14,8 +15,12 @@ import {
     IdcardOutlined,
     LogoutOutlined,
     SunOutlined,
-    FullscreenOutlined,
+    // FullscreenOutlined,
+    // FullscreenExitOutlined,
+    ExpandOutlined,
+    CompressOutlined,
     GithubOutlined,
+    MoonOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
@@ -37,6 +42,8 @@ const Layout: FC = () => {
 
     const { styles: ss, cx } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = theme;
+    // const { token } = theme.useToken();
+    // console.log("token===", token);
 
     const dropdownItems: MenuProps["items"] = [
         {
@@ -95,6 +102,12 @@ const Layout: FC = () => {
         <ConfigProvider
             theme={{
                 algorithm: isDarkModel ? darkAlgorithm : defaultAlgorithm,
+                components: {
+                    // 单独处理个别组件
+                    Layout: {
+                        headerBg: isDarkModel ? "#141414" : "#fff",
+                    },
+                },
             }}
         >
             <AntdLayout>
@@ -140,11 +153,19 @@ const Layout: FC = () => {
                         </span>
 
                         <span className={ss.headerRight}>
-                            <SunOutlined
-                                className={ss.headerIcon}
-                                onClick={() => setIsDarkModel(!isDarkModel)}
-                            />
-                            <FullscreenOutlined className={ss.headerIcon} />
+                            <span onClick={() => setIsDarkModel(!isDarkModel)}>
+                                {isDarkModel ? (
+                                    <SunOutlined className={ss.headerIcon} />
+                                ) : (
+                                    <MoonOutlined className={ss.headerIcon} />
+                                )}
+                            </span>
+
+                            {isDarkModel ? (
+                                <CompressOutlined className={ss.headerIcon} />
+                            ) : (
+                                <ExpandOutlined className={ss.headerIcon} />
+                            )}
                             <GithubOutlined className={ss.headerIcon} />
 
                             <Dropdown menu={{ items: dropdownItems }}>
@@ -160,7 +181,9 @@ const Layout: FC = () => {
                     </Header>
                     <Content className={ss.content}>
                         {/* 二级路由出口 */}
-                        <Outlet />
+                        <Card>
+                            <Outlet />
+                        </Card>
                     </Content>
                 </AntdLayout>
             </AntdLayout>

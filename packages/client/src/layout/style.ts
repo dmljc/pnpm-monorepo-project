@@ -4,7 +4,6 @@ export default createStyles(({ token, css }) => ({
     // 侧边栏
     side: {
         height: "100vh",
-        // background: "#fff",
     },
     // 菜单
     menu: {
@@ -16,7 +15,6 @@ export default createStyles(({ token, css }) => ({
         lineHeight: "64px",
         fontSize: 18,
         fontWeight: "bold",
-        // color: "rgba(0, 0, 0, 0.88)",
         paddingInlineStart: 24,
     },
     logo: {
@@ -36,7 +34,6 @@ export default createStyles(({ token, css }) => ({
     header: {
         padding: 0,
         display: "flex",
-        // background: token.colorBgContainer,
     },
     headerLeft: {
         width: 200,
@@ -57,7 +54,6 @@ export default createStyles(({ token, css }) => ({
         justify-content: center;
 
         &:hover {
-            // background: ${token.colorBgTextHover};
             cursor: pointer;
             border-radius: 100%;
         }
@@ -70,17 +66,13 @@ export default createStyles(({ token, css }) => ({
         height: 30,
         lineHeight: "30px",
         fontSize: "18px",
-        // background: token.colorBgContainer,
         borderRadius: "100%",
         border: `1px solid ${token.colorPrimaryText}`,
         padding: 2,
     },
     content: {
-        padding: 24,
-        minHeight: 280,
-        margin: "24px 16px",
-        // background: token.colorBgContainer,
-        borderRadius: token.borderRadiusLG,
+        height: "calc(100vh - 98px)",
+        margin: "24px 24px",
     },
 
     // container: {
