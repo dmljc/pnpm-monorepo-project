@@ -1,4 +1,3 @@
-import { CSSProperties } from "react";
 import {
     UserOutlined,
     DashboardOutlined,
@@ -7,37 +6,10 @@ import {
     SettingOutlined,
     TeamOutlined,
     MenuOutlined,
-    IdcardOutlined,
     SlidersOutlined,
 } from "@ant-design/icons";
 
-export const siderStyle: CSSProperties = {
-    height: "100vh",
-    background: "#fff",
-};
-
-export const headerLeftStyle: CSSProperties = {
-    fontSize: "16px",
-    width: 64,
-    height: 64,
-    lineHeight: 64,
-    display: "inline-flex",
-    justifyContent: "center",
-};
-export const headerRightStyle: CSSProperties = {
-    fontSize: "16px",
-    width: 40,
-    height: 64,
-    lineHeight: 64,
-    display: "inline-flex",
-    justifyContent: "center",
-};
-
-export const menuStyle: CSSProperties = {
-    borderInlineEnd: "none",
-};
-
-export const items = [
+export const menuItems = [
     {
         key: "/dashboard",
         icon: <DashboardOutlined />,
@@ -79,11 +51,6 @@ export const items = [
                 key: "/system/config",
                 icon: <SlidersOutlined />,
                 label: "系统配置",
-            },
-            {
-                key: "/system/person",
-                icon: <IdcardOutlined />,
-                label: "个人中心",
             },
         ],
     },

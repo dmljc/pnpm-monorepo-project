@@ -1,28 +1,12 @@
 import { FC } from "react";
 import { Button, Form, Input, message } from "antd";
 import { login } from "./api";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 interface LoginUser {
     username: string;
     password: string;
 }
-
-const onFinish = async (values: LoginUser) => {
-    try {
-        const res = await login(values);
-        if (res.success) {
-            message.success("登录成功");
-            console.log("xxxxxxxx");
-            console.log("🌟🌟🌟🌟🌟TEO");
-
-            setTimeout(() => {
-                window.location.href = "/book";
-            }, 1000);
-        }
-    } catch (e) {
-        message.error(e as any);
-    }
-};
 
 const layout1 = {
     labelCol: { span: 4 },
@@ -35,6 +19,25 @@ const layout2 = {
 };
 
 const Login: FC = () => {
+    const navigate = useNavigate();
+
+    const onFinish = async (values: LoginUser) => {
+        try {
+            const res = await login(values);
+            if (res.success) {
+                message.success("登录成功");
+                console.log("xxxxxxxx");
+                console.log("🌟🌟🌟🌟🌟TEO");
+
+                setTimeout(() => {
+                    navigate("/");
+                }, 1000);
+            }
+        } catch (e) {
+            message.error(e as any);
+        }
+    };
+
     return (
         <div className="login">
             <h1 className="title">英雄管理系统</h1>

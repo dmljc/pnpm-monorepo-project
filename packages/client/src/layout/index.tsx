@@ -1,22 +1,22 @@
 import { useState, FC } from "react";
-import { Layout as AntdLayout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
-import type { MenuProps } from "antd";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { Layout as AntdLayout, Menu, Dropdown, Button } from "antd";
 import {
-    siderStyle,
-    menuStyle,
-    items,
-    getLevelKeys,
-    LevelKeysProps,
-    headerLeftStyle,
-    headerRightStyle,
-} from "./utils";
-import "./index.css";
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    IdcardOutlined,
+    LogoutOutlined,
+    SunOutlined,
+    FullscreenOutlined,
+    GithubOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
+import useStyles from "./style";
 
 const { Header, Sider, Content } = AntdLayout;
 
-const levelKeys = getLevelKeys(items as LevelKeysProps[]);
+const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
 
 const Layout: FC = () => {
     const { pathname } = location;
@@ -27,9 +27,28 @@ const Layout: FC = () => {
     const [selectedKeys, setSelectedKeys] = useState([pathname]);
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
 
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
+    const { styles: ss, cx, theme } = useStyles();
+
+    const dropdownItems: MenuProps["items"] = [
+        {
+            key: "1",
+            label: (
+                <a onClick={() => navigate("/system/person")}>
+                    <IdcardOutlined />
+                    &nbsp;用户信息
+                </a>
+            ),
+        },
+        {
+            key: "2",
+            label: (
+                <a onClick={() => onLogout()}>
+                    <LogoutOutlined />
+                    &nbsp;退出登录
+                </a>
+            ),
+        },
+    ];
 
     const onOpenChange: MenuProps["onOpenChange"] = (openKeys) => {
         const currentOpenKey = openKeys.find(
@@ -59,79 +78,70 @@ const Layout: FC = () => {
         navigate(e.key);
     };
 
+    const onLogout = () => {
+        navigate("/login");
+    };
+
     return (
         <AntdLayout>
             <Sider
                 theme="light"
-                trigger={null}
                 width={250}
-                style={siderStyle}
                 collapsible
+                trigger={null}
+                className={ss.side}
                 collapsed={collapsed}
             >
-                <h1 className="demo-logo-vertical">
-                    <a>
-                        <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
-                        <span>{!collapsed && "智能数据管理系统"}</span>
-                    </a>
-                </h1>
+                <a className={ss.logoContainer}>
+                    <img
+                        className={ss.logo}
+                        src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+                    />
+                    <span className={ss.text}>
+                        {!collapsed && "智能数据管理系统"}
+                    </span>
+                </a>
                 <Menu
                     mode="inline"
+                    items={menuItems}
+                    className={ss.menu}
                     defaultSelectedKeys={["/"]}
                     openKeys={stateOpenKeys}
-                    onOpenChange={onOpenChange}
                     selectedKeys={selectedKeys}
-                    style={menuStyle}
-                    items={items}
+                    onOpenChange={onOpenChange}
                     onClick={clickMenuItem}
                 />
             </Sider>
             <AntdLayout>
-                <Header
-                    style={{
-                        padding: "0",
-                        background: colorBgContainer,
-                    }}
-                >
-                    <div
-                        style={{
-                            display: "flex",
-                        }}
+                <Header className={ss.header}>
+                    <span
+                        className={ss.headerLeft}
+                        onClick={() => setCollapsed(!collapsed)}
                     >
-                        <span
-                            style={{ width: 200 }}
-                            onClick={() => setCollapsed(!collapsed)}
-                        >
-                            {collapsed ? (
-                                <MenuUnfoldOutlined style={headerLeftStyle} />
-                            ) : (
-                                <MenuFoldOutlined style={headerLeftStyle} />
-                            )}
-                        </span>
+                        {collapsed ? (
+                            <MenuUnfoldOutlined className={ss.headerIcon} />
+                        ) : (
+                            <MenuFoldOutlined className={ss.headerIcon} />
+                        )}
+                    </span>
 
-                        <span
-                            style={{
-                                flex: 1,
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                paddingRight: 10,
-                            }}
-                        >
-                            <MenuFoldOutlined style={headerRightStyle} />
-                            <MenuFoldOutlined style={headerRightStyle} />
-                            <MenuFoldOutlined style={headerRightStyle} />
-                        </span>
-                    </div>
+                    <span className={ss.headerRight}>
+                        <SunOutlined className={ss.headerIcon} />
+                        <FullscreenOutlined className={ss.headerIcon} />
+                        <GithubOutlined className={ss.headerIcon} />
+
+                        <Dropdown menu={{ items: dropdownItems }}>
+                            <Button type="text" className={ss.logout}>
+                                <img
+                                    className={ss.avatar}
+                                    src="https://himg.bdimg.com/sys/portraitn/item/public.1.64e3a983.rQ7LkkDCsOJkvisL0IYKUw"
+                                />
+                                张芳朝
+                            </Button>
+                        </Dropdown>
+                    </span>
                 </Header>
-                <Content
-                    style={{
-                        margin: "24px 16px",
-                        padding: 24,
-                        minHeight: 280,
-                        background: colorBgContainer,
-                        borderRadius: borderRadiusLG,
-                    }}
-                >
+                <Content className={ss.content}>
                     {/* 二级路由出口 */}
                     <Outlet />
                 </Content>
