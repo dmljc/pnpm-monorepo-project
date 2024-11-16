@@ -79,10 +79,10 @@ body {
 
 /* 中菜单时，文字要显示成蓝色！ */
 /* 其实我们也可以利用 NavLink 选中时类名为 active 这个特性来实现 */
-.active {
+/* .active {
     color: blue;
-}
+} */
 
-.ant-menu-item-selected {
+/* .ant-menu-item-selected {
     background-color: rgba(0, 0, 0, 0.06) !important;
-}
+} */

@@ -1,6 +1,13 @@
 import { useState, FC } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { Layout as AntdLayout, Menu, Dropdown, Button } from "antd";
+import {
+    Layout as AntdLayout,
+    Menu,
+    Dropdown,
+    Button,
+    ConfigProvider,
+    theme,
+} from "antd";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -26,8 +33,10 @@ const Layout: FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState([pathname]);
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
+    const [isDarkModel, setIsDarkModel] = useState(false);
 
-    const { styles: ss, cx, theme } = useStyles();
+    const { styles: ss, cx } = useStyles();
+    const { defaultAlgorithm, darkAlgorithm } = theme;
 
     const dropdownItems: MenuProps["items"] = [
         {
@@ -83,70 +92,79 @@ const Layout: FC = () => {
     };
 
     return (
-        <AntdLayout>
-            <Sider
-                theme="light"
-                width={250}
-                collapsible
-                trigger={null}
-                className={ss.side}
-                collapsed={collapsed}
-            >
-                <a className={ss.logoContainer}>
-                    <img
-                        className={ss.logo}
-                        src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-                    />
-                    <span className={ss.text}>
-                        {!collapsed && "智能数据管理系统"}
-                    </span>
-                </a>
-                <Menu
-                    mode="inline"
-                    items={menuItems}
-                    className={ss.menu}
-                    defaultSelectedKeys={["/"]}
-                    openKeys={stateOpenKeys}
-                    selectedKeys={selectedKeys}
-                    onOpenChange={onOpenChange}
-                    onClick={clickMenuItem}
-                />
-            </Sider>
+        <ConfigProvider
+            theme={{
+                algorithm: isDarkModel ? darkAlgorithm : defaultAlgorithm,
+            }}
+        >
             <AntdLayout>
-                <Header className={ss.header}>
-                    <span
-                        className={ss.headerLeft}
-                        onClick={() => setCollapsed(!collapsed)}
-                    >
-                        {collapsed ? (
-                            <MenuUnfoldOutlined className={ss.headerIcon} />
-                        ) : (
-                            <MenuFoldOutlined className={ss.headerIcon} />
-                        )}
-                    </span>
+                <Sider
+                    theme="light"
+                    width={250}
+                    collapsible
+                    trigger={null}
+                    className={ss.side}
+                    collapsed={collapsed}
+                >
+                    <a className={ss.logoContainer}>
+                        <img
+                            className={ss.logo}
+                            src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+                        />
+                        <span className={ss.text}>
+                            {!collapsed && "智能数据管理系统"}
+                        </span>
+                    </a>
+                    <Menu
+                        mode="inline"
+                        items={menuItems}
+                        className={ss.menu}
+                        defaultSelectedKeys={["/"]}
+                        openKeys={stateOpenKeys}
+                        selectedKeys={selectedKeys}
+                        onOpenChange={onOpenChange}
+                        onClick={clickMenuItem}
+                    />
+                </Sider>
+                <AntdLayout>
+                    <Header className={ss.header}>
+                        <span
+                            className={ss.headerLeft}
+                            onClick={() => setCollapsed(!collapsed)}
+                        >
+                            {collapsed ? (
+                                <MenuUnfoldOutlined className={ss.headerIcon} />
+                            ) : (
+                                <MenuFoldOutlined className={ss.headerIcon} />
+                            )}
+                        </span>
 
-                    <span className={ss.headerRight}>
-                        <SunOutlined className={ss.headerIcon} />
-                        <FullscreenOutlined className={ss.headerIcon} />
-                        <GithubOutlined className={ss.headerIcon} />
+                        <span className={ss.headerRight}>
+                            <SunOutlined
+                                className={ss.headerIcon}
+                                onClick={() => setIsDarkModel(!isDarkModel)}
+                            />
+                            <FullscreenOutlined className={ss.headerIcon} />
+                            <GithubOutlined className={ss.headerIcon} />
 
-                        <Dropdown menu={{ items: dropdownItems }}>
-                            <Button type="text" className={ss.logout}>
-                                <img
-                                    className={ss.avatar}
-                                    src="https://himg.bdimg.com/sys/portraitn/item/public.1.64e3a983.rQ7LkkDCsOJkvisL0IYKUw"
-                                />
-                                张芳朝
-                            </Button>
-                        </Dropdown>
-                    </span>
-                </Header>
-                <Content className={ss.content}>
-                    {/* 二级路由出口 */}
-                    <Outlet />
-                </Content>
+                            <Dropdown menu={{ items: dropdownItems }}>
+                                <Button type="text" className={ss.logout}>
+                                    <img
+                                        className={ss.avatar}
+                                        src="https://himg.bdimg.com/sys/portraitn/item/public.1.64e3a983.rQ7LkkDCsOJkvisL0IYKUw"
+                                    />
+                                    张芳朝
+                                </Button>
+                            </Dropdown>
+                        </span>
+                    </Header>
+                    <Content className={ss.content}>
+                        {/* 二级路由出口 */}
+                        <Outlet />
+                    </Content>
+                </AntdLayout>
             </AntdLayout>
-        </AntdLayout>
+        </ConfigProvider>
     );
 };
 
