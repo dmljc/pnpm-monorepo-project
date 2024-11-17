@@ -14,7 +14,7 @@ export default tseslint.config({
         eslintPluginPrettierRecommended,
     ],
     files: ["**/*.{ts,tsx}"], // eslint 检测的文件，根据需要自行设置
-    ignores: ["dist"],
+    ignores: ["dist/**", "cache/**"],
     languageOptions: {
         ecmaVersion: 2020,
         globals: globals.browser,
@@ -33,5 +33,12 @@ export default tseslint.config({
         "@typescript-eslint/no-explicit-any": "off", // allow any type
         "react-hooks/exhaustive-deps": "off",
         "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
+
+        "@typescript-eslint/no-unused-expressions": [
+            "error",
+            {
+                allowShortCircuit: true,
+            },
+        ],
     },
 });

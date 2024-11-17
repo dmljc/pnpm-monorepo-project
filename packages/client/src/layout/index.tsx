@@ -41,6 +41,7 @@ const Layout: FC = () => {
     const [isDarkModel, setIsDarkModel] = useState(false);
 
     const { styles: ss, cx } = useStyles();
+    console.log("cx", cx);
     const { defaultAlgorithm, darkAlgorithm } = theme;
     // const { token } = theme.useToken();
     // console.log("token===", token);
@@ -89,7 +90,7 @@ const Layout: FC = () => {
         }
     };
 
-    const clickMenuItem = (e) => {
+    const clickMenuItem = (e: any) => {
         setSelectedKeys([e.key]);
         navigate(e.key);
     };

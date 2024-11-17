@@ -1,0 +1,113 @@
+import { defineConfig } from "vitepress";
+
+// https://vitepress.dev/reference/site-config
+export default defineConfig({
+    title: "南天门",
+    description: "南天门",
+    // base: "/vitepress-project", github.io 地址需要base
+    base: "/", // 自定义域名
+    head: [
+        [
+            "link",
+            {
+                rel: "icon",
+                href: "https://vitepress.dev/vitepress-logo-mini.svg",
+            },
+        ],
+    ],
+    lastUpdated: true,
+    markdown: {
+        lineNumbers: true,
+    },
+    themeConfig: {
+        // logo: "/logo.png",
+        logo: "https://vitepress.dev/vitepress-logo-mini.svg",
+        nav: [
+            { text: "首页", link: "/" },
+            { text: "前端", link: "../react/index.md" },
+            { text: "后端", link: "../nest/index.md" },
+        ],
+        sidebar: {
+            // 当用户位于 `react` 目录时，会显示此侧边栏
+            "/react/": [
+                {
+                    text: "工程化配置",
+                    collapsed: false,
+                    items: [
+                        { text: "Monorepo", link: "/react/monorepo.md" },
+                        {
+                            text: "Vite 创建 React 项目",
+                            link: "/react/vite.md",
+                        },
+                        {
+                            text: "Eslint Prettier",
+                            link: "/react/eslint-prettier.md",
+                        },
+                        {
+                            text: "路由 React Router 6",
+                            link: "/react/router.md",
+                        },
+                        { text: "Typescript", link: "/react/ts.md" },
+                        { text: "Ant Design 5", link: "/react/antd.md" },
+                    ],
+                },
+            ],
+            "/nest/": [
+                {
+                    text: "nest",
+                    collapsed: true,
+                    items: [
+                        { text: "第一节", link: "/nest/1.md" },
+                        { text: "第2节", link: "/nest/2.md" },
+                    ],
+                },
+            ],
+        },
+        socialLinks: [
+            {
+                icon: "github",
+                link: "https://github.com/dmljc/vitepress-project",
+            },
+        ],
+        search: {
+            provider: "local",
+        },
+        // 编辑链接
+        editLink: {
+            pattern:
+                "https://github.com/dmljc/vitepress-project/tree/main/docs/:path", // 自己项目仓库地址
+            text: "在 github 上编辑此页",
+        },
+        lastUpdatedText: "最后更新", // string
+        // 右侧边栏配置，默认值是"In hac pagina"
+        outlineTitle: "页面导航",
+        // 站点页脚配置
+        footer: {
+            message: "Copyright © 2024-present 张芳朝",
+            copyright: `
+                <ClientOnly>
+                    <a
+                        style="text-decoration-line: none;"
+                        href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002017672"
+                        rel="noreferrer"
+                        target="_blank"
+                    >
+                        <img
+                            style="width: 16px; display: inline-block; position: relative; top: 4px; right: 4px;"
+                            src="备案图标.png"
+                        />
+                    浙公网安备33011002017672
+                    </a>
+
+                    <a 
+                        style="text-decoration-line: none;" 
+                        href="https://beian.miit.gov.cn"
+                        target="_blank"
+                    >
+                        &nbsp; 浙ICP备2024066792号-1
+                    </a>
+                </ClientOnly>
+            `,
+        },
+    },
+});
