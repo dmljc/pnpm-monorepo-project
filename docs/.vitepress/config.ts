@@ -31,24 +31,19 @@ export default defineConfig({
             // 当用户位于 `react` 目录时，会显示此侧边栏
             "/react/": [
                 {
-                    text: "工程化配置",
+                    text: "工程",
                     collapsed: false,
                     items: [
-                        { text: "Monorepo", link: "/react/monorepo.md" },
+                        { text: "目录", link: "/react/monorepo.md" },
                         {
-                            text: "Vite 创建 React 项目",
-                            link: "/react/vite.md",
+                            text: "规范",
+                            link: "/react/standard.md",
                         },
                         {
-                            text: "Eslint Prettier",
-                            link: "/react/eslint-prettier.md",
-                        },
-                        {
-                            text: "路由 React Router 6",
+                            text: "路由",
                             link: "/react/router.md",
                         },
-                        { text: "Typescript", link: "/react/ts.md" },
-                        { text: "Ant Design 5", link: "/react/antd.md" },
+                        { text: "换肤", link: "/react/antd.md" },
                     ],
                 },
             ],

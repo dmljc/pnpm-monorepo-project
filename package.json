@@ -13,9 +13,9 @@
         "clean:node_modules": "find . -type d -name 'node_modules' -exec rm -rf {} +",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
-        "docs:dev": "vitepress dev packages/docs  --host 0.0.0.0",
-        "docs:build": "vitepress build packages/docs",
-        "docs:preview": "vitepress preview packages/docs"
+        "docs:dev": "vitepress dev docs  --host 0.0.0.0",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
     },
     "devDependencies": {
         "@eslint/js": "^9.15.0",

@@ -1,4 +1,3 @@
 # pnpm-monorepo-project
 
-,
-        "lint:fixed": "eslint \"**/*.{ts,tsx,js}\" --fix"
+南天门全栈项目

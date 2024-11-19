@@ -2,31 +2,17 @@
 outline: deep
 ---
 
-# React Router 6
+# 路由配置
 
-[React Router 6 官方文档](https://reactrouter.com/en/main)
+## `history` 路由模式
 
-## 1、路由模式
+部署到服务端后，刷新子路由报 `404` 的问题，解决方法也很简单：改用 `hash `模式或者配置 `Nginx` (`location` 块儿的 `try_files` 属性)。
 
-`history` 模式和 `hash` 模式("#");
-
-```js
-import { BrowserRouter, HashRouter } from "react-router-dom";
-
-root.render(
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>,
-);
-```
-
-> 当用户刷新页面或直接访问某个路径时，浏览器会向服务器发送请求，如果服务器上没有对应的文件或目录，就会返回404错误。
-
-使用 `history` 模式时，会出现部署到服务端后，刷新子路由报 `404` 的问题，解决方法也很简单：改用 `hash `模式或者配置 `Nginx` (`location` 块儿的 `try_files` 属性)。
+::: details 点击查看 Nginx 配置
 
 例如，如果前端项目部署在根路径下，配置可能如下所示：
 
-```js
+```js{6-8}
 server {
     listen 80;
     server_name www.example.com;
@@ -40,7 +26,8 @@ server {
 ```
 
 如果前端项目部署在非根路径下（如/app/），则配置需要稍作调整：
-```js
+
+```js{5-7}
 server {
     listen 80;
     server_name www.example.com;
@@ -52,9 +39,17 @@ server {
 }
 ```
 
-## 2、lazy 函数懒加载
+:::
 
-## 3、Suspense 包裹懒加载的组件，使用 fallback 函数设置 loading；
+## lazy 函数懒加载
+
+```js
+import { lazy } from "react";
+
+const Workplace = lazy(() => import("../pages/Workplace"));
+```
+
+## Suspense 包裹组件，fallback 函数设置 loading；
 
 ```js
 import React from "react";
@@ -71,7 +66,7 @@ const WithLoadingComponent = (Component: JSX.Element) => {
 export default WithLoadingComponent;
 ```
 
-## 4、高阶组件包裹权限组件实现登录权限控制
+## 高阶组件包裹权限组件 实现登录权限控制
 
 ```js
 import { Navigate } from "react-router-dom";
@@ -94,80 +89,7 @@ const AuthComponent = (props: { component: any }) => {
 export default AuthComponent;
 ```
 
-## 5、嵌套路由
-
-routes配置
-
-```js
-const routes = [{ ...匹配关系 }, { ...匹配关系 }, { ...匹配关系 }];
-```
-
--   `path` 属性就是组件对应的路径；
--   `element` 属性就是要对应的组件(旧版本是 `components`);
--   `index` 属性就是默认要展示的页面组件(对应旧版本的重定向`redirect`属性);
--   `children` 属性是路由嵌套时需要用也是一个数组，children数组里的属性和外层一样，子路由的配置就是在children 属性里维护的。
-
-## 6、Outlet 组件作为路由页面出口
-
-## 7、路由跳转方式
-
-### 7、1 组件式跳转
-
-```js
-<Link to="/about">About</Link>
-
-<NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink>
-```
-
-区别：
-
--   `Link` 组件用于基本的页面导航功能，通过`to`属性指定目标页面的路径。
--   `NavLink` 组件在`Link`组件的基础上增加了`激活状态样式管理`的功能，可以通过`classNam`e和`style`属性接收的函数来动态设置激活状态的样式或类名。
-
-### 7、2 编程式导航
-
-```js
-import { useNavigate } from "react-router-dom";
-
-const navigate = useNavigate();
-
-...
-navigate("/login", {
-    replace: true,
-    state: { data: "这是传给新页面的参数" },
-});
-```
-
-## 8、路由传参数
-
-### 8、1 动态路由
-
-```js
-navigate("/testContent/:id");
-
-import { useParams } from "react-router-dom";
-const params = useParams();
-```
-
-### 8、2 search 传参
-
-```js
-navigate("/login?name=zfc&age=18");
-
-import { useSearchParams } from "react-router-dom";
-const [searchParams] = useSearchParams();
-const params = Object.fromEntries(searchParams);
-```
-
-### 8、3 state 传参
-
-```js
-navigate('/login',{state:{name:"张添财",age:18}})
-<Link to='/login' state={{name:"张添财",age:18}}>跳转Login页面</Link>
-
-import { useLocation } from "react-router-dom";
-const state = useLocation();
-```
+::: details 完整路由配置
 
 ```js
 import { lazy } from "react";
@@ -262,3 +184,67 @@ const routes: RouteObject[] = [
 
 export default routes;
 ```
+
+:::
+
+::: details 路由跳转和传参
+
+1、1 组件式跳转
+
+```js
+<Link to="/about">About</Link>
+
+<NavLink to="/about" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink>
+```
+
+区别：
+
+-   `Link` 组件用于基本的页面导航功能，通过`to`属性指定目标页面的路径。
+-   `NavLink` 组件在`Link`组件的基础上增加了`激活状态样式管理`的功能，可以通过`className`和`style`属性接收的函数来动态设置激活状态的样式或类名。
+
+1、2 编程式导航
+
+```js
+import { useNavigate } from "react-router-dom";
+
+const navigate = useNavigate();
+
+...
+navigate("/login", {
+    replace: true,
+    state: { data: "这是传给新页面的参数" },
+});
+```
+
+2、路由传参数
+
+2、1 动态路由
+
+```js
+navigate("/testContent/:id");
+
+import { useParams } from "react-router-dom";
+const params = useParams();
+```
+
+2、2 search 传参
+
+```js
+navigate("/login?name=zfc&age=18");
+
+import { useSearchParams } from "react-router-dom";
+const [searchParams] = useSearchParams();
+const params = Object.fromEntries(searchParams);
+```
+
+2、3 state 传参
+
+```js
+navigate('/login',{state:{name:"张添财",age:18}})
+<Link to='/login' state={{name:"张添财",age:18}}>跳转Login页面</Link>
+
+import { useLocation } from "react-router-dom";
+const state = useLocation();
+```
+
+:::
