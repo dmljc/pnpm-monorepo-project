@@ -10,6 +10,6 @@ export class CreateBookDto {
     @IsNotEmpty({ message: "简介不能为空" })
     description: string;
 
-    @IsNotEmpty({ message: "头像不能为空" })
-    avatar: string;
+    // @IsNotEmpty({ message: "头像不能为空" })
+    // avatar: string;
 }

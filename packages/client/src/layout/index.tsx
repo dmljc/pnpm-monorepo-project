@@ -40,8 +40,7 @@ const Layout: FC = () => {
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
     const [isDarkModel, setIsDarkModel] = useState(false);
 
-    const { styles: ss, cx } = useStyles();
-    console.log("cx", cx);
+    const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = theme;
     // const { token } = theme.useToken();
     // console.log("token===", token);

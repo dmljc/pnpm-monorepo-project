@@ -22,8 +22,8 @@ export class Book {
     })
     description: string;
 
-    @Column({
-        comment: "头像",
-    })
-    avatar: string;
+    // @Column({
+    //     comment: "头像",
+    // })
+    // avatar: string;
 }
