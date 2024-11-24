@@ -35,14 +35,14 @@ const CreateModal = (props: ModalProps) => {
     };
 
     useEffect(() => {
-        if (record && modalType === "update") {
+        if (modalType === "update") {
             form.setFieldsValue({
                 ...record,
             });
         } else {
             form.resetFields();
         }
-    }, [record, modalType]);
+    }, [modalType]);
 
     return (
         <Modal

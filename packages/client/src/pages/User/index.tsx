@@ -1,11 +1,12 @@
 import { useState, useRef } from "react";
 import request from "umi-request";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import CreateModal from "./CreateModal.tsx";
 import { UpdateBook } from "./interface.ts";
+import { del } from "./api.ts";
 
 export const waitTimePromise = async (time: number = 100) => {
     return new Promise((resolve) => {
@@ -20,61 +21,59 @@ export const waitTime = async (time: number = 100) => {
 };
 
 type GithubIssueItem = {
+    id: number;
     name: string;
     word: string;
     description: string;
     avatar?: string;
 };
 
-const columns: ProColumns<GithubIssueItem>[] = [
-    {
-        title: "姓名",
-        dataIndex: "name",
-    },
-    {
-        title: "字名",
-        search: false,
-        dataIndex: "word",
-    },
-    {
-        title: "描述",
-        search: false,
-        dataIndex: "description",
-    },
-    {
-        title: "操作",
-        valueType: "option",
-        key: "option",
-        // render: (text, record, _, action) => [
-        //     <a
-        //         key="editable"
-        //         onClick={() => {
-        //             action?.startEditable?.(record.id);
-        //         }}
-        //     >
-        //         编辑
-        //     </a>,
-        //     <a
-        //         href={record.url}
-        //         target="_blank"
-        //         rel="noopener noreferrer"
-        //         key="view"
-        //     >
-        //         查看
-        //     </a>,
-        //     <TableDropdown
-        //         key="actionGroup"
-        //         onSelect={() => action?.reload()}
-        //         menus={[
-        //             { key: "copy", name: "复制" },
-        //             { key: "delete", name: "删除" },
-        //         ]}
-        //     />,
-        // ],
-    },
-];
-
-export default () => {
+const User = () => {
+    const columns: ProColumns<GithubIssueItem>[] = [
+        {
+            title: "姓名",
+            dataIndex: "name",
+        },
+        {
+            title: "字名",
+            search: false,
+            dataIndex: "word",
+        },
+        {
+            title: "描述",
+            search: false,
+            dataIndex: "description",
+        },
+        {
+            title: "操作",
+            valueType: "option",
+            key: "option",
+            render: (text, _record, _, action) => [
+                <a
+                    key="edit"
+                    onClick={() => {
+                        setModalType("update");
+                        setRecord(_record);
+                        setModalOpen(true);
+                    }}
+                >
+                    编辑
+                </a>,
+                <a
+                    key="delete"
+                    onClick={async () => {
+                        const resp = await del(_record.id);
+                        if (resp) {
+                            action?.reload();
+                            message.success("删除成功");
+                        }
+                    }}
+                >
+                    删除
+                </a>,
+            ],
+        },
+    ];
     const actionRef = useRef<ActionType>();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<string>("create");
@@ -87,11 +86,11 @@ export default () => {
                 actionRef={actionRef}
                 cardBordered
                 request={async (params, sort, filter) => {
-                    console.log(sort, filter);
+                    console.log(params, sort, filter);
                     return request<{
                         data: GithubIssueItem[];
                     }>("http://192.168.1.4:3000/api/book/list", {
-                        name: params.name,
+                        params,
                     });
                 }}
                 editable={{
@@ -139,6 +138,7 @@ export default () => {
                         key="button"
                         icon={<PlusOutlined />}
                         onClick={() => {
+                            setModalType("create");
                             setModalOpen(true);
                         }}
                         type="primary"
@@ -160,3 +160,5 @@ export default () => {
         </>
     );
 };
+
+export default User;
