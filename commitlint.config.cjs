@@ -74,7 +74,7 @@ module.exports = {
             },
         ],
         useEmoji: true,
-        emojiAlign: "center",
+        // emojiAlign: "center",
         // allowCustomScopes: true,
         // allowBreakingChanges: ["feat", "fix"],
 
