@@ -1,7 +1,7 @@
 // commitlint.config.cjs
 module.exports = {
     // 继承的规则
-    // extends: ["@commitlint/config-conventional"],
+    extends: ["@commitlint/config-conventional"],
     // 自定义规则
     rules: {
         // @see https://commitlint.js.org/#/reference-rules
@@ -23,6 +23,7 @@ module.exports = {
                 "chore", // 对构建过程或辅助工具和库的更改（不影响源文件、测试用例）
             ],
         ],
+        "subject-case": [0], // subject大小写不做校验
     },
 
     prompt: {
