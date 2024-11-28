@@ -20,26 +20,26 @@ const layout2 = {
 
 const Login: FC = () => {
     const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
 
     const onFinish = async (values: LoginUser) => {
         try {
             const res = await login(values);
             if (res.success) {
-                message.success("登录成功");
-                console.log("xxxxxxxx");
-                console.log("🌟🌟🌟🌟🌟TEO");
+                messageApi.success("登录成功");
 
                 setTimeout(() => {
                     navigate("/");
                 }, 1000);
             }
         } catch (e) {
-            message.error(e as any);
+            messageApi.error(e as any);
         }
     };
 
     return (
         <div className="login">
+            {contextHolder}
             <h1 className="title">英雄管理系统</h1>
             <Form
                 {...layout1}

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { FC, useState, useRef } from "react";
 import request from "umi-request";
 import { Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
@@ -28,7 +28,13 @@ type GithubIssueItem = {
     avatar?: string;
 };
 
-const User = () => {
+const User: FC = () => {
+    const actionRef = useRef<ActionType>();
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalType, setModalType] = useState<string>("create");
+    const [record, setRecord] = useState<UpdateBook>();
+    const [messageApi, contextHolder] = message.useMessage();
+
     const columns: ProColumns<GithubIssueItem>[] = [
         {
             title: "姓名",
@@ -65,7 +71,7 @@ const User = () => {
                         const resp = await del(_record.id);
                         if (resp) {
                             action?.reload();
-                            message.success("删除成功");
+                            messageApi.success("操作成功");
                         }
                     }}
                 >
@@ -74,13 +80,10 @@ const User = () => {
             ],
         },
     ];
-    const actionRef = useRef<ActionType>();
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [modalType, setModalType] = useState<string>("create");
-    const [record, setRecord] = useState<UpdateBook>();
 
     return (
         <>
+            {contextHolder}
             <ProTable<GithubIssueItem>
                 columns={columns}
                 actionRef={actionRef}
