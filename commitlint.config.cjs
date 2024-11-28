@@ -41,6 +41,12 @@ module.exports = {
             generatedSelectByAI: "选择一个 AI 生成的简短描述:",
             confirmCommit: "是否提交或修改commit ?",
         },
+        scopes: [
+            { name: "client" },
+            { name: "server" },
+            { name: "docs" },
+            { name: "global" },
+        ],
         types: [
             { value: "feat", name: "特性: ✨ 新增功能", emoji: ":sparkles:" },
             { value: "fix", name: "修复: 🐛 修复缺陷", emoji: ":bug:" },
@@ -84,8 +90,8 @@ module.exports = {
         ],
         useEmoji: true,
         // emojiAlign: "center",
-        // allowCustomScopes: true,
-        // allowBreakingChanges: ["feat", "fix"],
+        allowCustomScopes: true,
+        allowBreakingChanges: ["feat", "fix"],
 
         // useAI: false,
         // aiNumber: 1,
