@@ -24,7 +24,6 @@ module.exports = {
             ],
         ],
         "subject-case": [0], // subject大小写不做校验
-        // "custom-scopes-align": [0],
     },
 
     prompt: {
