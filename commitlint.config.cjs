@@ -24,6 +24,7 @@ module.exports = {
             ],
         ],
         "subject-case": [0], // subject大小写不做校验
+        // "custom-scopes-align": [0],
     },
 
     prompt: {
@@ -90,8 +91,8 @@ module.exports = {
         ],
         useEmoji: true,
         // emojiAlign: "center",
-        allowCustomScopes: true,
-        allowBreakingChanges: ["feat", "fix"],
+        // allowCustomScopes: true,
+        // allowBreakingChanges: ["feat", "fix"],
 
         // useAI: false,
         // aiNumber: 1,
@@ -114,8 +115,8 @@ module.exports = {
         // customIssuePrefixAlign: "top",
         // emptyIssuePrefixAlias: "skip",
         // customIssuePrefixAlias: "custom",
-        // allowCustomIssuePrefix: true,
-        // allowEmptyIssuePrefix: true,
+        allowCustomIssuePrefix: false,
+        allowEmptyIssuePrefix: false,
         // confirmColorize: true,
         // maxHeaderLength: Infinity,
         // maxSubjectLength: Infinity,
