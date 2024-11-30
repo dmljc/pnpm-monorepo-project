@@ -20,7 +20,7 @@ outline: deep
 
 ## 遇到的问题
 
-![header](../public/header.jpg)
+![header](../header.jpg)
 
 ## 解决方案
 
