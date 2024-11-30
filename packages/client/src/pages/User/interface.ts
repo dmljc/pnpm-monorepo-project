@@ -1,21 +1,28 @@
-export interface CreateBook {
+export interface CreateUser {
+    username: string;
+    password: string;
     name: string;
-    word: string;
-    description: string;
-    avatar?: string;
+    sex: number;
+    phone: string;
+    email: string;
+    id_card: string;
+    remark: string;
 }
 
-export interface UpdateBook extends CreateBook {
+export interface UpdateUser extends CreateUser {
     id: number;
 }
 export interface ModalProps {
     isOpen: boolean;
     modalType: string;
-    record: UpdateBook;
+    record: UpdateUser;
     handleClose: () => void;
 }
 
 export interface ListParams {
+    username?: string;
     name?: string;
-    word?: string;
+    phone?: string;
+    email?: string;
+    id_card?: string;
 }

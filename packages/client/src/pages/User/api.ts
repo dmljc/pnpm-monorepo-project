@@ -4,26 +4,26 @@ export const register = (data: any): Promise<any> => {
     return request.post("/user/register", data);
 };
 
-import { CreateBook, UpdateBook, ListParams } from "./interface";
+import { CreateUser, UpdateUser, ListParams } from "./interface";
 
 export const list = (data: ListParams): Promise<any> => {
-    return request.get("/book/list", {
+    return request.get("/user/list", {
         params: data,
     });
 };
 
-export const create = (data: CreateBook): Promise<any> => {
-    return request.post("/book/create", data);
+export const create = (data: CreateUser): Promise<any> => {
+    return request.post("/user/create", data);
 };
 
-export const update = (data: UpdateBook): Promise<any> => {
-    return request.put("/book/update", data);
+export const update = (data: UpdateUser): Promise<any> => {
+    return request.put("/user/update", data);
 };
 
 export const detail = (id: number): Promise<any> => {
-    return request.get(`/book/${id}`);
+    return request.get(`/user/${id}`);
 };
 
 export const del = (id: number): Promise<any> => {
-    return request.delete(`/book/delete/${id}`);
+    return request.delete(`/user/delete/${id}`);
 };

@@ -3,7 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
-import { BookModule } from "./book/book.module";
 
 @Module({
     imports: [
@@ -21,7 +20,6 @@ import { BookModule } from "./book/book.module";
             poolSize: 10, // 是一个常见的数据库连接池配置项，用于设置连接池中最大的连接数。
         }),
         UserModule,
-        BookModule,
     ],
     controllers: [AppController],
     providers: [AppService],

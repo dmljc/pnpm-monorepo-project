@@ -1,7 +1,17 @@
-// controller：控制器，用于处理路由，解析请求参数
-import { Controller, Post, Body } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Query,
+    Post,
+    Put,
+    Body,
+    Param,
+    Delete,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { RegisterUserDto } from "./dto/register-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { QueryUserDto } from "./dto/query-user.dto";
 import { LoginUserDto } from "./dto/login-user.dto";
 
 @Controller("user")
@@ -16,5 +26,30 @@ export class UserController {
     @Post("login")
     login(@Body() loginUserDto: LoginUserDto) {
         return this.userService.login(loginUserDto);
+    }
+
+    @Get("list")
+    async list(@Query() queryData: QueryUserDto) {
+        return this.userService.list(queryData);
+    }
+
+    @Get(":id")
+    async detail(@Param("id") id: number) {
+        return this.userService.detail(+id);
+    }
+
+    @Post("create")
+    async create(@Body() createUserDto: RegisterUserDto) {
+        return this.userService.create(createUserDto);
+    }
+
+    @Put("update")
+    async update(@Body() updateUserDto: UpdateUserDto) {
+        return this.userService.update(updateUserDto);
+    }
+
+    @Delete("delete/:id")
+    async delete(@Param("id") id: string) {
+        return this.userService.delete(+id);
     }
 }

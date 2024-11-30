@@ -1,19 +1,19 @@
 import { useEffect } from "react";
-import { Form, Input, message, Modal } from "antd";
-import { Coverupload } from "../../components/index";
-import { ModalProps, UpdateBook } from "./interface";
+import { Form, Input, message, Modal, Radio } from "antd";
+// import { Coverupload } from "../../components/index";
+import { ModalProps, UpdateUser } from "./interface";
 import { create, update } from "./api";
 
 const { TextArea } = Input;
 
 const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 18 },
+    labelCol: { span: 5 },
+    wrapperCol: { span: 17 },
 };
 
 const CreateModal = (props: ModalProps) => {
     const { modalType, isOpen, record, handleClose } = props;
-    const [form] = Form.useForm<UpdateBook>();
+    const [form] = Form.useForm<UpdateUser>();
     const [messageApi, contextHolder] = message.useMessage();
 
     const handleOk = async () => {
@@ -26,9 +26,10 @@ const CreateModal = (props: ModalProps) => {
             const apiUrl = modalType === "create" ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
-                messageApi.success("操作成功");
-                form.resetFields();
                 handleClose();
+                messageApi.success(
+                    modalType === "create" ? "新增成功" : "编辑成功",
+                );
             }
         } catch (error) {
             console.log(error);
@@ -43,48 +44,112 @@ const CreateModal = (props: ModalProps) => {
         } else {
             form.resetFields();
         }
-    }, [modalType]);
+    }, [isOpen, modalType]);
 
     return (
         <>
             {contextHolder}
             <Modal
-                title={modalType === "create" ? "添加英雄" : "编辑英雄"}
+                title={modalType === "create" ? "新增用户" : "编辑用户"}
                 open={isOpen}
+                width={600}
                 onOk={handleOk}
-                onCancel={() => handleClose()}
-                okText={"创建"}
+                okText="创建"
                 forceRender
+                onCancel={() => handleClose()}
             >
-                <Form form={form} {...layout}>
+                <Form
+                    form={form}
+                    {...layout}
+                    initialValues={{
+                        sex: 1,
+                    }}
+                >
                     <Form.Item
-                        label="名称"
+                        label="账号"
+                        name="username"
+                        rules={[{ required: true, message: "请输入账号" }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="密码"
+                        name="password"
+                        rules={[{ required: true, message: "请输入密码" }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="姓名"
                         name="name"
-                        rules={[{ required: true, message: "请输入名称!" }]}
+                        rules={[{ required: true, message: "请输入姓名" }]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        label="字名"
-                        name="word"
-                        rules={[{ required: true, message: "请输入作者的字!" }]}
+                        label="性别"
+                        name="sex"
+                        rules={[{ required: true, message: "请选择性别" }]}
+                    >
+                        <Radio.Group>
+                            <Radio value={1}>男</Radio>
+                            <Radio value={2}>女</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item
+                        label="手机号"
+                        name="phone"
+                        rules={[
+                            { required: true, message: "请输入手机号" },
+                            {
+                                pattern: /^1\d{10}$/,
+                                message: "手机号格式异常",
+                            },
+                        ]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        label="介绍"
-                        name="description"
-                        rules={[{ required: true, message: "请输入介绍!" }]}
+                        label="邮箱"
+                        name="email"
+                        rules={[
+                            { required: true, message: "请输入邮箱" },
+                            {
+                                type: "email",
+                                message: "邮箱格式异常",
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="身份证号"
+                        name="id_card"
+                        rules={[
+                            { required: true, message: "请输入身份证号" },
+                            {
+                                pattern:
+                                    /(^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx]$)|(^[1-9]\d{5}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}$)/,
+                                message: "身份证号格式异常",
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="备注"
+                        name="remark"
+                        rules={[{ required: false, message: "请输入备注" }]}
                     >
                         <TextArea autoSize={{ minRows: 4, maxRows: 6 }} />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                         label="头像"
                         name="avatar"
                         rules={[{ required: false, message: "请上传头像!" }]}
                     >
                         <Coverupload />
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Modal>
         </>

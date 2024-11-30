@@ -16,9 +16,6 @@ const Menu = lazy(() => import("../pages/Menu"));
 const Config = lazy(() => import("../pages/Config"));
 const Person = lazy(() => import("../pages/Person"));
 
-// 业务
-const Book = lazy(() => import("../pages/Book"));
-
 // 全局
 const Login = lazy(() => import("../pages/Login"));
 const NotFound = lazy(() => import("../components/NotFound"));
@@ -65,16 +62,6 @@ const routes: RouteObject[] = [
             {
                 path: "/system/person",
                 element: WithLoadingComponent(<Person />),
-            },
-        ],
-    },
-    {
-        path: "/yewu",
-        element: <AuthComponent component={<Layout />} />,
-        children: [
-            {
-                path: "/yewu/book",
-                element: WithLoadingComponent(<Book />),
             },
         ],
     },

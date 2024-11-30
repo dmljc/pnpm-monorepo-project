@@ -5,55 +5,83 @@ import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import CreateModal from "./CreateModal.tsx";
-import { UpdateBook } from "./interface.ts";
+import { UpdateUser } from "./interface.ts";
 import { del } from "./api.ts";
-
-export const waitTimePromise = async (time: number = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
-
-export const waitTime = async (time: number = 100) => {
-    await waitTimePromise(time);
-};
 
 type GithubIssueItem = {
     id: number;
+    username: string;
+    password: string;
     name: string;
-    word: string;
-    description: string;
-    avatar?: string;
+    sex: number;
+    phone: string;
+    email: string;
+    id_card: string;
+    remark: string;
 };
 
 const User: FC = () => {
     const actionRef = useRef<ActionType>();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<string>("create");
-    const [record, setRecord] = useState<UpdateBook>();
+    const [record, setRecord] = useState<UpdateUser>();
     const [messageApi, contextHolder] = message.useMessage();
 
     const columns: ProColumns<GithubIssueItem>[] = [
         {
+            title: "账号",
+            dataIndex: "username",
+            fixed: "left",
+            width: 120,
+        },
+        {
+            title: "密码",
+            dataIndex: "password",
+            search: false,
+            width: 120,
+        },
+        {
             title: "姓名",
             dataIndex: "name",
+            width: 120,
         },
         {
-            title: "字名",
+            title: "性别",
+            dataIndex: "sex",
             search: false,
-            dataIndex: "word",
+            filters: true,
+            width: 100,
+            onFilter: true,
+            valueType: "select",
+            valueEnum: {
+                1: { text: "男" },
+                2: { text: "女" },
+            },
         },
         {
-            title: "描述",
+            title: "手机号",
+            dataIndex: "phone",
+        },
+        {
+            title: "邮箱",
+            dataIndex: "email",
+        },
+        {
+            title: "身份证号",
+            dataIndex: "id_card",
+        },
+        {
+            title: "备注",
+            dataIndex: "remark",
             search: false,
-            dataIndex: "description",
+            width: 200,
+            ellipsis: true,
         },
         {
             title: "操作",
             valueType: "option",
             key: "option",
+            width: 100,
             render: (text, _record, _, action) => [
                 <a
                     key="edit"
@@ -71,7 +99,7 @@ const User: FC = () => {
                         const resp = await del(_record.id);
                         if (resp) {
                             action?.reload();
-                            messageApi.success("操作成功");
+                            messageApi.success("删除成功");
                         }
                     }}
                 >
@@ -88,11 +116,11 @@ const User: FC = () => {
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
-                request={async (params, sort, filter) => {
-                    console.log(params, sort, filter);
+                request={async (params) => {
+                    console.log(params);
                     return request<{
                         data: GithubIssueItem[];
-                    }>("http://192.168.1.4:3000/api/book/list", {
+                    }>("http://localhost:3000/api/user/list", {
                         params,
                     });
                 }}
@@ -146,7 +174,7 @@ const User: FC = () => {
                         }}
                         type="primary"
                     >
-                        新建
+                        新增
                     </Button>,
                 ]}
             />
