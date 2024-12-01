@@ -124,7 +124,7 @@ const CreateModal = (props: ModalProps) => {
                     </Form.Item>
                     <Form.Item
                         label="身份证号"
-                        name="id_card"
+                        name="idCard"
                         rules={[
                             { required: true, message: "请输入身份证号" },
                             {

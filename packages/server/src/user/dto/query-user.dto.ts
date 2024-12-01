@@ -3,5 +3,5 @@ export class QueryUserDto {
     name?: string;
     phone?: string;
     email?: string;
-    id_card?: string;
+    idCard?: string;
 }

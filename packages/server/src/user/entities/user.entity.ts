@@ -47,7 +47,7 @@ export class User {
     @Column({
         comment: "身份证",
     })
-    id_card: string;
+    idCard: string;
 
     @Column({
         comment: "备注",

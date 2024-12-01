@@ -24,7 +24,7 @@ export class RegisterUserDto {
     email: string;
 
     @IsNotEmpty({ message: "身份证号不能为空" })
-    id_card: string;
+    idCard: string;
 
     @MaxLength(100)
     remark: string;

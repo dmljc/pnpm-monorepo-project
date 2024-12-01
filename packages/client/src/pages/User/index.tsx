@@ -16,7 +16,7 @@ type GithubIssueItem = {
     sex: number;
     phone: string;
     email: string;
-    id_card: string;
+    idCard: string;
     remark: string;
 };
 
@@ -33,25 +33,26 @@ const User: FC = () => {
             dataIndex: "username",
             fixed: "left",
             width: 120,
+            render: (text) => <a>{text}</a>,
         },
         {
             title: "密码",
             dataIndex: "password",
             search: false,
-            width: 120,
+            width: 110,
         },
         {
             title: "姓名",
             dataIndex: "name",
-            width: 120,
+            width: 110,
         },
         {
             title: "性别",
             dataIndex: "sex",
             search: false,
             filters: true,
-            width: 100,
             onFilter: true,
+            width: 100,
             valueType: "select",
             valueEnum: {
                 1: { text: "男" },
@@ -61,6 +62,7 @@ const User: FC = () => {
         {
             title: "手机号",
             dataIndex: "phone",
+            width: 130,
         },
         {
             title: "邮箱",
@@ -68,20 +70,31 @@ const User: FC = () => {
         },
         {
             title: "身份证号",
-            dataIndex: "id_card",
+            dataIndex: "idCard",
+        },
+        {
+            title: "创建时间",
+            dataIndex: "createTime",
+            valueType: "dateTime",
+        },
+        {
+            title: "更新时间",
+            dataIndex: "updateTime",
+            valueType: "dateTime",
         },
         {
             title: "备注",
             dataIndex: "remark",
             search: false,
-            width: 200,
             ellipsis: true,
+            copyable: true,
         },
         {
             title: "操作",
             valueType: "option",
             key: "option",
             width: 100,
+            fixed: "right",
             render: (text, _record, _, action) => [
                 <a
                     key="edit"
@@ -116,6 +129,7 @@ const User: FC = () => {
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
+                scroll={{ x: 1600 }}
                 request={async (params) => {
                     console.log(params);
                     return request<{
