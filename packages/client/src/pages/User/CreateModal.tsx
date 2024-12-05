@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Form, Input, message, Modal, Radio } from "antd";
 // import { Coverupload } from "../../components/index";
 import { ModalProps, UpdateUser } from "./interface";
+import { ModalTypeEnum } from "../../utils";
 import { create, update } from "./api";
 
 const { TextArea } = Input;
@@ -20,15 +21,19 @@ const CreateModal = (props: ModalProps) => {
         await form.validateFields();
         const values = form.getFieldsValue();
         const params =
-            modalType === "create" ? values : { ...values, id: record.id };
+            modalType === ModalTypeEnum.CREATE
+                ? values
+                : { ...values, id: record.id };
 
         try {
-            const apiUrl = modalType === "create" ? create : update;
+            const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
                 handleClose();
                 messageApi.success(
-                    modalType === "create" ? "新增成功" : "编辑成功",
+                    modalType === ModalTypeEnum.CREATE
+                        ? "创建成功"
+                        : "更新成功",
                 );
             }
         } catch (error) {
@@ -37,7 +42,7 @@ const CreateModal = (props: ModalProps) => {
     };
 
     useEffect(() => {
-        if (modalType === "update") {
+        if (modalType === ModalTypeEnum.UPDATE) {
             form.setFieldsValue({
                 ...record,
             });
@@ -50,7 +55,9 @@ const CreateModal = (props: ModalProps) => {
         <>
             {contextHolder}
             <Modal
-                title={modalType === "create" ? "新增用户" : "编辑用户"}
+                title={
+                    modalType === ModalTypeEnum.CREATE ? "创建用户" : "更新用户"
+                }
                 open={isOpen}
                 width={600}
                 onOk={handleOk}

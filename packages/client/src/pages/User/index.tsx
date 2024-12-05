@@ -4,6 +4,7 @@ import { Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
+import { ModalTypeEnum } from "../../utils";
 import CreateModal from "./CreateModal.tsx";
 import { UpdateUser } from "./interface.ts";
 import { del } from "./api.ts";
@@ -23,7 +24,9 @@ type GithubIssueItem = {
 const User: FC = () => {
     const actionRef = useRef<ActionType>();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [modalType, setModalType] = useState<string>("create");
+    const [modalType, setModalType] = useState<ModalTypeEnum>(
+        ModalTypeEnum.CREATE,
+    );
     const [record, setRecord] = useState<UpdateUser>();
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -99,12 +102,12 @@ const User: FC = () => {
                 <a
                     key="edit"
                     onClick={() => {
-                        setModalType("update");
+                        setModalType(ModalTypeEnum.UPDATE);
                         setRecord(_record);
                         setModalOpen(true);
                     }}
                 >
-                    编辑
+                    更新
                 </a>,
                 <a
                     key="delete"
@@ -183,12 +186,12 @@ const User: FC = () => {
                         key="button"
                         icon={<PlusOutlined />}
                         onClick={() => {
-                            setModalType("create");
+                            setModalType(ModalTypeEnum.CREATE);
                             setModalOpen(true);
                         }}
                         type="primary"
                     >
-                        新增
+                        创建
                     </Button>,
                 ]}
             />
