@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Form, Input, message, Modal, Radio } from "antd";
 // import { Coverupload } from "../../components/index";
 import { ModalProps, UpdateUser } from "./interface";
-import { ModalTypeEnum } from "../../utils";
+import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
 
 const { TextArea } = Input;

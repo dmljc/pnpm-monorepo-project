@@ -4,7 +4,7 @@ import { Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { ModalTypeEnum } from "../../utils";
+import { ModalTypeEnum } from "@/utils";
 import CreateModal from "./CreateModal.tsx";
 import { UpdateUser } from "./interface.ts";
 import { del } from "./api.ts";

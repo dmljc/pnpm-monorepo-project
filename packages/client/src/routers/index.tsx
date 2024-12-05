@@ -1,24 +1,24 @@
 import { lazy } from "react";
 import { Navigate, RouteObject } from "react-router-dom";
-import { AuthComponent, WithLoadingComponent } from "../components";
+import { AuthComponent, WithLoadingComponent } from "@/components";
 import Layout from "../layout";
 
 // 路由懒加载
 
 // 仪表盘
-const Workplace = lazy(() => import("../pages/Workplace"));
-const Analysis = lazy(() => import("../pages/Analysis"));
+const Workplace = lazy(() => import("@/pages/Workplace"));
+const Analysis = lazy(() => import("@/pages/Analysis"));
 
 // 系统管理
-const User = lazy(() => import("../pages/User"));
-const Role = lazy(() => import("../pages/Role"));
-const Menu = lazy(() => import("../pages/Menu"));
-const Config = lazy(() => import("../pages/Config"));
-const Person = lazy(() => import("../pages/Person"));
+const User = lazy(() => import("@/pages/User"));
+const Role = lazy(() => import("@/pages/Role"));
+const Menu = lazy(() => import("@/pages/Menu"));
+const Config = lazy(() => import("@/pages/Config"));
+const Person = lazy(() => import("@/pages/Person"));
 
 // 全局
-const Login = lazy(() => import("../pages/Login"));
-const NotFound = lazy(() => import("../components/NotFound"));
+const Login = lazy(() => import("@/pages/Login"));
+const NotFound = lazy(() => import("@/components/NotFound"));
 
 const routes: RouteObject[] = [
     {
