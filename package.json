@@ -8,6 +8,7 @@
         "client:dev": "pnpm -F client dev",
         "client:build": "pnpm -F client build",
         "server:dev": "pnpm -F server start:dev",
+        "server:debug": "pnpm -F server start:debug",
         "server:build": "pnpm -F server build",
         "clean:dists": "find . -type d -name 'dist' -exec rm -rf {} +",
         "clean:node_modules": "find . -type d -name 'node_modules' -exec rm -rf {} +",
