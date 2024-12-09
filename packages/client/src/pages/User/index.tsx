@@ -1,5 +1,4 @@
 import { FC, useState, useRef } from "react";
-import request from "umi-request";
 import { Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
@@ -7,7 +6,7 @@ import { ProTable } from "@ant-design/pro-components";
 import { ModalTypeEnum } from "@/utils";
 import CreateModal from "./CreateModal.tsx";
 import { UpdateUser } from "./interface.ts";
-import { del } from "./api.ts";
+import { list, del } from "./api.ts";
 
 type GithubIssueItem = {
     id: number;
@@ -19,6 +18,8 @@ type GithubIssueItem = {
     email: string;
     idCard: string;
     remark: string;
+    createTime: string;
+    updateTime: string;
 };
 
 const User: FC = () => {
@@ -79,11 +80,28 @@ const User: FC = () => {
             title: "创建时间",
             dataIndex: "createTime",
             valueType: "dateTime",
+            sorter: true,
+            hideInSearch: true,
+        },
+        {
+            title: "创建时间",
+            dataIndex: "createTime",
+            valueType: "dateTimeRange",
+            hideInTable: true,
+            search: {
+                transform: (value) => {
+                    return {
+                        startTime: value[0],
+                        endTime: value[1],
+                    };
+                },
+            },
         },
         {
             title: "更新时间",
             dataIndex: "updateTime",
             valueType: "dateTime",
+            hideInSearch: true,
         },
         {
             title: "备注",
@@ -133,13 +151,20 @@ const User: FC = () => {
                 actionRef={actionRef}
                 cardBordered
                 scroll={{ x: 1600 }}
-                request={async (params) => {
-                    console.log(params);
-                    return request<{
-                        data: GithubIssueItem[];
-                    }>("http://localhost:3000/api/user/list", {
-                        params,
+                request={async (params, sort, filter) => {
+                    const resp = await list({
+                        current: params.current ?? 1,
+                        pageSize: params.pageSize ?? 10,
+                        ...params,
+                        ...sort,
+                        ...filter,
                     });
+
+                    return {
+                        data: resp.data,
+                        success: resp.success,
+                        total: resp.data.length,
+                    };
                 }}
                 editable={{
                     type: "multiple",
@@ -169,7 +194,7 @@ const User: FC = () => {
                         if (type === "get") {
                             return {
                                 ...values,
-                                created_at: [values.startTime, values.endTime],
+                                createTime: [values.startTime, values.endTime],
                             };
                         }
                         return values;

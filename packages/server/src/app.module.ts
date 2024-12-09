@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { JwtModule } from "@nestjs/jwt";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
@@ -18,6 +19,13 @@ import { UserModule } from "./user/user.module";
             // logging: ['error', 'warn', 'log', 'info', 'query'], // 设置日志级别
             entities: [__dirname + "/**/*.entity{.ts,.js}"], // 实体文件的位置
             poolSize: 10, // 是一个常见的数据库连接池配置项，用于设置连接池中最大的连接数。
+        }),
+        JwtModule.register({
+            global: true,
+            secret: "string",
+            signOptions: {
+                expiresIn: "0.5h",
+            },
         }),
         UserModule,
     ],

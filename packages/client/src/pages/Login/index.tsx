@@ -2,20 +2,14 @@ import { FC } from "react";
 import { Button, Form, Input, message } from "antd";
 import { login } from "./api";
 import { useNavigate } from "react-router-dom";
-import "./index.css";
 interface LoginUser {
     username: string;
     password: string;
 }
 
-const layout1 = {
+const layout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 20 },
-};
-
-const layout2 = {
-    labelCol: { span: 0 },
-    wrapperCol: { span: 24 },
 };
 
 const Login: FC = () => {
@@ -26,8 +20,8 @@ const Login: FC = () => {
         try {
             const res = await login(values);
             if (res.success) {
+                localStorage.setItem("token", res.data.token);
                 messageApi.success("登录成功");
-
                 setTimeout(() => {
                     navigate("/");
                 }, 1000);
@@ -38,19 +32,26 @@ const Login: FC = () => {
     };
 
     return (
-        <div className="login">
-            {contextHolder}
-            <h1 className="title">英雄管理系统</h1>
+        <div
+            className="login"
+            style={{
+                background: "#fff",
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
             <Form
-                {...layout1}
+                {...layout}
                 onFinish={onFinish}
                 colon={false}
                 autoComplete="off"
                 initialValues={{
-                    username: "zfc",
-                    password: "123456",
-                    password2: "123456",
+                    username: "zfcstring",
+                    password: "868891",
                 }}
+                style={{ minWidth: 400 }}
             >
                 <Form.Item
                     label="用户名"
@@ -68,18 +69,18 @@ const Login: FC = () => {
                     <Input.Password />
                 </Form.Item>
 
-                <Form.Item {...layout2}>
-                    <div className="links">
-                        <a href="/register">没有账号？去注册</a>
-                    </div>
-                </Form.Item>
-
                 <Form.Item label=" ">
-                    <Button className="btn" type="primary" htmlType="submit">
+                    <Button
+                        className="btn"
+                        block
+                        type="primary"
+                        htmlType="submit"
+                    >
                         登录
                     </Button>
                 </Form.Item>
             </Form>
+            {contextHolder}
         </div>
     );
 };

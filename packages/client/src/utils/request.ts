@@ -13,8 +13,10 @@ export const createAxiosByinterceptors = (
     // 添加请求拦截器
     instance.interceptors.request.use(
         (config) => {
-            const token = "222";
-            config.headers.authorization = "Bearer " + token;
+            const token = localStorage.getItem("token");
+            if (token) {
+                config.headers.Authorization = "Bearer " + token;
+            }
             return config;
         },
         (error) => {
@@ -27,7 +29,12 @@ export const createAxiosByinterceptors = (
     instance.interceptors.response.use(
         (config) => {
             const { data } = config;
-            if (data?.success === false) {
+            const token = data.data;
+            if (token) {
+                config.headers.Authorization = "Bearer " + token;
+            }
+
+            if (!data?.success) {
                 message.error(data?.message);
             }
 
@@ -44,13 +51,22 @@ export const createAxiosByinterceptors = (
                 message.error(data?.message);
             }
 
+            // token 失效，跳转到登录页面
+            if (data.code === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("pro-table-singe-demos");
+                window.location.href = "/login";
+            }
+
             return Promise.reject(error);
         },
     );
     return instance;
 };
 
+export const baseURL = "http://localhost:3000/api";
+
 export const request = createAxiosByinterceptors({
-    baseURL: "http://localhost:3000/api",
+    baseURL: baseURL,
     timeout: 3000,
 });

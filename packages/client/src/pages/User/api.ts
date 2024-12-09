@@ -1,10 +1,9 @@
 import { request } from "@/utils";
+import { CreateUser, UpdateUser, ListParams } from "./interface";
 
 export const register = (data: any): Promise<any> => {
     return request.post("/user/register", data);
 };
-
-import { CreateUser, UpdateUser, ListParams } from "./interface";
 
 export const list = (data: ListParams): Promise<any> => {
     return request.get("/user/list", {

@@ -64,6 +64,16 @@ export class User {
     })
     createTime: Date;
 
+    @CreateDateColumn({
+        comment: "创建时间",
+    })
+    startTime: Date;
+
+    @CreateDateColumn({
+        comment: "创建时间",
+    })
+    endTime: Date;
+
     @UpdateDateColumn({
         comment: "更新时间",
     })

@@ -7,29 +7,54 @@ import {
     Body,
     Param,
     Delete,
+    Res,
+    Inject,
 } from "@nestjs/common";
+import { Response } from "express";
+import { JwtService } from "@nestjs/jwt";
 import { UserService } from "./user.service";
-import { RegisterUserDto } from "./dto/register-user.dto";
+import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { QueryUserDto } from "./dto/query-user.dto";
-import { LoginUserDto } from "./dto/login-user.dto";
+import { QueryDto } from "./dto/query-user.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @Controller("user")
 export class UserController {
     constructor(private readonly userService: UserService) {}
+    @Inject(JwtService)
+    private jwtService: JwtService;
 
     // handler：控制器里处理路由的方法
-    @Post("register")
-    register(@Body() registerUserDto: RegisterUserDto) {
-        return this.userService.register(registerUserDto);
-    }
+    // @Post("register")
+    // register(@Body() CreateUserDto: CreateUserDto) {
+    //     return this.userService.register(CreateUserDto);
+    // }
     @Post("login")
-    login(@Body() loginUserDto: LoginUserDto) {
-        return this.userService.login(loginUserDto);
+    async login(
+        @Body() user: LoginDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        const foundUser = await this.userService.login(user);
+
+        if (foundUser) {
+            const token = await this.jwtService.signAsync({
+                user: {
+                    id: foundUser.id,
+                    username: foundUser.username,
+                },
+            });
+            res.setHeader("Authorization", token);
+
+            return {
+                token,
+            };
+        } else {
+            return "login fail";
+        }
     }
 
     @Get("list")
-    async list(@Query() queryData: QueryUserDto) {
+    async list(@Query() queryData: QueryDto) {
         return this.userService.list(queryData);
     }
 
@@ -39,7 +64,7 @@ export class UserController {
     }
 
     @Post("create")
-    async create(@Body() createUserDto: RegisterUserDto) {
+    async create(@Body() createUserDto: CreateUserDto) {
         return this.userService.create(createUserDto);
     }
 

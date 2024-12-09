@@ -7,6 +7,8 @@ import { ValidationPipe } from "@nestjs/common";
 import { HttpExceptionFilter } from "./common/http.exception.filter";
 import { HttpResppnseInterceptor } from "./common/http.response.interceptor";
 
+import { LoginGuard } from "./common/login.guard";
+
 async function bootstrap() {
     // const app = await NestFactory.create(AppModule);
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -27,6 +29,9 @@ async function bootstrap() {
     // 我们还要对参数做一些校验，校验请求体的参数需要用到 ValidationPipe
     // 现在接收到的参数是普通对象，指定 transform: true 之后，就会转为 dto 的实例了：
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+    // 设置全局登录守卫
+    app.useGlobalGuards(new LoginGuard());
 
     app.enableCors(); // 启用cors 否则前端会因为跨域报错
     await app.listen(3000);
