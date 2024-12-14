@@ -86,7 +86,7 @@ const User: FC = () => {
         {
             title: "创建时间",
             dataIndex: "createTime",
-            valueType: "dateTimeRange",
+            valueType: "dateRange",
             hideInTable: true,
             search: {
                 transform: (value) => {

@@ -6,6 +6,6 @@ export class QueryDto {
     phone?: string;
     email?: string;
     idCard?: string;
-    startTime?: string;
-    endTime?: string;
+    startTime?: Date;
+    endTime?: Date;
 }
