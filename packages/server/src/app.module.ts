@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { APP_GUARD } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
-
+import { LoginGuard } from "./common/login.guard";
 @Module({
     imports: [
         TypeOrmModule.forRoot({
@@ -24,12 +25,18 @@ import { UserModule } from "./user/user.module";
             global: true,
             secret: "string",
             signOptions: {
-                expiresIn: "0.5h",
+                expiresIn: "10s", // d 天，h 小时，m 分钟， s 秒
             },
         }),
         UserModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: LoginGuard,
+        },
+    ],
 })
 export class AppModule {}

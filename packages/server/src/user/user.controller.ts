@@ -17,18 +17,14 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { LoginDto } from "./dto/login.dto";
+import { RequireLogin } from "../common/custom-decorator";
 
 @Controller("user")
 export class UserController {
-    constructor(private readonly userService: UserService) {}
     @Inject(JwtService)
     private jwtService: JwtService;
+    constructor(private readonly userService: UserService) {}
 
-    // handler：控制器里处理路由的方法
-    // @Post("register")
-    // register(@Body() CreateUserDto: CreateUserDto) {
-    //     return this.userService.register(CreateUserDto);
-    // }
     @Post("login")
     async login(
         @Body() user: LoginDto,
@@ -37,7 +33,7 @@ export class UserController {
         const foundUser = await this.userService.login(user);
 
         if (foundUser) {
-            const token = await this.jwtService.signAsync({
+            const token = await this.jwtService.sign({
                 user: {
                     id: foundUser.id,
                     username: foundUser.username,
@@ -54,26 +50,31 @@ export class UserController {
     }
 
     @Get("list")
+    @RequireLogin()
     async list(@Query() queryData: QueryDto) {
         return this.userService.list(queryData);
     }
 
     @Get(":id")
+    @RequireLogin()
     async detail(@Param("id") id: number) {
         return this.userService.detail(+id);
     }
 
     @Post("create")
+    @RequireLogin()
     async create(@Body() createUserDto: CreateUserDto) {
         return this.userService.create(createUserDto);
     }
 
     @Put("update")
+    @RequireLogin()
     async update(@Body() updateUserDto: UpdateUserDto) {
         return this.userService.update(updateUserDto);
     }
 
     @Delete("delete/:id")
+    @RequireLogin()
     async delete(@Param("id") id: string) {
         return this.userService.delete(+id);
     }

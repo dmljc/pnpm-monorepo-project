@@ -9,11 +9,24 @@ import {
 } from "@nestjs/common";
 import { Request } from "express";
 import { Observable } from "rxjs";
+import { Reflector } from "@nestjs/core";
+
+declare module "express" {
+    interface Request {
+        user: {
+            username: string;
+            // roles: Role[]
+        };
+    }
+}
 
 @Injectable()
 export class LoginGuard implements CanActivate {
     @Inject(JwtService)
     private jwtService: JwtService;
+
+    @Inject()
+    private reflector: Reflector;
 
     canActivate(
         context: ExecutionContext,
@@ -22,22 +35,20 @@ export class LoginGuard implements CanActivate {
 
         const authorization = request.header("Authorization");
 
-        const bearer = authorization?.split(" ");
+        const requireLogin = this.reflector.getAllAndOverride("require-login", [
+            context.getClass(),
+            context.getHandler(),
+        ]);
 
-        // 登录接口不需要登录
-        if (["/api/user/login"].includes(request.route.path)) {
-            return true;
+        if (!requireLogin) return true;
+        if (!authorization) {
+            throw new HttpException("用户未登录", HttpStatus.UNAUTHORIZED);
         }
-
-        if (!bearer || bearer?.length < 2) {
-            throw new HttpException("登录 token 错误", HttpStatus.UNAUTHORIZED);
-        }
-
-        const token = bearer[1];
 
         try {
-            const info = this.jwtService?.verify(token);
-            (request as any).user = info?.user;
+            const token = authorization.split(" ")[1];
+            const info = this.jwtService.verify(token);
+            request.user = info.user;
             return true;
         } catch (e) {
             console.log("登录守卫异常信息e：", e);

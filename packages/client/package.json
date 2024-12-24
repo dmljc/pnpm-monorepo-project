@@ -12,12 +12,12 @@
     "dependencies": {
         "@ant-design/icons": "^5.5.2",
         "@ant-design/pro-components": "^2.8.2",
-        "antd": "^5.22.2",
+        "antd": "^5.22.6",
         "antd-style": "^3.7.1",
-        "axios": "^1.7.8",
+        "axios": "^1.7.9",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
-        "react-router-dom": "^7.0.1",
+        "react-router-dom": "^7.1.1",
         "umi-request": "^1.4.0"
     },
     "devDependencies": {
@@ -25,6 +25,6 @@
         "@types/react-dom": "^18.3.1",
         "@vitejs/plugin-react-swc": "^3.7.2",
         "typescript": "^5.7.2",
-        "vite": "^6.0.1"
+        "vite": "^6.0.5"
     }
 }

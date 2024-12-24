@@ -7,8 +7,6 @@ import { ValidationPipe } from "@nestjs/common";
 import { HttpExceptionFilter } from "./common/http.exception.filter";
 import { HttpResppnseInterceptor } from "./common/http.response.interceptor";
 
-import { LoginGuard } from "./common/login.guard";
-
 async function bootstrap() {
     // const app = await NestFactory.create(AppModule);
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -31,7 +29,10 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     // 设置全局登录守卫
-    app.useGlobalGuards(new LoginGuard());
+    // app.useGlobalGuards(new LoginGuard());
+    // app.userGlobalXxx 的方式不能注入 provide
+    // 可以通过在 AppModule 添加 token 为 APP_XXX 的 provider
+    // 的方式来声明全局 Guard、Pipe、Intercepter 等：
 
     app.enableCors(); // 启用cors 否则前端会因为跨域报错
     await app.listen(3000);
