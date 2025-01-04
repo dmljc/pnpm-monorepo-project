@@ -25,7 +25,7 @@ import { LoginGuard } from "./common/login.guard";
             global: true,
             secret: "string",
             signOptions: {
-                expiresIn: "10s", // d 天，h 小时，m 分钟， s 秒
+                expiresIn: "10m", // d 天，h 小时，m 分钟， s 秒
             },
         }),
         UserModule,

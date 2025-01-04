@@ -25,6 +25,7 @@ export class UserController {
     private jwtService: JwtService;
     constructor(private readonly userService: UserService) {}
 
+    @RequireLogin(false)
     @Post("login")
     async login(
         @Body() user: LoginDto,
