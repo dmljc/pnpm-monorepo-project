@@ -117,33 +117,6 @@ const CreateModal = (props: ModalProps) => {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        label="邮箱"
-                        name="email"
-                        rules={[
-                            { required: true, message: "请输入邮箱" },
-                            {
-                                type: "email",
-                                message: "邮箱格式异常",
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="身份证号"
-                        name="idCard"
-                        rules={[
-                            { required: true, message: "请输入身份证号" },
-                            {
-                                pattern:
-                                    /(^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx]$)|(^[1-9]\d{5}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}$)/,
-                                message: "身份证号格式异常",
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
                         label="备注"
                         name="remark"
                         rules={[{ required: false, message: "请输入备注" }]}

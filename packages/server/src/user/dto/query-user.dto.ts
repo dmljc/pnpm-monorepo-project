@@ -4,8 +4,6 @@ export class QueryDto {
     username?: string;
     name?: string;
     phone?: string;
-    email?: string;
-    idCard?: string;
     startTime?: Date;
     endTime?: Date;
 }

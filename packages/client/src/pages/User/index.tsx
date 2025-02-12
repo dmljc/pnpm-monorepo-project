@@ -15,15 +15,13 @@ type GithubIssueItem = {
     name: string;
     sex: number;
     phone: string;
-    email: string;
-    idCard: string;
     remark: string;
     createTime: string;
     updateTime: string;
 };
 
 const User: FC = () => {
-    const actionRef = useRef<ActionType>();
+    const actionRef = useRef<ActionType>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
@@ -35,7 +33,6 @@ const User: FC = () => {
         {
             title: "账号",
             dataIndex: "username",
-            fixed: "left",
             width: 120,
             render: (text) => <a>{text}</a>,
         },
@@ -69,19 +66,12 @@ const User: FC = () => {
             width: 130,
         },
         {
-            title: "邮箱",
-            dataIndex: "email",
-        },
-        {
-            title: "身份证号",
-            dataIndex: "idCard",
-        },
-        {
             title: "创建时间",
             dataIndex: "createTime",
             valueType: "dateTime",
             sorter: true,
             hideInSearch: true,
+            width: 180,
         },
         {
             title: "创建时间",
@@ -102,6 +92,7 @@ const User: FC = () => {
             dataIndex: "updateTime",
             valueType: "dateTime",
             hideInSearch: true,
+            width: 180,
         },
         {
             title: "备注",
@@ -115,7 +106,6 @@ const User: FC = () => {
             valueType: "option",
             key: "option",
             width: 100,
-            fixed: "right",
             render: (text, _record, _, action) => [
                 <a
                     key="edit"
@@ -150,7 +140,6 @@ const User: FC = () => {
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
-                scroll={{ x: 1600 }}
                 request={async (params, sort, filter) => {
                     const resp = await list({
                         current: params.current ?? 1,

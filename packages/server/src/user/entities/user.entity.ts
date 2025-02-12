@@ -40,16 +40,6 @@ export class User {
     phone: string;
 
     @Column({
-        comment: "邮箱",
-    })
-    email: string;
-
-    @Column({
-        comment: "身份证",
-    })
-    idCard: string;
-
-    @Column({
         comment: "备注",
     })
     remark: string;

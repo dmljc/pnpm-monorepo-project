@@ -20,12 +20,6 @@ export class CreateUserDto {
     @IsNotEmpty({ message: "手机号不能为空" })
     phone: string;
 
-    @IsNotEmpty({ message: "邮箱不能为空" })
-    email: string;
-
-    @IsNotEmpty({ message: "身份证号不能为空" })
-    idCard: string;
-
     @MaxLength(100)
     remark: string;
 }

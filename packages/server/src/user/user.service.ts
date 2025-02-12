@@ -54,8 +54,7 @@ export class UserService {
     }
 
     async list(queryData: QueryDto) {
-        const { username, name, phone, email, idCard, startTime, endTime } =
-            queryData;
+        const { username, name, phone, startTime, endTime } = queryData;
 
         if (Object.keys(queryData).length < 3) {
             return await this.userRepository.find();
@@ -66,8 +65,6 @@ export class UserService {
                 username: Like(createLikeQuery(username)),
                 name: Like(createLikeQuery(name)),
                 phone: Like(createLikeQuery(phone)),
-                email: Like(createLikeQuery(email)),
-                idCard: Like(createLikeQuery(idCard)),
                 createTime: Between(startTime, endTime),
             },
         });
