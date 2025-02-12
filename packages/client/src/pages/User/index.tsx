@@ -210,15 +210,17 @@ const User: FC = () => {
                 ]}
             />
 
-            <CreateModal
-                isOpen={modalOpen}
-                modalType={modalType}
-                record={record!}
-                handleClose={() => {
-                    setModalOpen(false);
-                    actionRef.current?.reload();
-                }}
-            />
+            {modalOpen && (
+                <CreateModal
+                    isOpen={modalOpen}
+                    modalType={modalType}
+                    record={record!}
+                    handleClose={() => {
+                        setModalOpen(false);
+                        actionRef.current?.reload();
+                    }}
+                />
+            )}
         </>
     );
 };
