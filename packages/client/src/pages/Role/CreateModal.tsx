@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import { Form, Input, message, Modal, Radio } from "antd";
-// import { Coverupload } from "../../components/index";
-import { ModalProps, UpdateUser } from "./interface";
+import { Form, Input, message, Modal } from "antd";
+import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
 
@@ -14,7 +13,7 @@ const layout = {
 
 const CreateModal = (props: ModalProps) => {
     const { modalType, isOpen, record, handleClose } = props;
-    const [form] = Form.useForm<UpdateUser>();
+    const [form] = Form.useForm<UpdateRole>();
     const [messageApi, contextHolder] = message.useMessage();
 
     const handleOk = async () => {
@@ -56,7 +55,7 @@ const CreateModal = (props: ModalProps) => {
             {contextHolder}
             <Modal
                 title={
-                    modalType === ModalTypeEnum.CREATE ? "新增用户" : "修改用户"
+                    modalType === ModalTypeEnum.CREATE ? "新增角色" : "修改角色"
                 }
                 open={isOpen}
                 width={600}
@@ -72,48 +71,18 @@ const CreateModal = (props: ModalProps) => {
                     }}
                 >
                     <Form.Item
-                        label="账号"
-                        name="username"
-                        rules={[{ required: true, message: "请输入账号" }]}
-                    >
-                        <Input placeholder="请输入账号" />
-                    </Form.Item>
-                    <Form.Item
-                        label="密码"
-                        name="password"
-                        rules={[{ required: true, message: "请输入密码" }]}
-                    >
-                        <Input placeholder="请输入密码" />
-                    </Form.Item>
-                    <Form.Item
-                        label="姓名"
+                        label="角色姓名"
                         name="name"
-                        rules={[{ required: true, message: "请输入姓名" }]}
+                        rules={[{ required: true, message: "请输入角色姓名" }]}
                     >
-                        <Input placeholder="请输入姓名" />
+                        <Input placeholder="请输入角色姓名" />
                     </Form.Item>
                     <Form.Item
-                        label="性别"
-                        name="sex"
-                        rules={[{ required: true, message: "请选择性别" }]}
+                        label="角色编码"
+                        name="code"
+                        rules={[{ required: true, message: "请输入角色编码" }]}
                     >
-                        <Radio.Group>
-                            <Radio value={1}>男</Radio>
-                            <Radio value={2}>女</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
-                        label="手机号"
-                        name="phone"
-                        rules={[
-                            { required: true, message: "请输入手机号" },
-                            {
-                                pattern: /^1\d{10}$/,
-                                message: "手机号格式异常",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="请输入手机号" />
+                        <Input placeholder="请输入角色编码" />
                     </Form.Item>
                     <Form.Item
                         label="备注"
@@ -125,13 +94,6 @@ const CreateModal = (props: ModalProps) => {
                             placeholder="请输入备注"
                         />
                     </Form.Item>
-                    {/* <Form.Item
-                        label="头像"
-                        name="avatar"
-                        rules={[{ required: false, message: "请上传头像!" }]}
-                    >
-                        <Coverupload />
-                    </Form.Item> */}
                 </Form>
             </Modal>
         </>

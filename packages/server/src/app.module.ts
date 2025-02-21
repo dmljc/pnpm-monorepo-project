@@ -5,6 +5,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
+import { RoleModule } from "./role/role.module";
 import { LoginGuard } from "./common/login.guard";
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { LoginGuard } from "./common/login.guard";
             },
         }),
         UserModule,
+        RoleModule,
     ],
     controllers: [AppController],
     providers: [

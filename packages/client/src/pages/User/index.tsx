@@ -91,6 +91,7 @@ const User: FC = () => {
             title: "更新时间",
             dataIndex: "updateTime",
             valueType: "dateTime",
+            sorter: true,
             hideInSearch: true,
             width: 180,
         },
@@ -115,7 +116,7 @@ const User: FC = () => {
                         setModalOpen(true);
                     }}
                 >
-                    更新
+                    修改
                 </a>,
                 <a
                     key="delete"
@@ -205,7 +206,7 @@ const User: FC = () => {
                         }}
                         type="primary"
                     >
-                        创建
+                        新增
                     </Button>,
                 ]}
             />
