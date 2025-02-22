@@ -127,7 +127,7 @@ const Layout: FC = () => {
                             src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
                         />
                         <span className={ss.text}>
-                            {!collapsed && "智能数据管理系统"}
+                            {!collapsed && "Nest React19 Admin"}
                         </span>
                     </a>
                     <Menu

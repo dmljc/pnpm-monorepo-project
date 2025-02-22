@@ -35,8 +35,8 @@
             "stylelint --fix"
         ],
         "*.{scss,css}": [
-            "stylelint --fix",
-            "prettier --write"
+            "prettier --write",
+            "stylelint --fix"
         ],
         "*.md": [
             "prettier --write"
@@ -63,7 +63,10 @@
         "init": "^0.1.2",
         "lint-staged": "^15.4.3",
         "npx": "^10.2.2",
+        "postcss-html": "^1.8.0",
         "prettier": "^3.5.2",
+        "stylelint": "^16.14.1",
+        "stylelint-config-standard": "^37.0.0",
         "typescript-eslint": "^8.24.1",
         "vitepress": "^1.6.3"
     },
