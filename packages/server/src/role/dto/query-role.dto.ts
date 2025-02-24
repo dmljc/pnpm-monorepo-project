@@ -3,6 +3,7 @@ export class QueryDto {
     pageSize: number;
     name?: string;
     code?: string;
+    status?: number;
     startTime?: Date;
     endTime?: Date;
 }

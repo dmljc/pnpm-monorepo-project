@@ -13,6 +13,9 @@ export class UpdateRoleDto {
     @IsNotEmpty({ message: "角色编码不能为空" })
     code: string;
 
+    @IsNotEmpty({ message: "角色状态不能为空" })
+    status: number;
+
     @MaxLength(100)
     remark: string;
 }

@@ -23,6 +23,11 @@ export class Role {
     code: string;
 
     @Column({
+        comment: "角色状态",
+    })
+    status: number;
+
+    @Column({
         comment: "备注",
     })
     remark: string;

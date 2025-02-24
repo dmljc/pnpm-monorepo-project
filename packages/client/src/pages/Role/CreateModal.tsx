@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { Form, Input, message, Modal } from "antd";
+import { Form, Input, Radio, message, Modal } from "antd";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
@@ -50,6 +50,10 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
         }
     }, [isOpen, modalType]);
 
+    const onChangeStatus = (val: number) => {
+        console.log(`switch to ${val}`);
+    };
+
     return (
         <>
             {contextHolder}
@@ -67,7 +71,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     form={form}
                     {...layout}
                     initialValues={{
-                        sex: 1,
+                        status: 1,
                     }}
                 >
                     <Form.Item
@@ -83,6 +87,16 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         rules={[{ required: true, message: "请输入角色编码" }]}
                     >
                         <Input placeholder="请输入角色编码" />
+                    </Form.Item>
+                    <Form.Item
+                        label="角色状态"
+                        name="status"
+                        rules={[{ required: true, message: "请输入角色状态" }]}
+                    >
+                        <Radio.Group onChange={onChangeStatus}>
+                            <Radio value={1}>启用</Radio>
+                            <Radio value={0}>停用</Radio>
+                        </Radio.Group>
                     </Form.Item>
                     <Form.Item
                         label="备注"

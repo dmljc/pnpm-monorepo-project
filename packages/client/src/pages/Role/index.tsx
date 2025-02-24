@@ -12,6 +12,7 @@ type GithubIssueItem = {
     id: number;
     name: string;
     code: string;
+    status: number;
     remark: string;
     createTime: string;
     updateTime: string;
@@ -34,6 +35,19 @@ const Role: FC = () => {
         {
             title: "角色编码",
             dataIndex: "code",
+        },
+        {
+            title: "角色状态",
+            dataIndex: "status",
+            search: false,
+            filters: true,
+            onFilter: true,
+            width: 100,
+            valueType: "select",
+            valueEnum: {
+                0: { text: "停用" },
+                1: { text: "启用" },
+            },
         },
         {
             title: "创建时间",

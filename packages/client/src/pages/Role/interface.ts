@@ -1,6 +1,7 @@
 export interface CreateRole {
     name: string;
     code: string;
+    status: number;
     remark: string;
 }
 
