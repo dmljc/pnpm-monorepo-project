@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 import { Form, Input, message, Modal } from "antd";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
@@ -11,7 +11,7 @@ const layout = {
     wrapperCol: { span: 17 },
 };
 
-const CreateModal = (props: ModalProps) => {
+const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, isOpen, record, handleClose } = props;
     const [form] = Form.useForm<UpdateRole>();
     const [messageApi, contextHolder] = message.useMessage();
