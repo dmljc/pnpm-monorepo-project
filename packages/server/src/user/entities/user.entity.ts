@@ -40,6 +40,11 @@ export class User {
     phone: string;
 
     @Column({
+        comment: "用户状态",
+    })
+    status: number;
+
+    @Column({
         comment: "备注",
     })
     remark: string;

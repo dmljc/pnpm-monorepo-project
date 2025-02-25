@@ -51,6 +51,10 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
         }
     }, [isOpen, modalType]);
 
+    const onChangeStatus = (e: any) => {
+        console.log(e.target.value);
+    };
+
     return (
         <>
             {contextHolder}
@@ -69,6 +73,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     {...layout}
                     initialValues={{
                         sex: 1,
+                        status: 1,
                     }}
                 >
                     <Form.Item
@@ -114,6 +119,16 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         ]}
                     >
                         <Input placeholder="请输入手机号" />
+                    </Form.Item>
+                    <Form.Item
+                        label="状态"
+                        name="status"
+                        rules={[{ required: true, message: "请选择用户状态" }]}
+                    >
+                        <Radio.Group onChange={onChangeStatus}>
+                            <Radio value={1}>启用</Radio>
+                            <Radio value={0}>停用</Radio>
+                        </Radio.Group>
                     </Form.Item>
                     <Form.Item
                         label="备注"

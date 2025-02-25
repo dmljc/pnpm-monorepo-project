@@ -50,8 +50,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
         }
     }, [isOpen, modalType]);
 
-    const onChangeStatus = (val: number) => {
-        console.log(`switch to ${val}`);
+    const onChangeStatus = (e: any) => {
+        console.log(e.target.value);
     };
 
     return (
@@ -75,23 +75,23 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     }}
                 >
                     <Form.Item
-                        label="角色姓名"
+                        label="姓名"
                         name="name"
-                        rules={[{ required: true, message: "请输入角色姓名" }]}
+                        rules={[{ required: true, message: "请输入姓名" }]}
                     >
-                        <Input placeholder="请输入角色姓名" />
+                        <Input placeholder="请输入姓名" />
                     </Form.Item>
                     <Form.Item
-                        label="角色编码"
+                        label="编码"
                         name="code"
-                        rules={[{ required: true, message: "请输入角色编码" }]}
+                        rules={[{ required: true, message: "请输入编码" }]}
                     >
-                        <Input placeholder="请输入角色编码" />
+                        <Input placeholder="请输入编码" />
                     </Form.Item>
                     <Form.Item
-                        label="角色状态"
+                        label="状态"
                         name="status"
-                        rules={[{ required: true, message: "请输入角色状态" }]}
+                        rules={[{ required: true, message: "请选择状态" }]}
                     >
                         <Radio.Group onChange={onChangeStatus}>
                             <Radio value={1}>启用</Radio>
