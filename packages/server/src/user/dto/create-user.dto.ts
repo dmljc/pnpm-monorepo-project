@@ -4,6 +4,9 @@
 import { IsNotEmpty, MinLength, MaxLength } from "class-validator";
 
 export class CreateUserDto {
+    @IsNotEmpty({ message: "角色不能为空" })
+    role: number;
+
     @IsNotEmpty({ message: "账号不能为空" })
     username: string;
 

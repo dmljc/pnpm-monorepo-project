@@ -45,6 +45,11 @@ export class User {
     status: number;
 
     @Column({
+        comment: "用户角色",
+    })
+    role: number;
+
+    @Column({
         comment: "备注",
     })
     remark: string;

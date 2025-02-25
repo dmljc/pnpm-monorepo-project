@@ -79,14 +79,24 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         name="name"
                         rules={[{ required: true, message: "请输入姓名" }]}
                     >
-                        <Input placeholder="请输入姓名" />
+                        <Input
+                            showCount
+                            allowClear
+                            maxLength={10}
+                            placeholder="请输入姓名"
+                        />
                     </Form.Item>
                     <Form.Item
                         label="编码"
                         name="code"
                         rules={[{ required: true, message: "请输入编码" }]}
                     >
-                        <Input placeholder="请输入编码" />
+                        <Input
+                            showCount
+                            allowClear
+                            maxLength={10}
+                            placeholder="请输入编码"
+                        />
                     </Form.Item>
                     <Form.Item
                         label="状态"
@@ -104,6 +114,9 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         rules={[{ required: false, message: "请输入备注" }]}
                     >
                         <TextArea
+                            showCount
+                            allowClear
+                            maxLength={100}
                             autoSize={{ minRows: 4, maxRows: 6 }}
                             placeholder="请输入备注"
                         />

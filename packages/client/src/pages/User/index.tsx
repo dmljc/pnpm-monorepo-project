@@ -66,6 +66,11 @@ const User: FC = () => {
             width: 130,
         },
         {
+            title: "角色",
+            dataIndex: "role",
+            hideInSearch: true,
+        },
+        {
             title: "创建时间",
             dataIndex: "createTime",
             valueType: "dateTime",
