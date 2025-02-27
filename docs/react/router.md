@@ -108,7 +108,7 @@ const User = lazy(() => import("../pages/User"));
 const Role = lazy(() => import("../pages/Role"));
 const Menu = lazy(() => import("../pages/Menu"));
 const Config = lazy(() => import("../pages/Config"));
-const Person = lazy(() => import("../pages/Person"));
+const Profile = lazy(() => import("../pages/Profile"));
 
 // 业务
 const Book = lazy(() => import("../pages/Book"));
@@ -157,8 +157,8 @@ const routes: RouteObject[] = [
                 element: WithLoadingComponent(<Config />),
             },
             {
-                path: "/system/person",
-                element: WithLoadingComponent(<Person />),
+                path: "/system/profile",
+                element: WithLoadingComponent(<Profile />),
             },
         ],
     },
@@ -199,8 +199,8 @@ export default routes;
 
 区别：
 
--   `Link` 组件用于基本的页面导航功能，通过`to`属性指定目标页面的路径。
--   `NavLink` 组件在`Link`组件的基础上增加了`激活状态样式管理`的功能，可以通过`className`和`style`属性接收的函数来动态设置激活状态的样式或类名。
+- `Link` 组件用于基本的页面导航功能，通过`to`属性指定目标页面的路径。
+- `NavLink` 组件在`Link`组件的基础上增加了`激活状态样式管理`的功能，可以通过`className`和`style`属性接收的函数来动态设置激活状态的样式或类名。
 
 1、2 编程式导航
 

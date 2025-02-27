@@ -49,7 +49,7 @@ const Layout: FC = () => {
         {
             key: "1",
             label: (
-                <a onClick={() => navigate("/system/person")}>
+                <a onClick={() => navigate("/system/profile")}>
                     <IdcardOutlined />
                     &nbsp;用户信息
                 </a>
