@@ -2,8 +2,8 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-    title: "南天门",
-    description: "南天门",
+    title: "Nest React19 Admin 全栈项目",
+    description: "Nest React19 Admin 全栈项目 描述信息",
     // base: "/vitepress-project", github.io 地址需要base
     base: "/", // 自定义域名
     head: [
@@ -50,10 +50,10 @@ export default defineConfig({
             "/nest/": [
                 {
                     text: "nest",
-                    collapsed: true,
+                    collapsed: false,
                     items: [
                         { text: "第一节", link: "/nest/1.md" },
-                        { text: "第2节", link: "/nest/2.md" },
+                        { text: "第二节", link: "/nest/2.md" },
                     ],
                 },
             ],

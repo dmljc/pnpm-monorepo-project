@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-    name: "南天门全栈项目"
-    text: "在线笔记本"
+    name: "Nest React19 全栈项目"
+    text: "在线文档"
     tagline: 好记性不如烂笔头，唯有笔墨能长存
     image:
         # src: /logo.png
@@ -23,7 +23,7 @@ features:
       title: Monorepo 架构
       details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
     - icon: 🤹
-      title: React 18 + TS 
+      title: React 19 + TS
       details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
     - icon: 🙈
       title: NestJs + Mysql
