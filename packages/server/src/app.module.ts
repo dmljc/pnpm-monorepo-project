@@ -1,7 +1,9 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
+import { join } from "path";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
@@ -9,18 +11,31 @@ import { RoleModule } from "./role/role.module";
 import { LoginGuard } from "./common/login.guard";
 @Module({
     imports: [
-        TypeOrmModule.forRoot({
-            type: "mysql", // 数据库类型
-            host: "127.0.0.1", // 数据库主机
-            port: 3306, // 数据库端口
-            username: "root", // 数据库用户名
-            password: "zfc125521", // 数据库密码
-            database: "nest_db", // 数据库名
-            synchronize: true, // 是否自动将实体类同步到数据库
-            logging: false,
-            // logging: ['error', 'warn', 'log', 'info', 'query'], // 设置日志级别
-            entities: [__dirname + "/**/*.entity{.ts,.js}"], // 实体文件的位置
-            poolSize: 10, // 是一个常见的数据库连接池配置项，用于设置连接池中最大的连接数。
+        // 配置ConfigModule 根据环境变量动态加载 .env.development 或 .env.production文件
+        ConfigModule.forRoot({
+            isGlobal: true, // 使配置在全局范围内可用
+            // 指定要加载的环境文件
+            envFilePath:
+                process.env.NODE_ENV === "production"
+                    ? ".env.production"
+                    : ".env.development",
+        }),
+        // 使用TypeOrmModule并读取配置
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: configService.get("DB_TYPE") as any,
+                host: configService.get<string>("DB_HOST"),
+                port: configService.get<number>("DB_PORT"),
+                username: configService.get<string>("DB_USERNAME"),
+                password: configService.get<string>("DB_PASSWORD"),
+                database: configService.get<string>("DB_DATABASE"),
+                synchronize: configService.get<boolean>("DB_SYNCHRONIZE"),
+                logging: configService.get<boolean>("DB_LOGGING"),
+                entities: [join(__dirname, "**/*.entity{.ts,.js}")],
+                poolSize: configService.get<number>("DB_POOL_SIZE"),
+            }),
         }),
         JwtModule.register({
             global: true,
