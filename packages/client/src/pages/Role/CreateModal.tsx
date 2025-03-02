@@ -12,11 +12,11 @@ const layout = {
 };
 
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
-    const { modalType, isOpen, record, handleClose } = props;
+    const { modalType, isOpen, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateRole>();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const handleOk = async () => {
+    const onOk = async () => {
         await form.validateFields();
         const values = form.getFieldsValue();
         const params =
@@ -28,7 +28,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
-                handleClose();
+                handleOk();
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
                         ? "新增成功"
@@ -63,9 +63,9 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 }
                 open={isOpen}
                 width={600}
-                onOk={handleOk}
+                onOk={onOk}
                 forceRender
-                onCancel={() => handleClose()}
+                onCancel={handleClose}
             >
                 <Form
                     form={form}

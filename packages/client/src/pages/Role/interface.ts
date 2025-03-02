@@ -14,6 +14,7 @@ export interface ModalProps {
     modalType: string;
     record: UpdateRole;
     handleClose: () => void;
+    handleOk: () => void;
 }
 
 export interface ListParams {

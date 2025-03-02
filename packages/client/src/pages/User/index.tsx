@@ -223,6 +223,9 @@ const User: FC = () => {
                     record={record!}
                     handleClose={() => {
                         setModalOpen(false);
+                    }}
+                    handleOk={() => {
+                        setModalOpen(false);
                         actionRef.current?.reload();
                     }}
                 />
