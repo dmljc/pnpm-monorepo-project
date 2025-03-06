@@ -1,7 +1,7 @@
 // service：实现业务逻辑的地方，比如操作数据库等
 import { Injectable, HttpException, Body } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Like, Between } from "typeorm";
+import { Repository, Like } from "typeorm"; //Between
 // import * as crypto from "crypto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -39,8 +39,9 @@ export class UserService {
 
     // 因为注入 response 对象之后，默认不会把返回值作为 body 了，需要设置 passthrough 为 true 才可以。
     async login(@Body() user: LoginDto) {
-        const foundUser = await this.userRepository.findOneBy({
-            username: user.username,
+        const foundUser = await this.userRepository.findOne({
+            where: { username: user.username },
+            relations: ["roles"], // 关键：加载关联角色
         });
 
         if (!foundUser) {
@@ -54,24 +55,26 @@ export class UserService {
     }
 
     async list(queryData: QueryDto) {
-        const { username, name, phone, startTime, endTime } = queryData;
+        const { username, name, phone } = queryData;
+        // startTime, endTime
 
-        if (Object.keys(queryData).length < 3) {
-            return await this.userRepository.find();
-        }
         // 使用 Like 操作符进行模糊查询
         return await this.userRepository.find({
             where: {
                 username: Like(createLikeQuery(username)),
                 name: Like(createLikeQuery(name)),
                 phone: Like(createLikeQuery(phone)),
-                createTime: Between(startTime, endTime),
+                // createTime: Between(startTime, endTime),
             },
+            relations: ["roles"],
         });
     }
 
-    async detail(id: number) {
-        return await this.userRepository.findOneBy({ id });
+    async info(id: number) {
+        return this.userRepository.findOne({
+            where: { id },
+            relations: ["roles"], // 关联角色信息
+        });
     }
 
     async create(createUserDto: CreateUserDto) {

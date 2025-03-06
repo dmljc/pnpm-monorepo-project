@@ -2,6 +2,8 @@ import { request } from "@/utils";
 
 export const info = (): Promise<any> => {
     return request.get("/user/info", {
-        params: {},
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
     });
 };

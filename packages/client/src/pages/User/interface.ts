@@ -1,9 +1,11 @@
 export interface CreateUser {
+    role: number;
     username: string;
     password: string;
     name: string;
     sex: number;
     phone: string;
+    status: number;
     remark: string;
 }
 

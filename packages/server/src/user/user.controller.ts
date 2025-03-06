@@ -9,6 +9,7 @@ import {
     Delete,
     Res,
     Inject,
+    Request,
 } from "@nestjs/common";
 import { Response } from "express";
 import { JwtService } from "@nestjs/jwt";
@@ -56,10 +57,10 @@ export class UserController {
         return this.userService.list(queryData);
     }
 
-    @Get(":id")
+    @Get("info")
     @RequireLogin()
-    async detail(@Param("id") id: number) {
-        return this.userService.detail(+id);
+    async info(@Request() req) {
+        return this.userService.info(req.user.sub);
     }
 
     @Post("create")
