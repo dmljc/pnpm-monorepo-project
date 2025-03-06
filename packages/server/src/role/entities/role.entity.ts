@@ -5,7 +5,10 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
+    ManyToMany,
+    JoinTable,
 } from "typeorm";
+import { Permission } from "src/user/entities/permission.entity";
 
 @Entity()
 export class Role {
@@ -41,4 +44,10 @@ export class Role {
         comment: "更新时间",
     })
     updateTime: Date;
+
+    @ManyToMany(() => Permission)
+    @JoinTable({
+        name: "role_permission_relation",
+    })
+    permissions: Permission[];
 }

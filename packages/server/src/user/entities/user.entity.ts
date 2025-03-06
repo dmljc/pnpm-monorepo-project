@@ -5,7 +5,10 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
+    ManyToMany,
+    JoinTable,
 } from "typeorm";
+import { Role } from "src/role/entities/role.entity";
 
 @Entity()
 export class User {
@@ -78,4 +81,10 @@ export class User {
         comment: "更新时间",
     })
     updateTime: Date;
+
+    @ManyToMany(() => Role)
+    @JoinTable({
+        name: "user_role_relation",
+    })
+    roles: Role[];
 }

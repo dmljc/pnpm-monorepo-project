@@ -10,12 +10,13 @@ import {
 import { Request } from "express";
 import { Observable } from "rxjs";
 import { Reflector } from "@nestjs/core";
+import { Role } from "../role/entities/role.entity";
 
 declare module "express" {
     interface Request {
         user: {
             username: string;
-            // roles: Role[]
+            roles: Role[];
         };
     }
 }

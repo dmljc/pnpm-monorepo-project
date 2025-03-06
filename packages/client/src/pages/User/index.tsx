@@ -83,6 +83,7 @@ const User: FC = () => {
             dataIndex: "createTime",
             valueType: "dateRange",
             hideInTable: true,
+            hideInSearch: true,
             search: {
                 transform: (value) => {
                     return {
