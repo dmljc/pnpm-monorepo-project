@@ -18,7 +18,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { LoginDto } from "./dto/login.dto";
-import { RequireLogin } from "../common/custom-decorator";
+import { RequireLogin, RequirePermission } from "../common/custom-decorator";
 
 @Controller("user")
 export class UserController {
@@ -59,6 +59,7 @@ export class UserController {
 
     @Get("info")
     @RequireLogin()
+    @RequirePermission("role:list")
     async info(@Request() req) {
         return this.userService.info(req.user.sub);
     }

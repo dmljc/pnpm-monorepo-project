@@ -4,3 +4,7 @@ import { SetMetadata } from "@nestjs/common";
 export const RequireLogin = (bool = true) => {
     return SetMetadata("require-login", bool);
 };
+
+// 接口权限
+export const RequirePermission = (...permissions: string[]) =>
+    SetMetadata("require-permission", permissions);

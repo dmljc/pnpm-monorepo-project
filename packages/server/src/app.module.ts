@@ -9,6 +9,8 @@ import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
 import { RoleModule } from "./role/role.module";
 import { LoginGuard } from "./common/login.guard";
+import { RedisModule } from "./redis/redis.module";
+import { PermissionGuard } from "./common/permission.guard";
 @Module({
     imports: [
         // 配置ConfigModule 根据环境变量动态加载 .env.development 或 .env.production文件
@@ -46,6 +48,7 @@ import { LoginGuard } from "./common/login.guard";
         }),
         UserModule,
         RoleModule,
+        RedisModule,
     ],
     controllers: [AppController],
     providers: [
@@ -53,6 +56,10 @@ import { LoginGuard } from "./common/login.guard";
         {
             provide: APP_GUARD,
             useClass: LoginGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: PermissionGuard,
         },
     ],
 })

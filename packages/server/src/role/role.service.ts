@@ -1,7 +1,7 @@
 // service：实现业务逻辑的地方，比如操作数据库等
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Like } from "typeorm";
+import { Repository, Like, In } from "typeorm";
 import { CreateRoleDto } from "./dto/create-role.dto";
 import { UpdateRoleDto } from "./dto/update-role.dto";
 import { QueryDto } from "./dto/query-role.dto";
@@ -29,6 +29,18 @@ export class RoleService {
             where: {
                 name: Like(createLikeQuery(name)),
                 code: Like(createLikeQuery(code)),
+            },
+        });
+    }
+
+    async findRolesByIds(roleIds: number[]) {
+        console.log("--findRolesByIds--roleIds===>", roleIds);
+        return this.roleRepository.find({
+            where: {
+                id: In(roleIds),
+            },
+            relations: {
+                permissions: true,
             },
         });
     }
