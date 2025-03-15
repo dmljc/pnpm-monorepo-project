@@ -76,18 +76,19 @@ export const createAxiosByinterceptors = (
                 refreshing = true;
 
                 const res = await refreshToken();
+                const newAccessToken = res.data.data.access_token;
 
                 refreshing = false;
 
                 if (res.status === 200) {
                     queue.forEach(({ config, resolve }) => {
-                        config.headers.Authorization =
-                            "Bearer " + res.data.data.access_token;
+                        if (config.headers) {
+                            config.headers.Authorization = `Bearer ${newAccessToken}`;
+                        }
 
                         resolve(axios(config));
                     });
-                    config.headers.Authorization =
-                        "Bearer " + res.data.data.access_token;
+                    config.headers.Authorization = `Bearer ${newAccessToken}`;
 
                     return axios(config);
                 } else {
