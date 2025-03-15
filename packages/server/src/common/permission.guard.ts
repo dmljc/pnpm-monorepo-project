@@ -29,7 +29,7 @@ export class PermissionGuard implements CanActivate {
             return true;
         }
 
-        console.log("PermissionGuard==request.user===>", request.user);
+        // console.log("PermissionGuard==request.user===>", request.user);
 
         const roles = await this.roleService.findRolesByIds(
             [1],

@@ -10,6 +10,7 @@ import {
     Res,
     Inject,
     Request,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { Response } from "express";
 import { JwtService } from "@nestjs/jwt";
@@ -18,7 +19,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { LoginDto } from "./dto/login.dto";
-import { RequireLogin, RequirePermission } from "../common/custom-decorator";
+import { RequireLogin } from "../common/custom-decorator";
 
 @Controller("user")
 export class UserController {
@@ -29,25 +30,78 @@ export class UserController {
     @RequireLogin(false)
     @Post("login")
     async login(
-        @Body() user: LoginDto,
+        @Body() loginUser: LoginDto,
         @Res({ passthrough: true }) res: Response,
     ) {
-        const foundUser = await this.userService.login(user);
+        const user = await this.userService.login(loginUser);
 
-        if (foundUser) {
-            const token = await this.jwtService.sign({
-                user: {
-                    id: foundUser.id,
-                    username: foundUser.username,
+        if (user) {
+            const access_token = this.jwtService.sign(
+                {
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        user,
+                    },
                 },
-            });
-            res.setHeader("Authorization", token);
+                { expiresIn: "30s" },
+            );
+            res.setHeader("Authorization", access_token);
+
+            const refresh_token = this.jwtService.sign(
+                {
+                    user: {
+                        id: user.id,
+                    },
+                },
+                {
+                    expiresIn: "10m",
+                },
+            );
 
             return {
-                token,
+                access_token,
+                refresh_token,
             };
         } else {
             return "login fail";
+        }
+    }
+
+    @Get("refresh")
+    async refresh(@Query("refresh_token") refreshToken: string) {
+        try {
+            const data = this.jwtService.verify(refreshToken);
+
+            const user = await this.userService.findUserById(data.id);
+
+            const access_token = this.jwtService.sign(
+                {
+                    id: user.id,
+                    username: user.username,
+                    user,
+                },
+                {
+                    expiresIn: "30s",
+                },
+            );
+
+            const refresh_token = this.jwtService.sign(
+                {
+                    id: user.id,
+                },
+                {
+                    expiresIn: "10m",
+                },
+            );
+
+            return {
+                access_token,
+                refresh_token,
+            };
+        } catch (e) {
+            console.log("refresh token 异常信息e：", e);
+            throw new UnauthorizedException("token 已失效，请重新登录");
         }
     }
 
@@ -59,9 +113,8 @@ export class UserController {
 
     @Get("info")
     @RequireLogin()
-    @RequirePermission("role:list")
     async info(@Request() req) {
-        return this.userService.info(req.user.sub);
+        return this.userService.info(req.user.id);
     }
 
     @Post("create")

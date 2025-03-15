@@ -70,6 +70,12 @@ export class UserService {
         });
     }
 
+    async findUserById(id: number) {
+        return await this.userRepository.findOne({
+            where: { id },
+        });
+    }
+
     async info(id: number) {
         return this.userRepository.findOne({
             where: { id },

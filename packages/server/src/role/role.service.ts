@@ -34,7 +34,6 @@ export class RoleService {
     }
 
     async findRolesByIds(roleIds: number[]) {
-        console.log("--findRolesByIds--roleIds===>", roleIds);
         return this.roleRepository.find({
             where: {
                 id: In(roleIds),

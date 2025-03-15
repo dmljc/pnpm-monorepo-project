@@ -9,8 +9,8 @@ import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
 import { RoleModule } from "./role/role.module";
 import { LoginGuard } from "./common/login.guard";
-import { RedisModule } from "./redis/redis.module";
-import { PermissionGuard } from "./common/permission.guard";
+// import { RedisModule } from "./redis/redis.module";
+// import { PermissionGuard } from "./common/permission.guard";
 @Module({
     imports: [
         // 配置ConfigModule 根据环境变量动态加载 .env.development 或 .env.production文件
@@ -43,12 +43,12 @@ import { PermissionGuard } from "./common/permission.guard";
             global: true,
             secret: "string",
             signOptions: {
-                expiresIn: "10m", // d 天，h 小时，m 分钟， s 秒
+                expiresIn: "30s", // d 天，h 小时，m 分钟， s 秒
             },
         }),
         UserModule,
         RoleModule,
-        RedisModule,
+        // RedisModule,
     ],
     controllers: [AppController],
     providers: [
@@ -57,10 +57,10 @@ import { PermissionGuard } from "./common/permission.guard";
             provide: APP_GUARD,
             useClass: LoginGuard,
         },
-        {
-            provide: APP_GUARD,
-            useClass: PermissionGuard,
-        },
+        // {
+        //     provide: APP_GUARD,
+        //     useClass: PermissionGuard,
+        // },
     ],
 })
 export class AppModule {}

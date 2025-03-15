@@ -1,4 +1,4 @@
-import type { CreateRole } from "../../api/role/interfaces";
+import type { CreateRole } from "../Role/interface";
 export interface UserInfo {
     role: number;
     username: string;

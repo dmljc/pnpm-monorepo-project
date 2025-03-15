@@ -95,7 +95,8 @@ const Layout: FC = () => {
     };
 
     const onLogout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
         localStorage.removeItem("pro-table-singe-demos");
         navigate("/login");
     };

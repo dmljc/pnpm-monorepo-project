@@ -27,10 +27,14 @@ const Profile: FC = () => {
                     <p>phone: {userInfo.phone}</p>
                     <p>status: {userInfo.status}</p>
                     <p>remark: {userInfo.remark}</p>
-                    <p>roles: {userInfo.roles[0].id}</p>
-                    <p>roles: {userInfo.roles[0].name}</p>
-                    <p>roles: {userInfo.roles[0].code}</p>
-                    <p>roles: {userInfo.roles[0].remark}</p>
+                    {userInfo?.roles?.[0] && (
+                        <>
+                            {/* <p>roles: {userInfo.roles[0].id}</p> */}
+                            <p>roles: {userInfo.roles[0].name}</p>
+                            <p>roles: {userInfo.roles[0].code}</p>
+                            <p>roles: {userInfo.roles[0].remark}</p>
+                        </>
+                    )}
                 </>
             )}
         </>
