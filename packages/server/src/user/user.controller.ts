@@ -99,8 +99,7 @@ export class UserController {
                 access_token,
                 refresh_token,
             };
-        } catch (e) {
-            console.log("refresh token 异常信息e：", e);
+        } catch {
             throw new UnauthorizedException("token 已失效，请重新登录");
         }
     }

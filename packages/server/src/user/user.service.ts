@@ -76,6 +76,12 @@ export class UserService {
         });
     }
 
+    async findUserByUserName(username: string) {
+        return await this.userRepository.findOne({
+            where: { username },
+        });
+    }
+
     async info(id: number) {
         return this.userRepository.findOne({
             where: { id },
