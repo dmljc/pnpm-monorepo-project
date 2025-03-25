@@ -12,6 +12,7 @@ import { LoginGuard } from "./common/login.guard";
 // import { RedisModule } from "./redis/redis.module";
 // import { PermissionGuard } from "./common/permission.guard";
 import { AuthModule } from "./auth/auth.module";
+// import { JwtAuthGuard } from "./auth/jwt.auth.guard";
 @Module({
     imports: [
         // 配置ConfigModule 根据环境变量动态加载 .env.development 或 .env.production文件
@@ -61,7 +62,7 @@ import { AuthModule } from "./auth/auth.module";
         },
         // {
         //     provide: APP_GUARD,
-        //     useClass: PermissionGuard,
+        //     useClass: JwtAuthGuard,
         // },
     ],
 })
