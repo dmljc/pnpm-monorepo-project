@@ -27,6 +27,7 @@ export class UserController {
     private jwtService: JwtService;
     constructor(private readonly userService: UserService) {}
 
+    // 用户名密码登录
     @RequireLogin(false)
     @Post("login")
     async login(

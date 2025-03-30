@@ -1,40 +1,61 @@
 import { message } from "antd";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
+// 定义基础配置
+export const baseURL = "http://localhost:3000/api";
+const DEFAULT_TIMEOUT = 3000;
+
+// 定义接口类型
+interface PendingTask {
+    config: AxiosRequestConfig;
+    resolve: (value?: unknown) => void;
+}
+
+// Token相关操作封装
+const TokenService = {
+    getAccessToken: () => localStorage.getItem("access_token"),
+    getRefreshToken: () => localStorage.getItem("refresh_token"),
+    setTokens: (accessToken: string, refreshToken: string) => {
+        localStorage.setItem("access_token", accessToken);
+        localStorage.setItem("refresh_token", refreshToken);
+    },
+    removeTokens: () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("pro-table-singe-demos");
+    },
+};
+
 export const createAxiosByinterceptors = (
     config?: AxiosRequestConfig,
 ): AxiosInstance => {
     const instance = axios.create({
-        timeout: 1000, //超时配置
-        // withCredentials: true, //跨域携带cookie
-        ...config, // 自定义配置覆盖基本配置
+        baseURL,
+        timeout: DEFAULT_TIMEOUT,
+        ...config,
     });
-    interface PendingTask {
-        config: AxiosRequestConfig;
-        resolve: (value?: unknown) => void;
-    }
 
     let refreshing = false;
     const queue: PendingTask[] = [];
 
     const refreshToken = async () => {
-        const res = await axios.get("http://localhost:3000/api/user/refresh", {
+        const res = await axios.get(`${baseURL}/user/refresh`, {
             params: {
-                refresh_token: localStorage.getItem("refresh_token"),
+                refresh_token: TokenService.getRefreshToken(),
             },
         });
 
-        localStorage.setItem("access_token", res.data.data.access_token);
-        localStorage.setItem("refresh_token", res.data.data.refresh_token);
+        const { access_token, refresh_token } = res.data.data;
+        TokenService.setTokens(access_token, refresh_token);
         return res;
     };
 
-    // 添加请求拦截器
+    // 请求拦截器
     instance.interceptors.request.use(
         (config) => {
-            const accessToken = localStorage.getItem("access_token");
+            const accessToken = TokenService.getAccessToken();
             if (accessToken) {
-                config.headers.Authorization = "Bearer " + accessToken;
+                config.headers.Authorization = `Bearer ${accessToken}`;
             }
             return config;
         },
@@ -44,13 +65,14 @@ export const createAxiosByinterceptors = (
         },
     );
 
-    // 添加响应拦截器
+    // 响应拦截器
     instance.interceptors.response.use(
-        (config) => {
-            const { data } = config;
-            const access_token = data.data.access_token;
-            if (access_token) {
-                config.headers.Authorization = "Bearer " + access_token;
+        (response) => {
+            const { data } = response;
+            const accessToken = data.data?.access_token;
+
+            if (accessToken) {
+                response.headers.Authorization = `Bearer ${accessToken}`;
             }
 
             if (!data?.success) {
@@ -60,56 +82,49 @@ export const createAxiosByinterceptors = (
             return data;
         },
         async (error) => {
-            const data = error?.response?.data;
-            const config = error?.response?.config;
+            const { data, config } = error.response || {};
+            const isRefreshRequest = config?.url?.includes("/user/refresh");
 
-            if (refreshing && !config.url.includes("/user/refresh")) {
+            if (refreshing && !isRefreshRequest) {
                 return new Promise((resolve) => {
-                    queue.push({
-                        config,
-                        resolve,
-                    });
+                    queue.push({ config, resolve });
                 });
             }
 
-            if (data.code === 401 && !config.url.includes("/user/refresh")) {
+            if (data?.code === 401 && !isRefreshRequest) {
                 refreshing = true;
 
-                const res = await refreshToken();
-                const newAccessToken = res.data.data.access_token;
+                try {
+                    const res = await refreshToken();
+                    const newAccessToken = res.data.data.access_token;
+                    refreshing = false;
 
-                refreshing = false;
+                    if (res.status === 200) {
+                        // 重试队列中的请求
+                        queue.forEach(({ config, resolve }) => {
+                            if (config.headers) {
+                                config.headers.Authorization = `Bearer ${newAccessToken}`;
+                            }
+                            resolve(axios(config));
+                        });
 
-                if (res.status === 200) {
-                    queue.forEach(({ config, resolve }) => {
-                        if (config.headers) {
-                            config.headers.Authorization = `Bearer ${newAccessToken}`;
-                        }
-
-                        resolve(axios(config));
-                    });
-                    config.headers.Authorization = `Bearer ${newAccessToken}`;
-
-                    return axios(config);
-                } else {
+                        config.headers.Authorization = `Bearer ${newAccessToken}`;
+                        return axios(config);
+                    }
+                } catch (err) {
+                    refreshing = false;
                     message.error("登录过期，请重新登录");
-                    localStorage.removeItem("access_token");
-                    localStorage.removeItem("refresh_token");
-                    localStorage.removeItem("pro-table-singe-demos");
+                    TokenService.removeTokens();
                     window.location.href = "/login";
-                    return Promise.reject(res.data);
+                    return Promise.reject(err);
                 }
             }
 
             return Promise.reject(error);
         },
     );
+
     return instance;
 };
 
-export const baseURL = "http://localhost:3000/api";
-
-export const request = createAxiosByinterceptors({
-    baseURL: baseURL,
-    timeout: 3000,
-});
+export const request = createAxiosByinterceptors();

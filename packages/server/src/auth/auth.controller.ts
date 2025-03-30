@@ -1,10 +1,12 @@
 import {
     Controller,
+    Get,
     Post,
+    Req,
+    Res,
+    Inject,
     Request,
     UseGuards,
-    Inject,
-    Res,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
@@ -57,5 +59,20 @@ export class AuthController {
         } else {
             return "login fail";
         }
+    }
+
+    // github 登录
+    @Get("github/login")
+    @UseGuards(AuthGuard("github"))
+    async githubLogin() {
+        // 这个路由会自动触发 Passport 的 302 重定向到 GitHub
+    }
+
+    @Get("github/callback")
+    @UseGuards(AuthGuard("github"))
+    async githubCallback(@Req() req) {
+        console.log("---callback--req.user----", req.user);
+        return this.userService.findUserByGithubId(req.user.id);
+        // return req.user;
     }
 }

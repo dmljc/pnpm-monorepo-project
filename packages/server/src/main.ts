@@ -3,6 +3,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
+import * as os from "os";
 
 import { HttpExceptionFilter } from "./common/http.exception.filter";
 import { HttpResppnseInterceptor } from "./common/http.response.interceptor";
@@ -34,7 +35,27 @@ async function bootstrap() {
     // 可以通过在 AppModule 添加 token 为 APP_XXX 的 provider
     // 的方式来声明全局 Guard、Pipe、Intercepter 等：
 
-    app.enableCors(); // 启用cors 否则前端会因为跨域报错
-    await app.listen(3000);
+    app.enableCors({
+        origin: true, // 或指定域名如 ['http://localhost:3000']
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        allowedHeaders: "Content-Type,Authorization",
+        credentials: true, // 允许携带凭证（如 cookies）
+    }); // 启用cors 否则前端会因为跨域报错
+
+    const port = process.env.PORT || 3000;
+
+    await app.listen(port, () => {
+        const networkInterfaces = os.networkInterfaces();
+        const ipv4 = Object.values(networkInterfaces)
+            .flat()
+            .find((ni) => ni.family === "IPv4" && !ni.internal)?.address;
+
+        // Vite 风格输出
+        console.log(`
+ Nestjs 
+\x1b[37m Local:\x1b[0m   \x1b[36mhttp://localhost:${port}\x1b[0m
+\x1b[37m Network:\x1b[0m \x1b[36mhttp://${ipv4}:${port}\x1b[0m
+    `);
+    });
 }
 bootstrap();
