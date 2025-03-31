@@ -5,7 +5,7 @@ import { Profile, Strategy } from "passport-github2";
 import { SocksProxyAgent } from "socks-proxy-agent";
 
 const agent = new SocksProxyAgent(
-    process.env.SOCKS_PROXY || "socks5://127.0.0.1:7890",
+    process.env.SOCKS_PROXY || "socks5://127.0.0.1:7897",
 );
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, "github") {

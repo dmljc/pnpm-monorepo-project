@@ -81,7 +81,16 @@ const Login: FC = () => {
             window.location.href =
                 "http://localhost:3000/api/auth/github/login";
         } catch {
-            messageApi.error("Github登录失败");
+            messageApi.error("Github 登录失败");
+        }
+    };
+    // 处理Google登录
+    const handleGoogleLogin = async () => {
+        try {
+            window.location.href =
+                "http://localhost:3000/api/auth/google/login";
+        } catch {
+            messageApi.error("Google 登录失败");
         }
     };
 
@@ -174,6 +183,7 @@ const Login: FC = () => {
                 </div>
                 <div className={ss.taobao}>
                     <GoogleOutlined
+                        onClick={handleGoogleLogin}
                         style={{ ...ICON_STYLES, color: "#1677FF" }}
                     />
                 </div>

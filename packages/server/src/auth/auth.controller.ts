@@ -7,6 +7,7 @@ import {
     Inject,
     Request,
     UseGuards,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
@@ -74,5 +75,20 @@ export class AuthController {
         console.log("---callback--req.user----", req.user);
         return this.userService.findUserByGithubId(req.user.id);
         // return req.user;
+    }
+
+    // google 登录
+    @Get("google/login")
+    @UseGuards(AuthGuard("google"))
+    async googleLogin() {}
+
+    @Get("google/callback")
+    @UseGuards(AuthGuard("google"))
+    googleCallback(@Req() req, @Res() res) {
+        console.log("--googleCallback----", req.user);
+        if (!req.user) throw new UnauthorizedException();
+
+        // 返回 JSON 数据
+        res.json(req.user);
     }
 }
