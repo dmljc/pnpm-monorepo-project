@@ -12,7 +12,7 @@ const Profile: FC = () => {
     const fetchUserInfo = async () => {
         const res = await info();
         const redisRes = await redis();
-        console.log('redisRes===>', redisRes);
+        console.log("redisRes===>", redisRes);
         setUserInfo(res?.data);
     };
 
