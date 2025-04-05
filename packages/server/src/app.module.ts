@@ -9,7 +9,8 @@ import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
 import { RoleModule } from "./role/role.module";
 import { LoginGuard } from "./common/login.guard";
-// import { RedisModule } from "./redis/redis.module";
+import { RedisModule } from "./redis/redis.module";
+import { RedisService } from "./redis/redis.service";
 // import { PermissionGuard } from "./common/permission.guard";
 import { AuthModule } from "./auth/auth.module";
 // import { JwtAuthGuard } from "./auth/jwt.auth.guard";
@@ -51,11 +52,12 @@ import { AuthModule } from "./auth/auth.module";
         UserModule,
         RoleModule,
         AuthModule,
-        // RedisModule,
+        RedisModule,
     ],
     controllers: [AppController],
     providers: [
         AppService,
+        RedisService,
         {
             provide: APP_GUARD,
             useClass: LoginGuard,
