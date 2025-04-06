@@ -4,7 +4,7 @@ import { join } from "path";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import * as os from "os";
-
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { HttpExceptionFilter } from "./common/http.exception.filter";
 import { HttpResppnseInterceptor } from "./common/http.response.interceptor";
 
@@ -28,6 +28,14 @@ async function bootstrap() {
     // 我们还要对参数做一些校验，校验请求体的参数需要用到 ValidationPipe
     // 现在接收到的参数是普通对象，指定 transform: true 之后，就会转为 dto 的实例了：
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+    const config = new DocumentBuilder()
+        .setTitle("NestJS 全栈项目接口文档")
+        .setDescription("这是我的第一个 Nestjs 全栈项目，希望你能喜欢")
+        .setVersion("1.0")
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("doc", app, document);
 
     // 设置全局登录守卫
     // app.useGlobalGuards(new LoginGuard());

@@ -20,7 +20,9 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RequireLogin } from "../common/custom-decorator";
+import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+@ApiTags("用户模块")
 @Controller("user")
 export class UserController {
     @Inject(JwtService)
@@ -28,6 +30,18 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     // 用户名密码登录
+    @ApiOperation({ summary: "登录接口" })
+    @ApiBody({
+        type: LoginDto,
+        examples: {
+            登录成功: {
+                value: {
+                    username: "zfcstring",
+                    password: "999999",
+                },
+            },
+        },
+    })
     @RequireLogin(false)
     @Post("login")
     async login(

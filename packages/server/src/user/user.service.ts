@@ -26,17 +26,6 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>;
 
-    // async register(CreateUserDto: CreateUserDto) {
-    //     const existUser = await this.userRepository.findOneBy({
-    //         username: CreateUserDto.username,
-    //     });
-
-    //     if (existUser) {
-    //         throw new HttpException("用户已注册", HttpStatus.OK);
-    //     }
-    //     return await this.userRepository.save(CreateUserDto);
-    // }
-
     // 因为注入 response 对象之后，默认不会把返回值作为 body 了，需要设置 passthrough 为 true 才可以。
     async login(@Body() user: LoginDto) {
         const foundUser = await this.userRepository.findOne({
