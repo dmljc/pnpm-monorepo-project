@@ -4,28 +4,33 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
 import { join } from "path";
+
+// 控制器和服务
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+
+// 模块导入
 import { UserModule } from "./user/user.module";
 import { RoleModule } from "./role/role.module";
-import { LoginGuard } from "./common/login.guard";
-import { RedisModule } from "./redis/redis.module";
-import { RedisService } from "./redis/redis.service";
-// import { PermissionGuard } from "./common/permission.guard";
 import { AuthModule } from "./auth/auth.module";
+import { RedisModule } from "./redis/redis.module";
+import { EmailModule } from "./email/email.module";
+
+// 服务和守卫
+import { RedisService } from "./redis/redis.service";
+import { LoginGuard } from "./common/login.guard";
+// import { PermissionGuard } from "./common/permission.guard";
 // import { JwtAuthGuard } from "./auth/jwt.auth.guard";
+
 @Module({
     imports: [
-        // 配置ConfigModule 根据环境变量动态加载 .env.development 或 .env.production文件
+        // 全局配置模块，根据环境变量动态加载配置文件
         ConfigModule.forRoot({
-            isGlobal: true, // 使配置在全局范围内可用
-            // 指定要加载的环境文件
-            envFilePath:
-                process.env.NODE_ENV === "production"
-                    ? ".env.production"
-                    : ".env.development",
+            isGlobal: true,
+            envFilePath: `.env.${process.env.NODE_ENV || "development"}`,
         }),
-        // 使用TypeOrmModule并读取配置
+
+        // 数据库连接配置
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -42,17 +47,26 @@ import { AuthModule } from "./auth/auth.module";
                 poolSize: configService.get<number>("DB_POOL_SIZE"),
             }),
         }),
-        JwtModule.register({
+
+        // JWT认证模块配置
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
             global: true,
-            secret: "string",
-            signOptions: {
-                expiresIn: "30s", // d 天，h 小时，m 分钟， s 秒
-            },
+            useFactory: (configService: ConfigService) => ({
+                secret: configService.get<string>("JWT_SECRET"),
+                signOptions: {
+                    expiresIn: configService.get<string>("JWT_EXPIRES_IN"),
+                },
+            }),
         }),
+
+        // 功能模块
         UserModule,
         RoleModule,
         AuthModule,
         RedisModule,
+        EmailModule,
     ],
     controllers: [AppController],
     providers: [
@@ -62,6 +76,7 @@ import { AuthModule } from "./auth/auth.module";
             provide: APP_GUARD,
             useClass: LoginGuard,
         },
+        // 取消注释以启用JWT认证守卫
         // {
         //     provide: APP_GUARD,
         //     useClass: JwtAuthGuard,

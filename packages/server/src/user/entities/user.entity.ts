@@ -43,6 +43,11 @@ export class User {
     phone: string;
 
     @Column({
+        comment: "邮箱",
+    })
+    email: string;
+
+    @Column({
         comment: "用户状态",
     })
     status: number;

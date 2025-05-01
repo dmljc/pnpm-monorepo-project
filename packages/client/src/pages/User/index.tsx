@@ -15,6 +15,7 @@ type GithubIssueItem = {
     name: string;
     sex: number;
     phone: string;
+    email: string;
     remark: string;
     createTime: string;
     updateTime: string;
@@ -64,6 +65,11 @@ const User: FC = () => {
             title: "手机号",
             dataIndex: "phone",
             width: 130,
+        },
+        {
+            title: "邮箱",
+            dataIndex: "email",
+            width: 160,
         },
         {
             title: "角色",

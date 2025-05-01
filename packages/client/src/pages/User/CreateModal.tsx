@@ -174,6 +174,13 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         />
                     </Item>
                     <Item
+                        label="邮箱"
+                        name="email"
+                        rules={[{ required: true, message: "请输入邮箱" }]}
+                    >
+                        <Input allowClear placeholder="请输入邮箱" />
+                    </Item>
+                    <Item
                         label="状态"
                         name="status"
                         rules={[{ required: true, message: "请选择用户状态" }]}

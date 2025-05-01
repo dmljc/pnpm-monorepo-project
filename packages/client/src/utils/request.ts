@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 // 定义基础配置
 export const baseURL = "http://localhost:3000/api";
-const DEFAULT_TIMEOUT = 3000;
+const DEFAULT_TIMEOUT = 30000; // qq 邮箱接口响应比较慢，所以超时时间设置的稍微长点
 
 // 定义接口类型
 interface PendingTask {

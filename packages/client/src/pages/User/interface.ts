@@ -5,6 +5,7 @@ export interface CreateUser {
     name: string;
     sex: number;
     phone: string;
+    email: string;
     status: number;
     remark: string;
 }
@@ -26,6 +27,7 @@ export interface ListParams {
     username?: string;
     name?: string;
     phone?: string;
+    email?: string;
     startTime?: Date;
     endTime?: Date;
 }

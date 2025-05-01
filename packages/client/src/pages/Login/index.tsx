@@ -17,14 +17,14 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from "@ant-design/pro-components";
-import { login } from "./api";
+import { login, emailCaptcha } from "./api";
 
 import useStyles from "./style";
 
 // 登录类型枚举
 enum LoginType {
     ACCOUNT = "account",
-    PHONE = "phone",
+    EMAIL = "email",
 }
 
 // 图标样式常量
@@ -48,13 +48,13 @@ const LOGIN_TABS: TabsProps["items"] = [
         label: "账号密码登录",
     },
     {
-        key: LoginType.PHONE,
-        label: "手机号登录",
+        key: LoginType.EMAIL,
+        label: "邮箱登录",
     },
 ];
 
 const Login: FC = () => {
-    const [loginType, setLoginType] = useState<LoginType>(LoginType.ACCOUNT);
+    const [loginType, setLoginType] = useState<LoginType>(LoginType.EMAIL);
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
@@ -94,6 +94,14 @@ const Login: FC = () => {
         }
     };
 
+    // 获取验证码
+    const sendEmailCaptcha = async () => {
+        const res = await emailCaptcha({
+            address: "1593025641@qq.com",
+        });
+        message.success(`您的验证码是：${res?.data}`);
+    };
+
     // 渲染账号密码登录表单
     const renderAccountLogin = () => (
         <>
@@ -128,24 +136,25 @@ const Login: FC = () => {
         </>
     );
 
-    // 渲染手机号登录表单
-    const renderPhoneLogin = () => (
+    // 渲染邮箱登录表单
+    const renderEmailLogin = () => (
         <>
             <ProFormText
                 fieldProps={{
                     size: "large",
-                    prefix: <MobileOutlined className={ss.mobile} />,
+                    prefix: <MobileOutlined className={ss.email} />,
                 }}
-                name="mobile"
-                placeholder={"手机号"}
+                name="email"
+                placeholder={"邮箱"}
                 rules={[
                     {
                         required: true,
-                        message: "请输入手机号！",
+                        message: "请输入邮箱！",
                     },
                     {
-                        pattern: /^1\d{10}$/,
-                        message: "手机号格式错误！",
+                        pattern:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "请输入正确的邮箱格式！",
                     },
                 ]}
             />
@@ -161,9 +170,7 @@ const Login: FC = () => {
                 }}
                 name="captcha"
                 rules={[{ required: true, message: "请输入验证码！" }]}
-                onGetCaptcha={async () => {
-                    message.success("获取验证码成功！验证码为：1234");
-                }}
+                onGetCaptcha={sendEmailCaptcha}
             />
         </>
     );
@@ -202,6 +209,8 @@ const Login: FC = () => {
                 initialValues={{
                     username: "zfcstring",
                     password: "999999",
+
+                    email: "1593025641@qq.com",
                 }}
                 backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
                 logo="https://github.githubassets.com/favicons/favicon.png"
@@ -220,7 +229,7 @@ const Login: FC = () => {
                 />
                 {loginType === LoginType.ACCOUNT
                     ? renderAccountLogin()
-                    : renderPhoneLogin()}
+                    : renderEmailLogin()}
                 <div className={ss.checkbox}>
                     <ProFormCheckbox noStyle name="autoLogin">
                         自动登录
