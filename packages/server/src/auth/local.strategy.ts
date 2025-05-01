@@ -6,11 +6,25 @@ import { AuthService } from "./auth.service";
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(private authService: AuthService) {
-        super();
+        super({
+            usernameField: "login", // 支持用户名或邮箱
+            passwordField: "code", // 支持密码或验证码
+        });
     }
 
-    async validate(username: string, password: string) {
-        const user = await this.authService.validateUser(username, password);
-        return user;
+    async validate(login: string, code: string) {
+        try {
+            console.log("======LocalStrategy validate===>", login, code);
+            // 判断是邮箱登录还是用户名密码登录
+            if (login.includes("@")) {
+                // 邮箱验证码登录
+                return await this.authService.validateEmailLogin(login, code);
+            } else {
+                // 用户名密码登录
+                return await this.authService.validateUser(login, code);
+            }
+        } catch (error) {
+            console.log("======LocalStrategy validate error===>", error);
+        }
     }
 }

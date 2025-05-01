@@ -1,5 +1,11 @@
 // service：实现业务逻辑的地方，比如操作数据库等
-import { Injectable, HttpException, Body } from "@nestjs/common";
+import {
+    Injectable,
+    HttpException,
+    Body,
+    BadRequestException,
+    Inject,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Like } from "typeorm"; //Between
 // import * as crypto from "crypto";
@@ -8,6 +14,8 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { LoginDto } from "./dto/login.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { User } from "./entities/user.entity";
+import { isEmail } from "class-validator";
+import { RedisService } from "../redis/redis.service";
 
 // 假设 Like 是一个函数，用于创建包含通配符的查询条件
 // 如果 Like 不是现成的函数，你可能需要自定义它
@@ -25,6 +33,9 @@ export function createLikeQuery(query) {
 export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>;
+
+    @Inject("REDIS_CLIENT")
+    private redisService: RedisService;
 
     // 因为注入 response 对象之后，默认不会把返回值作为 body 了，需要设置 passthrough 为 true 才可以。
     async login(@Body() user: LoginDto) {
@@ -68,6 +79,37 @@ export class UserService {
     async findUserByUserName(username: string) {
         return await this.userRepository.findOne({
             where: { username },
+        });
+    }
+
+    async loginByEmail(email: string, captcha: string) {
+        // 1. 验证邮箱格式
+        if (!isEmail(email)) {
+            throw new BadRequestException("无效的邮箱格式");
+        }
+
+        // 2. 从redis获取验证码
+        const redisCaptcha = await this.redisService.get(`captcha_${email}`);
+        if (!redisCaptcha || redisCaptcha !== captcha) {
+            throw new BadRequestException("验证码错误或已过期");
+        }
+
+        // 3. 查找用户
+        const user = await this.userRepository.findOne({
+            where: { email },
+        });
+
+        if (!user) {
+            throw new BadRequestException("邮箱未注册");
+        }
+
+        return user;
+    }
+
+    async findUserByEmail(email: string) {
+        return await this.userRepository.findOne({
+            where: { email },
+            relations: ["roles"],
         });
     }
 

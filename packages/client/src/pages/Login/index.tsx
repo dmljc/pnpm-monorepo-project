@@ -39,6 +39,8 @@ const ICON_STYLES: CSSProperties = {
 interface LoginUser {
     username: string;
     password: string;
+    email: string;
+    captcha: string;
 }
 
 // 登录表单配置
@@ -62,7 +64,18 @@ const Login: FC = () => {
     // 处理登录提交
     const handleLoginSubmit = async (values: LoginUser) => {
         try {
-            const res = await login(values);
+            const params = {
+                login:
+                    loginType === LoginType.ACCOUNT
+                        ? values.username
+                        : values.email,
+                code:
+                    loginType === LoginType.ACCOUNT
+                        ? values.password
+                        : values.captcha,
+            };
+
+            const res = await login(params);
             if (res.success) {
                 const { access_token, refresh_token } = res.data;
                 localStorage.setItem("access_token", access_token);
