@@ -182,7 +182,13 @@ const Login: FC = () => {
                     return timing ? `${count} ${"获取验证码"}` : "获取验证码";
                 }}
                 name="captcha"
-                rules={[{ required: true, message: "请输入验证码！" }]}
+                rules={[
+                    { required: true, message: "请输入验证码！" },
+                    {
+                        pattern: /^\d{6}$/,
+                        message: "验证码必须是6位数字",
+                    },
+                ]}
                 onGetCaptcha={sendEmailCaptcha}
             />
         </>
