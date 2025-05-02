@@ -112,7 +112,7 @@ const Login: FC = () => {
         const res = await emailCaptcha({
             address: "1593025641@qq.com",
         });
-        message.success(`您的验证码是：${res?.data}`);
+        message.success(`您的验证码是：${res?.data}，有效期为 5 分钟`);
     };
 
     // 渲染账号密码登录表单

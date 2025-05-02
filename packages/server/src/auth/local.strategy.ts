@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 import { AuthService } from "./auth.service";
@@ -14,7 +14,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     async validate(login: string, code: string) {
         try {
-            console.log("======LocalStrategy validate===>", login, code);
             // 判断是邮箱登录还是用户名密码登录
             if (login.includes("@")) {
                 // 邮箱验证码登录
@@ -24,7 +23,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
                 return await this.authService.validateUser(login, code);
             }
         } catch (error) {
-            console.log("======LocalStrategy validate error===>", error);
+            throw new UnauthorizedException(error.message);
         }
     }
 }

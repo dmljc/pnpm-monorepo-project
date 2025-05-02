@@ -93,11 +93,10 @@ export const createAxiosByinterceptors = (
 
             // 第三方邮箱授权失败
             if (status === 401 && statusText === "Unauthorized") {
-                const msg = "邮箱登录失败，请重新登录";
-                message.error(msg);
+                message.error(data?.message);
                 return Promise.resolve({
                     code: 401,
-                    message: msg,
+                    message: data?.message,
                     success: false,
                 });
             }
