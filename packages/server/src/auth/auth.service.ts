@@ -1,4 +1,5 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { isEmail } from "class-validator";
 import { UserService } from "src/user/user.service";
 import { RedisService } from "src/redis/redis.service";
 
@@ -26,7 +27,7 @@ export class AuthService {
 
     async validateEmailLogin(email: string, code: string) {
         // 1. 验证邮箱格式
-        if (!this.isValidEmail(email)) {
+        if (!isEmail(email)) {
             throw new UnauthorizedException("无效的邮箱格式");
         }
 
@@ -43,10 +44,5 @@ export class AuthService {
         }
 
         return user || {};
-    }
-
-    private isValidEmail(email: string): boolean {
-        // 简单的邮箱格式验证
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 }

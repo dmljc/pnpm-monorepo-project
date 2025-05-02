@@ -1,11 +1,5 @@
 // service：实现业务逻辑的地方，比如操作数据库等
-import {
-    Injectable,
-    HttpException,
-    Body,
-    BadRequestException,
-    Inject,
-} from "@nestjs/common";
+import { Injectable, HttpException, Body, Inject } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Like } from "typeorm"; //Between
 // import * as crypto from "crypto";
@@ -14,7 +8,6 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { LoginDto } from "./dto/login.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { User } from "./entities/user.entity";
-import { isEmail } from "class-validator";
 import { RedisService } from "../redis/redis.service";
 
 // 假设 Like 是一个函数，用于创建包含通配符的查询条件
@@ -80,30 +73,6 @@ export class UserService {
         return await this.userRepository.findOne({
             where: { username },
         });
-    }
-
-    async loginByEmail(email: string, captcha: string) {
-        // 1. 验证邮箱格式
-        if (!isEmail(email)) {
-            throw new BadRequestException("无效的邮箱格式");
-        }
-
-        // 2. 从redis获取验证码
-        const redisCaptcha = await this.redisService.get(`captcha_${email}`);
-        if (!redisCaptcha || redisCaptcha !== captcha) {
-            throw new BadRequestException("验证码错误或已过期");
-        }
-
-        // 3. 查找用户
-        const user = await this.userRepository.findOne({
-            where: { email },
-        });
-
-        if (!user) {
-            throw new BadRequestException("邮箱未注册");
-        }
-
-        return user;
     }
 
     async findUserByEmail(email: string) {

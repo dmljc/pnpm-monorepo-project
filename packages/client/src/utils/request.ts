@@ -76,18 +76,29 @@ export const createAxiosByinterceptors = (
             }
 
             if (!data?.success) {
-                message.error(data?.message);
+                message.error(`${data?.message}请求失败`);
             }
 
             return data;
         },
         async (error) => {
-            const { data, config } = error.response || {};
+            const { data, status, statusText, config } = error.response || {};
             const isRefreshRequest = config?.url?.includes("/user/refresh");
 
             if (refreshing && !isRefreshRequest) {
                 return new Promise((resolve) => {
                     queue.push({ config, resolve });
+                });
+            }
+
+            // 第三方邮箱授权失败
+            if (status === 401 && statusText === "Unauthorized") {
+                const msg = "邮箱登录失败，请重新登录";
+                message.error(msg);
+                return Promise.resolve({
+                    code: 401,
+                    message: msg,
+                    success: false,
                 });
             }
 
