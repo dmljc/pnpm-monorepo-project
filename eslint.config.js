@@ -14,7 +14,15 @@ export default tseslint.config({
         eslintPluginPrettierRecommended,
     ],
     files: ["**/*.{ts,tsx}"], // eslint 检测的文件，根据需要自行设置
-    ignores: ["dist/**", "cache/**"],
+    // ignores: ["dist/**", "cache/**"],
+    ignores: [
+        "**/dist/**",
+        "**/node_modules/**",
+        "**/.git/**",
+        "**/cache/**",
+        "**/coverage/**",
+        "**/documentation/**",
+    ],
     languageOptions: {
         ecmaVersion: 2020,
         globals: globals.browser,
