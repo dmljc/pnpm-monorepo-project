@@ -94,6 +94,9 @@ export const createAxiosByinterceptors = (
             // 第三方邮箱授权失败
             if (status === 401 && statusText === "Unauthorized") {
                 message.error(data?.message);
+
+                TokenService.removeTokens();
+                window.location.href = "/login";
                 return Promise.resolve({
                     code: 401,
                     message: data?.message,

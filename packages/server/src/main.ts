@@ -1,6 +1,5 @@
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { join } from "path";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import * as os from "os";
@@ -17,7 +16,8 @@ async function bootstrap() {
 
     // 设置全局路由前缀
     app.setGlobalPrefix("api");
-    app.useStaticAssets(join(__dirname, "../uploads"), { prefix: "/uploads" });
+    // app.useStaticAssets(join(__dirname, "../uploads"), { prefix: "/uploads" });
+    app.useStaticAssets("public");
 
     // 自定义全局响应拦截器
     app.useGlobalInterceptors(new HttpResppnseInterceptor());
@@ -46,7 +46,7 @@ async function bootstrap() {
     app.enableCors({
         origin: true, // 或指定域名如 ['http://localhost:3000']
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        allowedHeaders: "Content-Type,Authorization",
+        allowedHeaders: ["Content-Type", "Authorization", "x-requested-with"],
         credentials: true, // 允许携带凭证（如 cookies）
     }); // 启用cors 否则前端会因为跨域报错
 

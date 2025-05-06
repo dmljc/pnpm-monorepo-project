@@ -21,7 +21,7 @@ import { RedisService } from "./redis/redis.service";
 import { LoginGuard } from "./common/login.guard";
 // import { PermissionGuard } from "./common/permission.guard";
 // import { JwtAuthGuard } from "./auth/jwt.auth.guard";
-
+import { MinioModule } from "./minio/minio.module";
 @Module({
     imports: [
         // 全局配置模块，根据环境变量动态加载配置文件
@@ -67,6 +67,7 @@ import { LoginGuard } from "./common/login.guard";
         AuthModule,
         RedisModule,
         EmailModule,
+        MinioModule,
     ],
     controllers: [AppController],
     providers: [

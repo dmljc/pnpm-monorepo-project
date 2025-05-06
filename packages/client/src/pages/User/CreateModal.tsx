@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Form, Input, message, Modal, Radio, Select } from "antd";
-// import { Coverupload } from "../../components/index";
+import { OSSUpload } from "../../components/index";
 import { ModalProps, UpdateUser } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
@@ -203,13 +203,13 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             placeholder="请输入备注"
                         />
                     </Item>
-                    {/* <Item
+                    <Item
                         label="头像"
                         name="avatar"
                         rules={[{ required: false, message: "请上传头像!" }]}
                     >
-                        <Coverupload />
-                    </Item> */}
+                        <OSSUpload />
+                    </Item>
                 </Form>
             </Modal>
         </>
