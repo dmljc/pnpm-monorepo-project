@@ -16,7 +16,7 @@ const layout = {
 };
 
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
-    const { modalType, isOpen, record, handleClose, handleOk } = props;
+    const { modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateUser>();
     const [messageApi, contextHolder] = message.useMessage();
     const [roleOptions, setRoleOptions] = useState([]);
@@ -56,19 +56,31 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     }, [modalType]);
 
     useEffect(() => {
-        onFetchRoleOptions();
-    }, []);
+        open && onFetchRoleOptions();
+    }, [open]);
 
     const onFetchRoleOptions = async () => {
-        const resp = await list({
-            current: 1,
-            pageSize: 100,
-        });
-        setRoleOptions(resp?.data);
+        try {
+            const resp = await list({
+                current: 1,
+                pageSize: 100,
+            });
+            // 强制更新状态
+            setRoleOptions(resp?.data || []);
+        } catch (error) {
+            console.error("获取角色列表失败:", error);
+            setRoleOptions([]);
+        }
     };
 
     const onChangeStatus = (e: any) => {
         console.log(e.target.value);
+    };
+
+    const onAvatarUploadSuccess = (url: string) => {
+        form.setFieldsValue({
+            avatar: url,
+        });
     };
 
     return (
@@ -78,7 +90,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 title={
                     modalType === ModalTypeEnum.CREATE ? "新增用户" : "修改用户"
                 }
-                open={isOpen}
+                open={open}
                 width={600}
                 onOk={onOk}
                 forceRender
@@ -101,10 +113,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             allowClear
                             showSearch
                             optionFilterProp="label"
-                            options={roleOptions.map((item: any) => ({
-                                value: item.id,
-                                label: item.name,
-                            }))}
+                            fieldNames={{ label: "name", value: "id" }}
+                            options={roleOptions}
                             placeholder="请选择角色"
                         />
                     </Item>
@@ -208,7 +218,10 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         name="avatar"
                         rules={[{ required: false, message: "请上传头像!" }]}
                     >
-                        <OSSUpload />
+                        <OSSUpload
+                            value={record?.avatar}
+                            onSuccess={onAvatarUploadSuccess}
+                        />
                     </Item>
                 </Form>
             </Modal>

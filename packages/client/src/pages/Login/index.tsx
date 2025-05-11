@@ -56,7 +56,7 @@ const LOGIN_TABS: TabsProps["items"] = [
 ];
 
 const Login: FC = () => {
-    const [loginType, setLoginType] = useState<LoginType>(LoginType.EMAIL);
+    const [loginType, setLoginType] = useState<LoginType>(LoginType.ACCOUNT);
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();

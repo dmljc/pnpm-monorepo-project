@@ -8,13 +8,14 @@ export interface CreateUser {
     email: string;
     status: number;
     remark: string;
+    avatar: string;
 }
 
 export interface UpdateUser extends CreateUser {
     id: number;
 }
 export interface ModalProps {
-    isOpen: boolean;
+    open: boolean;
     modalType: string;
     record: UpdateUser;
     handleClose: () => void;

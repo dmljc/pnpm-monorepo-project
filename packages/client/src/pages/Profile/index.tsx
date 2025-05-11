@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { UserInfo } from "./interface";
-import { info, redis } from "./api";
+import { info } from "./api";
 
 const Profile: FC = () => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -11,8 +11,6 @@ const Profile: FC = () => {
 
     const fetchUserInfo = async () => {
         const res = await info();
-        const redisRes = await redis();
-        console.log("redisRes===>", redisRes);
         setUserInfo(res?.data);
     };
 

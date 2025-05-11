@@ -16,6 +16,11 @@ export class User {
     id: number;
 
     @Column({
+        comment: "头像",
+    })
+    avatar: string;
+
+    @Column({
         length: 50,
         comment: "账号",
     })

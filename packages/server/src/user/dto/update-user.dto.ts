@@ -34,4 +34,6 @@ export class UpdateUserDto {
 
     @MaxLength(100)
     remark: string;
+
+    avatar: string;
 }

@@ -1,18 +1,56 @@
 import { message } from "antd";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
-// 定义基础配置
+/**
+ * API基础URL配置
+ * @constant
+ * @type {string}
+ */
 export const baseURL = "http://localhost:3000/api";
-const DEFAULT_TIMEOUT = 30000; // qq 邮箱接口响应比较慢，所以超时时间设置的稍微长点
 
-// 定义接口类型
+/**
+ * 默认请求超时时间(毫秒)
+ * @constant
+ * @type {number}
+ */
+const DEFAULT_TIMEOUT = 1000 * 30;
+
+/**
+ * 待处理任务接口定义
+ * @interface
+ */
 interface PendingTask {
+    /** 请求配置 */
     config: AxiosRequestConfig;
+    /** Promise解决函数 */
     resolve: (value?: unknown) => void;
 }
 
-// Token相关操作封装
-const TokenService = {
+/**
+ * Token服务接口定义
+ * @interface
+ */
+interface TokenServiceType {
+    /** 获取访问令牌 */
+    getAccessToken: () => string | null;
+    /** 获取刷新令牌 */
+    getRefreshToken: () => string | null;
+    /**
+     * 设置令牌
+     * @param {string} accessToken - 访问令牌
+     * @param {string} refreshToken - 刷新令牌
+     */
+    setTokens: (accessToken: string, refreshToken: string) => void;
+    /** 移除所有令牌 */
+    removeTokens: () => void;
+}
+
+/**
+ * Token服务实现
+ * @constant
+ * @type {TokenServiceType}
+ */
+const TokenService: TokenServiceType = {
     getAccessToken: () => localStorage.getItem("access_token"),
     getRefreshToken: () => localStorage.getItem("refresh_token"),
     setTokens: (accessToken: string, refreshToken: string) => {
@@ -26,6 +64,47 @@ const TokenService = {
     },
 };
 
+/**
+ * 处理未授权错误并重试请求
+ * @async
+ * @function
+ * @param {AxiosRequestConfig} config - 原始请求配置
+ * @param {Function} refreshToken - 刷新令牌函数
+ * @param {PendingTask[]} queue - 待处理请求队列
+ * @returns {Promise<any>} 重试后的请求结果
+ */
+const handleUnauthorizedError = async (
+    config: AxiosRequestConfig,
+    refreshToken: () => Promise<any>,
+    queue: PendingTask[],
+) => {
+    try {
+        const res = await refreshToken();
+        const newAccessToken = res.data.data.access_token;
+
+        queue.forEach(({ config, resolve }) => {
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${newAccessToken}`;
+            resolve(axios(config));
+        });
+
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axios(config);
+    } catch (err) {
+        message.error("登录过期，请重新登录");
+        TokenService.removeTokens();
+        window.location.href = "/login";
+        return Promise.reject(err);
+    }
+};
+
+/**
+ * 创建带有拦截器的Axios实例
+ * @function
+ * @param {AxiosRequestConfig} [config] - 可选的自定义配置
+ * @returns {AxiosInstance} 配置好的Axios实例
+ */
 export const createAxiosByinterceptors = (
     config?: AxiosRequestConfig,
 ): AxiosInstance => {
@@ -35,9 +114,17 @@ export const createAxiosByinterceptors = (
         ...config,
     });
 
-    let refreshing = false;
+    /** @type {boolean} 是否正在刷新令牌标志 */
+    const refreshing = false;
+    /** @type {PendingTask[]} 待处理请求队列 */
     const queue: PendingTask[] = [];
 
+    /**
+     * 刷新令牌函数
+     * @async
+     * @function
+     * @returns {Promise<any>} 刷新令牌的响应结果
+     */
     const refreshToken = async () => {
         const res = await axios.get(`${baseURL}/user/refresh`, {
             params: {
@@ -82,7 +169,8 @@ export const createAxiosByinterceptors = (
             return data;
         },
         async (error) => {
-            const { data, status, statusText, config } = error.response || {};
+            const { config, response } = error || {};
+            const { status, data } = response || {};
             const isRefreshRequest = config?.url?.includes("/user/refresh");
 
             if (refreshing && !isRefreshRequest) {
@@ -90,47 +178,10 @@ export const createAxiosByinterceptors = (
                     queue.push({ config, resolve });
                 });
             }
-
-            // 第三方邮箱授权失败
-            if (status === 401 && statusText === "Unauthorized") {
-                message.error(data?.message);
-
-                TokenService.removeTokens();
-                window.location.href = "/login";
-                return Promise.resolve({
-                    code: 401,
-                    message: data?.message,
-                    success: false,
-                });
-            }
-
-            if (data?.code === 401 && !isRefreshRequest) {
-                refreshing = true;
-
-                try {
-                    const res = await refreshToken();
-                    const newAccessToken = res.data.data.access_token;
-                    refreshing = false;
-
-                    if (res.status === 200) {
-                        // 重试队列中的请求
-                        queue.forEach(({ config, resolve }) => {
-                            if (config.headers) {
-                                config.headers.Authorization = `Bearer ${newAccessToken}`;
-                            }
-                            resolve(axios(config));
-                        });
-
-                        config.headers.Authorization = `Bearer ${newAccessToken}`;
-                        return axios(config);
-                    }
-                } catch (err) {
-                    refreshing = false;
-                    message.error("登录过期，请重新登录");
-                    TokenService.removeTokens();
-                    window.location.href = "/login";
-                    return Promise.reject(err);
-                }
+            // status === 401 业务接口返回 401 错误
+            // data?.code === 401 第三方接口返回 401 错误，比如QQ登录
+            if ((status === 401 || data?.code === 401) && !isRefreshRequest) {
+                return handleUnauthorizedError(config, refreshToken, queue);
             }
 
             return Promise.reject(error);
@@ -140,4 +191,9 @@ export const createAxiosByinterceptors = (
     return instance;
 };
 
+/**
+ * 默认导出的请求实例
+ * @constant
+ * @type {AxiosInstance}
+ */
 export const request = createAxiosByinterceptors();

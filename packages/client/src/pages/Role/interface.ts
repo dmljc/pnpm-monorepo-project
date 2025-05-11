@@ -10,7 +10,7 @@ export interface UpdateRole extends CreateRole {
 }
 
 export interface ModalProps {
-    isOpen: boolean;
+    open: boolean;
     modalType: string;
     record: UpdateRole;
     handleClose: () => void;

@@ -31,4 +31,6 @@ export class CreateUserDto {
 
     @MaxLength(100)
     remark: string;
+
+    avatar: string;
 }

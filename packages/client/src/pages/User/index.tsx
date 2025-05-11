@@ -1,5 +1,5 @@
 import { FC, useState, useRef } from "react";
-import { Button, message } from "antd";
+import { Button, message, Image } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
@@ -10,13 +10,16 @@ import { list, del } from "./api.ts";
 
 type GithubIssueItem = {
     id: number;
+    role: string;
     username: string;
     password: string;
     name: string;
     sex: number;
     phone: string;
     email: string;
+    status: number;
     remark: string;
+    avatar: string;
     createTime: string;
     updateTime: string;
 };
@@ -32,11 +35,46 @@ const User: FC = () => {
 
     const columns: ProColumns<GithubIssueItem>[] = [
         {
+            title: "头像",
+            dataIndex: "avatar",
+            width: 120,
+            fixed: "left",
+            // @ts-expect-error 目前无法确定 `OSSUpload` 组件在接收 `value` 参数时的类型检查细节，直接传入字符串类型的 `text` 可能会触发类型错误，因此暂时使用此指令绕过类型检查。
+            render: (text: string | undefined) =>
+                text !== undefined && typeof text === "string" ? (
+                    <div
+                        style={{
+                            position: "relative",
+                            width: "60px",
+                            height: "60px",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                        }}
+                    >
+                        <Image
+                            width={60}
+                            height={60}
+                            style={{
+                                borderRadius: "100%",
+                                objectFit: "cover",
+                                border: "1px solid #ccc",
+                                padding: "4px",
+                                cursor: "pointer",
+                                transition: "transform 0.3s ease",
+                            }}
+                            src={text}
+                        />
+                    </div>
+                ) : null,
+        },
+        {
             title: "账号",
             dataIndex: "username",
             width: 120,
+            fixed: "left",
             render: (text) => <a>{text}</a>,
         },
+
         {
             title: "密码",
             dataIndex: "password",
@@ -113,6 +151,7 @@ const User: FC = () => {
             search: false,
             ellipsis: true,
             copyable: true,
+            width: 220,
         },
         {
             title: "操作",
@@ -162,9 +201,14 @@ const User: FC = () => {
                         ...filter,
                     });
 
+                    // 兼容性处理，在 refresh 接口调用之后刷新页面
+                    if (!resp.success) {
+                        actionRef.current?.reload();
+                    }
+
                     return {
-                        data: resp.data,
-                        success: resp.success,
+                        data: Array.isArray(resp.data) ? resp.data : [],
+                        success: resp.success || true,
                         total: resp.data.length,
                     };
                 }}
@@ -177,13 +221,16 @@ const User: FC = () => {
                     defaultValue: {
                         option: { fixed: "right", disable: true },
                     },
-                    onChange(value) {
-                        console.log("value: ", value);
-                    },
+                    // onChange(value) {
+                    //     console.log("value: ", value);
+                    // },
                 }}
                 rowKey="id"
                 search={{
                     labelWidth: "auto",
+                }}
+                scroll={{
+                    x: 1400,
                 }}
                 options={{
                     setting: {
@@ -225,7 +272,7 @@ const User: FC = () => {
 
             {modalOpen && (
                 <CreateModal
-                    isOpen={modalOpen}
+                    open={modalOpen}
                     modalType={modalType}
                     record={record!}
                     handleClose={() => {

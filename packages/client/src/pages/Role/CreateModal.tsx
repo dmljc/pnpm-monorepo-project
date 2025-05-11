@@ -12,7 +12,7 @@ const layout = {
 };
 
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
-    const { modalType, isOpen, record, handleClose, handleOk } = props;
+    const { modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateRole>();
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -48,7 +48,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
         } else {
             form.resetFields();
         }
-    }, [isOpen, modalType]);
+    }, [open, modalType]);
 
     const onChangeStatus = (e: any) => {
         console.log(e.target.value);
@@ -61,7 +61,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 title={
                     modalType === ModalTypeEnum.CREATE ? "新增角色" : "修改角色"
                 }
-                open={isOpen}
+                open={open}
                 width={600}
                 onOk={onOk}
                 forceRender

@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { Upload, Image } from "antd";
+import { useState, useEffect } from "react";
+import { Upload, Image, message } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { upload } from "./api";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
+interface CoverUploadProps {
+    value?: string;
+    maxCount?: number;
+    // 'editable' | 'disabled' | 'readOnly' | 'readPretty' //Field interaction
+    pattern?: "editable" | "readOnly";
+    onSuccess?: (url: string) => void;
+    onError?: (error: Error) => void;
+}
 
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -14,11 +23,31 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 
-const OSSUpload = () => {
+const OSSUpload = (props: CoverUploadProps) => {
+    const { value = "", maxCount = 1, pattern = "editable" } = props;
+
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
+    const [uploading, setUploading] = useState(false);
+
+    const defaultFile = value
+        ? {
+              uid: Math.random().toString(),
+              name: `${new Date().toLocaleString()}.png`, // 使用时间戳作为文件名,
+              status: "done",
+              url: value,
+          }
+        : null;
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    useEffect(() => {
+        if (defaultFile && value) {
+            setFileList([defaultFile]);
+        } else {
+            setFileList([]);
+        }
+    }, [value, defaultFile?.url]);
 
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
@@ -29,16 +58,25 @@ const OSSUpload = () => {
         setPreviewOpen(true);
     };
 
-    const handleUpload = async (file: File) => {
+    const beforeUpload = async (file: File) => {
+        setUploading(true);
         try {
             const formData = new FormData();
             formData.append("file", file);
             const response = await upload(formData);
             console.log("Upload success:", response.data);
-            return response.data.url; // 返回文件访问地址
+
+            const url = response?.data?.url;
+            // 添加成功回调
+            props.onSuccess?.(url);
+            return url; // 返回文件访问地址
         } catch (error) {
             console.error("Upload failed:", error);
+            message.error("上传失败，请重试");
+            props.onError?.(error as Error);
             return null;
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -46,12 +84,7 @@ const OSSUpload = () => {
         fileList: newFileList,
     }) => {
         const file = newFileList?.[0];
-        if (file) {
-            file.status = "done";
-            setFileList([file]);
-        } else {
-            setFileList([]);
-        }
+        setFileList(file ? [file] : []);
     };
 
     const uploadButton = (
@@ -62,15 +95,27 @@ const OSSUpload = () => {
     );
 
     return (
-        <span style={{ minHeight: 102 }}>
+        <>
             <Upload
                 listType="picture-circle"
+                maxCount={maxCount}
                 fileList={fileList}
                 onPreview={handlePreview}
-                beforeUpload={handleUpload}
+                beforeUpload={beforeUpload}
                 onChange={handleChange}
+                showUploadList={{
+                    showRemoveIcon: pattern === "editable" ? true : false,
+                }}
+                disabled={uploading || pattern === "readOnly"}
+                action="" // 注意：添加空的action属性以防止默认提交行为
+                // 通过覆盖默认的上传行为，可以自定义自己的上传实现
+                customRequest={({ file, onSuccess }) => {
+                    onSuccess?.("ok");
+                }}
             >
-                {fileList.length === 1 ? null : uploadButton}
+                {pattern === "readOnly" || fileList.length >= maxCount
+                    ? null
+                    : uploadButton}
             </Upload>
             {previewImage && (
                 <Image
@@ -84,7 +129,7 @@ const OSSUpload = () => {
                     src={previewImage}
                 />
             )}
-        </span>
+        </>
     );
 };
 

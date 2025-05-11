@@ -120,9 +120,13 @@ const Role: FC = () => {
                         ...filter,
                     });
 
+                    if (!resp.success) {
+                        actionRef.current?.reload();
+                    }
+
                     return {
-                        data: resp.data,
-                        success: resp.success,
+                        data: Array.isArray(resp.data) ? resp.data : [],
+                        success: resp.success || true,
                         total: resp.data.length,
                     };
                 }}
@@ -135,9 +139,9 @@ const Role: FC = () => {
                     defaultValue: {
                         option: { fixed: "right", disable: true },
                     },
-                    onChange(value) {
-                        console.log("value: ", value);
-                    },
+                    // onChange(value) {
+                    //     console.log("value: ", value);
+                    // },
                 }}
                 rowKey="id"
                 search={{
@@ -183,7 +187,7 @@ const Role: FC = () => {
 
             {modalOpen && (
                 <CreateModal
-                    isOpen={modalOpen}
+                    open={modalOpen}
                     modalType={modalType}
                     record={record!}
                     handleClose={() => {
