@@ -1,0 +1,61 @@
+# 依赖目录
+# 排除所有 node_modules 目录，使用容器内安装的依赖
+node_modules
+**/node_modules
+
+# 构建输出目录
+# 排除所有构建产物，这些文件会在容器内重新生成
+dist
+**/dist
+build
+**/build
+.next
+**/.next
+
+# 开发工具配置文件
+# 排除版本控制和环境配置文件
+.git
+.gitignore
+.env
+.env.*
+*.log
+
+# IDE 配置文件
+# 排除各种 IDE 的配置文件，这些文件对容器运行没有影响
+.idea
+.vscode
+*.swp
+*.swo
+
+# 系统文件
+# 排除操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 上传文件目录
+# 排除服务器上传的文件目录，这些文件应该持久化存储
+packages/server/uploads
+packages/server/my-uploads
+
+# 测试相关文件
+# 排除测试文件和测试覆盖率报告
+coverage
+**/coverage
+*.test.*
+**/*.test.*
+__tests__
+**/__tests__
+
+# 临时文件
+# 排除各种临时文件和缓存
+.temp
+.tmp
+.cache
+**/.cache
+
+# Docker 相关文件
+# 排除 Docker 配置文件，避免循环复制
+Dockerfile
+**/Dockerfile
+.dockerignore
+docker-compose*.yml 

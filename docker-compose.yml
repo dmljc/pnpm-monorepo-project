@@ -1,0 +1,66 @@
+# 指定 docker-compose 文件格式版本
+version: '3.8'
+
+# 定义服务列表
+services:
+  # 前端服务配置
+  client:
+    # 构建配置
+    build:
+      # 指定构建上下文为当前目录（monorepo 根目录）
+      context: .
+      # 指定使用的 Dockerfile 路径
+      dockerfile: packages/client/Dockerfile
+    # 端口映射配置：主机端口:容器端口
+    ports:
+      - "5173:5173"  # Vite 开发服务器默认端口
+    # 数据卷配置，用于实现代码热重载
+    volumes:
+      - ./packages/client:/app/packages/client  # 将前端代码目录挂载到容器中
+      - ./packages/shared:/app/packages/shared  # 共享代码目录（如果有的话）
+      - /app/node_modules                       # 排除 node_modules，使用容器内的依赖
+    # 环境变量配置
+    environment:
+      - NODE_ENV=development    # 设置开发环境
+      - VITE_API_URL=http://server:3000  # 设置后端 API 地址
+    # 容器启动命令
+    command: pnpm --filter client dev  # 使用 pnpm 运行前端开发服务器
+    # 设置容器名称
+    container_name: monorepo-client
+    # 设置容器重启策略
+    restart: unless-stopped
+
+  # 后端服务配置
+  server:
+    build:
+      context: .
+      dockerfile: packages/server/Dockerfile
+    ports:
+      - "3000:3000"  # NestJS 默认端口
+    volumes:
+      - ./packages/server:/app/packages/server  # 将后端代码目录挂载到容器中
+      - ./packages/shared:/app/packages/shared  # 共享代码目录（如果有的话）
+      - /app/node_modules                       # 排除 node_modules，使用容器内的依赖
+      - ./packages/server/uploads:/app/packages/server/uploads  # 持久化上传文件目录
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    command: pnpm --filter server start:dev  # 使用 pnpm 运行后端开发服务器
+    container_name: monorepo-server
+    restart: unless-stopped
+
+  # 文档服务配置（如果需要）
+  # docs:
+  #   build:
+  #     context: .
+  #     dockerfile: packages/docs/Dockerfile
+  #   ports:
+  #     - "8080:8080"  # 文档服务器端口
+  #   volumes:
+  #     - ./packages/docs:/app/packages/docs
+  #     - /app/node_modules
+  #   environment:
+  #     - NODE_ENV=development
+  #   command: pnpm --filter docs dev
+  #   container_name: monorepo-docs
+  #   restart: unless-stopped 
