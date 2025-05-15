@@ -1,40 +1,148 @@
 import { message } from "antd";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
+/**
+ * API基础URL配置
+ * @constant
+ * @type {string}
+ */
+export const baseURL = "http://localhost:3000/api";
+
+/**
+ * 默认请求超时时间(毫秒)
+ * @constant
+ * @type {number}
+ */
+const DEFAULT_TIMEOUT = 1000 * 30;
+
+/**
+ * 待处理任务接口定义
+ * @interface
+ */
+interface PendingTask {
+    /** 请求配置 */
+    config: AxiosRequestConfig;
+    /** Promise解决函数 */
+    resolve: (value?: unknown) => void;
+}
+
+/**
+ * Token服务接口定义
+ * @interface
+ */
+interface TokenServiceType {
+    /** 获取访问令牌 */
+    getAccessToken: () => string | null;
+    /** 获取刷新令牌 */
+    getRefreshToken: () => string | null;
+    /**
+     * 设置令牌
+     * @param {string} accessToken - 访问令牌
+     * @param {string} refreshToken - 刷新令牌
+     */
+    setTokens: (accessToken: string, refreshToken: string) => void;
+    /** 移除所有令牌 */
+    removeTokens: () => void;
+}
+
+/**
+ * Token服务实现
+ * @constant
+ * @type {TokenServiceType}
+ */
+const TokenService: TokenServiceType = {
+    getAccessToken: () => localStorage.getItem("access_token"),
+    getRefreshToken: () => localStorage.getItem("refresh_token"),
+    setTokens: (accessToken: string, refreshToken: string) => {
+        localStorage.setItem("access_token", accessToken);
+        localStorage.setItem("refresh_token", refreshToken);
+    },
+    removeTokens: () => {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("pro-table-singe-demos");
+    },
+};
+
+/**
+ * 处理未授权错误并重试请求
+ * @async
+ * @function
+ * @param {AxiosRequestConfig} config - 原始请求配置
+ * @param {Function} refreshToken - 刷新令牌函数
+ * @param {PendingTask[]} queue - 待处理请求队列
+ * @returns {Promise<any>} 重试后的请求结果
+ */
+const handleUnauthorizedError = async (
+    config: AxiosRequestConfig,
+    refreshToken: () => Promise<any>,
+    queue: PendingTask[],
+) => {
+    try {
+        const res = await refreshToken();
+        const newAccessToken = res.data.data.access_token;
+
+        queue.forEach(({ config, resolve }) => {
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${newAccessToken}`;
+            resolve(axios(config));
+        });
+
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axios(config);
+    } catch (err) {
+        message.error("登录过期，请重新登录");
+        TokenService.removeTokens();
+        window.location.href = "/login";
+        return Promise.reject(err);
+    }
+};
+
+/**
+ * 创建带有拦截器的Axios实例
+ * @function
+ * @param {AxiosRequestConfig} [config] - 可选的自定义配置
+ * @returns {AxiosInstance} 配置好的Axios实例
+ */
 export const createAxiosByinterceptors = (
     config?: AxiosRequestConfig,
 ): AxiosInstance => {
     const instance = axios.create({
-        timeout: 1000, //超时配置
-        // withCredentials: true, //跨域携带cookie
-        ...config, // 自定义配置覆盖基本配置
+        baseURL,
+        timeout: DEFAULT_TIMEOUT,
+        ...config,
     });
-    interface PendingTask {
-        config: AxiosRequestConfig;
-        resolve: (value?: unknown) => void;
-    }
 
-    let refreshing = false;
+    /** @type {boolean} 是否正在刷新令牌标志 */
+    const refreshing = false;
+    /** @type {PendingTask[]} 待处理请求队列 */
     const queue: PendingTask[] = [];
 
+    /**
+     * 刷新令牌函数
+     * @async
+     * @function
+     * @returns {Promise<any>} 刷新令牌的响应结果
+     */
     const refreshToken = async () => {
-        const res = await axios.get("http://localhost:3000/api/user/refresh", {
+        const res = await axios.get(`${baseURL}/user/refresh`, {
             params: {
-                refresh_token: localStorage.getItem("refresh_token"),
+                refresh_token: TokenService.getRefreshToken(),
             },
         });
 
-        localStorage.setItem("access_token", res.data.data.access_token);
-        localStorage.setItem("refresh_token", res.data.data.refresh_token);
+        const { access_token, refresh_token } = res.data.data;
+        TokenService.setTokens(access_token, refresh_token);
         return res;
     };
 
-    // 添加请求拦截器
+    // 请求拦截器
     instance.interceptors.request.use(
         (config) => {
-            const accessToken = localStorage.getItem("access_token");
+            const accessToken = TokenService.getAccessToken();
             if (accessToken) {
-                config.headers.Authorization = "Bearer " + accessToken;
+                config.headers.Authorization = `Bearer ${accessToken}`;
             }
             return config;
         },
@@ -44,72 +152,48 @@ export const createAxiosByinterceptors = (
         },
     );
 
-    // 添加响应拦截器
+    // 响应拦截器
     instance.interceptors.response.use(
-        (config) => {
-            const { data } = config;
-            const access_token = data.data.access_token;
-            if (access_token) {
-                config.headers.Authorization = "Bearer " + access_token;
+        (response) => {
+            const { data } = response;
+            const accessToken = data.data?.access_token;
+
+            if (accessToken) {
+                response.headers.Authorization = `Bearer ${accessToken}`;
             }
 
             if (!data?.success) {
-                message.error(data?.message);
+                message.error(`${data?.message}请求失败`);
             }
 
             return data;
         },
         async (error) => {
-            const data = error?.response?.data;
-            const config = error?.response?.config;
+            const { config, response } = error || {};
+            const { status, data } = response || {};
+            const isRefreshRequest = config?.url?.includes("/user/refresh");
 
-            if (refreshing && !config.url.includes("/user/refresh")) {
+            if (refreshing && !isRefreshRequest) {
                 return new Promise((resolve) => {
-                    queue.push({
-                        config,
-                        resolve,
-                    });
+                    queue.push({ config, resolve });
                 });
             }
-
-            if (data.code === 401 && !config.url.includes("/user/refresh")) {
-                refreshing = true;
-
-                const res = await refreshToken();
-                const newAccessToken = res.data.data.access_token;
-
-                refreshing = false;
-
-                if (res.status === 200) {
-                    queue.forEach(({ config, resolve }) => {
-                        if (config.headers) {
-                            config.headers.Authorization = `Bearer ${newAccessToken}`;
-                        }
-
-                        resolve(axios(config));
-                    });
-                    config.headers.Authorization = `Bearer ${newAccessToken}`;
-
-                    return axios(config);
-                } else {
-                    message.error("登录过期，请重新登录");
-                    localStorage.removeItem("access_token");
-                    localStorage.removeItem("refresh_token");
-                    localStorage.removeItem("pro-table-singe-demos");
-                    window.location.href = "/login";
-                    return Promise.reject(res.data);
-                }
+            // status === 401 业务接口返回 401 错误
+            // data?.code === 401 第三方接口返回 401 错误，比如QQ登录
+            if ((status === 401 || data?.code === 401) && !isRefreshRequest) {
+                return handleUnauthorizedError(config, refreshToken, queue);
             }
 
             return Promise.reject(error);
         },
     );
+
     return instance;
 };
 
-export const baseURL = "http://localhost:3000/api";
-
-export const request = createAxiosByinterceptors({
-    baseURL: baseURL,
-    timeout: 3000,
-});
+/**
+ * 默认导出的请求实例
+ * @constant
+ * @type {AxiosInstance}
+ */
+export const request = createAxiosByinterceptors();

@@ -16,6 +16,11 @@ export class User {
     id: number;
 
     @Column({
+        comment: "头像",
+    })
+    avatar: string;
+
+    @Column({
         length: 50,
         comment: "账号",
     })
@@ -41,6 +46,11 @@ export class User {
         comment: "手机",
     })
     phone: string;
+
+    @Column({
+        comment: "邮箱",
+    })
+    email: string;
 
     @Column({
         comment: "用户状态",

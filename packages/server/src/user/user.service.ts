@@ -1,5 +1,5 @@
 // service：实现业务逻辑的地方，比如操作数据库等
-import { Injectable, HttpException, Body } from "@nestjs/common";
+import { Injectable, HttpException, Body, Inject } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Like } from "typeorm"; //Between
 // import * as crypto from "crypto";
@@ -8,6 +8,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { LoginDto } from "./dto/login.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { User } from "./entities/user.entity";
+import { RedisService } from "../redis/redis.service";
 
 // 假设 Like 是一个函数，用于创建包含通配符的查询条件
 // 如果 Like 不是现成的函数，你可能需要自定义它
@@ -26,16 +27,8 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>;
 
-    // async register(CreateUserDto: CreateUserDto) {
-    //     const existUser = await this.userRepository.findOneBy({
-    //         username: CreateUserDto.username,
-    //     });
-
-    //     if (existUser) {
-    //         throw new HttpException("用户已注册", HttpStatus.OK);
-    //     }
-    //     return await this.userRepository.save(CreateUserDto);
-    // }
+    @Inject("REDIS_CLIENT")
+    private redisService: RedisService;
 
     // 因为注入 response 对象之后，默认不会把返回值作为 body 了，需要设置 passthrough 为 true 才可以。
     async login(@Body() user: LoginDto) {
@@ -79,6 +72,20 @@ export class UserService {
     async findUserByUserName(username: string) {
         return await this.userRepository.findOne({
             where: { username },
+        });
+    }
+
+    async findUserByEmail(email: string) {
+        return await this.userRepository.findOne({
+            where: { email },
+            relations: ["roles"],
+        });
+    }
+
+    async findUserByGithubId(id: string) {
+        console.log("----id----", id);
+        return await this.userRepository.findOne({
+            // where: { id },
         });
     }
 

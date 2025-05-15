@@ -1,10 +1,13 @@
 import {
     Controller,
+    Get,
     Post,
+    Req,
+    Res,
+    Inject,
     Request,
     UseGuards,
-    Inject,
-    Res,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
@@ -57,5 +60,35 @@ export class AuthController {
         } else {
             return "login fail";
         }
+    }
+
+    // github 登录
+    @Get("github/login")
+    @UseGuards(AuthGuard("github"))
+    async githubLogin() {
+        // 这个路由会自动触发 Passport 的 302 重定向到 GitHub
+    }
+
+    @Get("github/callback")
+    @UseGuards(AuthGuard("github"))
+    async githubCallback(@Req() req) {
+        console.log("---callback--req.user----", req.user);
+        return this.userService.findUserByGithubId(req.user.id);
+        // return req.user;
+    }
+
+    // google 登录
+    @Get("google/login")
+    @UseGuards(AuthGuard("google"))
+    async googleLogin() {}
+
+    @Get("google/callback")
+    @UseGuards(AuthGuard("google"))
+    googleCallback(@Req() req, @Res() res) {
+        console.log("--googleCallback----", req.user);
+        if (!req.user) throw new UnauthorizedException();
+
+        // 返回 JSON 数据
+        res.json(req.user);
     }
 }

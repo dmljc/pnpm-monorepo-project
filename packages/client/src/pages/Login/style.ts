@@ -58,7 +58,7 @@ export default createStyles(({ token }) => ({
 
     password: { color: token.colorText },
 
-    mobile: { color: token.colorText },
+    email: { color: token.colorText },
 
     captcha: {
         color: token.colorText,

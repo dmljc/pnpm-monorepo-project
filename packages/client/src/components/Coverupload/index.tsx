@@ -13,7 +13,7 @@ let onChange: (data: any) => void;
 
 const props: UploadProps = {
     name: "file",
-    action: "http://localhost:3000/api/book/upload",
+    action: "http://localhost:3000/api/minio/upload",
     method: "post",
     onChange(info) {
         const { status } = info.file;

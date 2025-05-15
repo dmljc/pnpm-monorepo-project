@@ -5,15 +5,17 @@ export interface CreateUser {
     name: string;
     sex: number;
     phone: string;
+    email: string;
     status: number;
     remark: string;
+    avatar: string;
 }
 
 export interface UpdateUser extends CreateUser {
     id: number;
 }
 export interface ModalProps {
-    isOpen: boolean;
+    open: boolean;
     modalType: string;
     record: UpdateUser;
     handleClose: () => void;
@@ -26,6 +28,7 @@ export interface ListParams {
     username?: string;
     name?: string;
     phone?: string;
+    email?: string;
     startTime?: Date;
     endTime?: Date;
 }

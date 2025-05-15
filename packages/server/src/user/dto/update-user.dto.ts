@@ -26,9 +26,14 @@ export class UpdateUserDto {
     @IsNotEmpty({ message: "手机号不能为空" })
     phone: string;
 
+    @IsNotEmpty({ message: "邮箱不能为空" })
+    email: string;
+
     @IsNotEmpty({ message: "状态不能为空" })
     status: number;
 
     @MaxLength(100)
     remark: string;
+
+    avatar: string;
 }
