@@ -32,6 +32,7 @@ export class Role {
 
     @Column({
         comment: "备注",
+        nullable: true,
     })
     remark: string;
 

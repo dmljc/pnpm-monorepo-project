@@ -1,7 +1,7 @@
 // 请求体一般会传递 json，比如 { username: 'xxx', password: 'xxx' }
 // 我们会通过 dto （data transfer object）来接收。
 // dto 是封装请求参数的。
-import { IsNotEmpty, MinLength, MaxLength } from "class-validator";
+import { IsNotEmpty, MinLength, MaxLength, IsOptional } from "class-validator";
 
 export class CreateUserDto {
     @IsNotEmpty({ message: "角色不能为空" })
@@ -29,8 +29,10 @@ export class CreateUserDto {
     @IsNotEmpty({ message: "状态不能为空" })
     status: number;
 
+    @IsOptional()
     @MaxLength(100)
     remark: string;
 
+    @IsOptional()
     avatar: string;
 }

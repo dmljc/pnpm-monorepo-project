@@ -139,6 +139,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         <Input
                             showCount
                             allowClear
+                            minLength={6}
                             maxLength={10}
                             placeholder="请输入密码"
                         />

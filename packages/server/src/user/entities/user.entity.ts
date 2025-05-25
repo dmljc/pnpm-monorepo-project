@@ -17,6 +17,7 @@ export class User {
 
     @Column({
         comment: "头像",
+        nullable: true, // 添加这行
     })
     avatar: string;
 
@@ -64,6 +65,7 @@ export class User {
 
     @Column({
         comment: "备注",
+        nullable: true,
     })
     remark: string;
 

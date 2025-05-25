@@ -107,7 +107,7 @@ const User: FC = () => {
         {
             title: "邮箱",
             dataIndex: "email",
-            width: 160,
+            width: 180,
         },
         {
             title: "角色",
@@ -151,7 +151,7 @@ const User: FC = () => {
             search: false,
             ellipsis: true,
             copyable: true,
-            width: 220,
+            width: 200,
         },
         {
             title: "操作",
