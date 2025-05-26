@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { APP_GUARD } from "@nestjs/core";
+import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
+import { HttpModule } from "@nestjs/axios";
 import { join } from "path";
 
 // 控制器和服务
@@ -19,9 +20,11 @@ import { EmailModule } from "./email/email.module";
 // 服务和守卫
 import { RedisService } from "./redis/redis.service";
 import { LoginGuard } from "./common/login.guard";
+import { RequestLogInterceptor } from "./common/request.log.interceptor";
 // import { PermissionGuard } from "./common/permission.guard";
 // import { JwtAuthGuard } from "./auth/jwt.auth.guard";
 import { MinioModule } from "./minio/minio.module";
+
 @Module({
     imports: [
         // 全局配置模块，根据环境变量动态加载配置文件
@@ -61,6 +64,10 @@ import { MinioModule } from "./minio/minio.module";
             }),
         }),
 
+        HttpModule.register({
+            timeout: 5000,
+        }),
+
         // 功能模块
         UserModule,
         RoleModule,
@@ -76,6 +83,10 @@ import { MinioModule } from "./minio/minio.module";
         {
             provide: APP_GUARD,
             useClass: LoginGuard,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: RequestLogInterceptor,
         },
         // 取消注释以启用JWT认证守卫
         // {
