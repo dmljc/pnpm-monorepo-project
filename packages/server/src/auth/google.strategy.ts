@@ -4,11 +4,11 @@ import { Strategy } from "passport-google-oauth20";
 import { VerifiedCallback } from "passport-jwt";
 
 // socks-proxy-agent 翻墙代理工具
-import { SocksProxyAgent } from "socks-proxy-agent";
+// import { SocksProxyAgent } from "socks-proxy-agent";
 
-const agent = new SocksProxyAgent(
-    process.env.SOCKS_PROXY || "socks5://127.0.0.1:7897",
-);
+// const agent = new SocksProxyAgent(
+//     process.env.SOCKS_PROXY || "socks5://127.0.0.1:7897",
+// );
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
@@ -20,7 +20,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
             callbackURL: "http://localhost:3000/api/auth/google/callback",
             scope: ["email", "profile"], // 必须包含 email 以获取用户信息
         });
-        this._oauth2.setAgent(agent);
+        // this._oauth2.setAgent(agent);
     }
 
     validate(
