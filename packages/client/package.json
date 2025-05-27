@@ -22,7 +22,7 @@
     },
     "devDependencies": {
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
-        "@types/react": "^19.1.5",
+        "@types/react": "^19.1.6",
         "@types/react-dom": "^19.1.5",
         "@vitejs/plugin-react-swc": "^3.10.0",
         "typescript": "^5.8.3",
