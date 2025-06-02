@@ -15,6 +15,9 @@ const layout = {
     wrapperCol: { span: 17 },
 };
 
+const defaultAvatar =
+    "https://img0.baidu.com/it/u=3170389506,3533872302&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500";
+
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateUser>();
@@ -102,6 +105,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     initialValues={{
                         sex: 1,
                         status: 1,
+                        avatar: defaultAvatar,
                     }}
                 >
                     <Item
@@ -113,7 +117,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             allowClear
                             showSearch
                             optionFilterProp="label"
-                            fieldNames={{ label: "name", value: "id" }}
+                            fieldNames={{ label: "name", value: "code" }}
                             options={roleOptions}
                             placeholder="请选择角色"
                         />
@@ -134,7 +138,11 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     <Item
                         label="密码"
                         name="password"
-                        rules={[{ required: true, message: "请输入密码" }]}
+                        rules={[
+                            { required: true, message: "请输入密码" },
+                            { min: 6, message: "密码长度不能少于6位" },
+                            { max: 10, message: "密码长度不能超过10位" },
+                        ]}
                     >
                         <Input
                             showCount
@@ -163,7 +171,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     >
                         <Group>
                             <Radio value={1}>男</Radio>
-                            <Radio value={2}>女</Radio>
+                            <Radio value={0}>女</Radio>
                         </Group>
                     </Item>
                     <Item

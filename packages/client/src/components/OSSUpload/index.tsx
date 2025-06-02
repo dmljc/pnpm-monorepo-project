@@ -23,8 +23,11 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 
+const defaultAvatar =
+    "https://img0.baidu.com/it/u=3170389506,3533872302&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500";
+
 const OSSUpload = (props: CoverUploadProps) => {
-    const { value = "", maxCount = 1, pattern = "editable" } = props;
+    const { value = defaultAvatar, maxCount = 1, pattern = "editable" } = props;
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");

@@ -1,5 +1,5 @@
 export interface CreateUser {
-    role: number;
+    role: string;
     username: string;
     password: string;
     name: string;
@@ -32,3 +32,20 @@ export interface ListParams {
     startTime?: Date;
     endTime?: Date;
 }
+
+export type GithubIssueItem = {
+    id: number;
+    role: string;
+    username: string;
+    password: string;
+    name: string;
+    sex: number;
+    phone: string;
+    email: string;
+    status: number;
+    remark: string;
+    avatar: string;
+    createTime: string;
+    updateTime: string;
+    dataSource: any[];
+};

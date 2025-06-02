@@ -8,7 +8,7 @@ export class UpdateUserDto {
     id: number;
 
     @IsNotEmpty({ message: "角色不能为空" })
-    role: number;
+    role: string;
 
     @IsNotEmpty({ message: "账号不能为空" })
     username: string;

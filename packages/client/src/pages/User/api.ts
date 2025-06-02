@@ -26,3 +26,20 @@ export const detail = (id: number): Promise<any> => {
 export const del = (id: number): Promise<any> => {
     return request.delete(`/user/delete/${id}`);
 };
+
+export const importExcel = (data: FormData): Promise<any> => {
+    return request.post("/excel/import", data, {
+        responseType: "blob",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};
+export const exportExcel = (): Promise<any> => {
+    return request.post("/excel/export", null, {
+        responseType: "blob",
+        headers: {
+            Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+    });
+};

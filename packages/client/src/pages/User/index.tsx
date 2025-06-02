@@ -1,28 +1,17 @@
 import { FC, useState, useRef } from "react";
-import { Button, message, Image } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, message, Image, Upload } from "antd";
+import {
+    PlusOutlined,
+    DownloadOutlined,
+    UploadOutlined,
+} from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
+import dayjs from "dayjs";
 import { ModalTypeEnum } from "@/utils";
 import CreateModal from "./CreateModal.tsx";
-import { UpdateUser } from "./interface.ts";
-import { list, del } from "./api.ts";
-
-type GithubIssueItem = {
-    id: number;
-    role: string;
-    username: string;
-    password: string;
-    name: string;
-    sex: number;
-    phone: string;
-    email: string;
-    status: number;
-    remark: string;
-    avatar: string;
-    createTime: string;
-    updateTime: string;
-};
+import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
+import { list, del, importExcel, exportExcel, create } from "./api.ts";
 
 const User: FC = () => {
     const actionRef = useRef<ActionType>(null);
@@ -32,6 +21,7 @@ const User: FC = () => {
     );
     const [record, setRecord] = useState<UpdateUser>();
     const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false);
 
     const columns: ProColumns<GithubIssueItem>[] = [
         {
@@ -96,7 +86,7 @@ const User: FC = () => {
             valueType: "select",
             valueEnum: {
                 1: { text: "男" },
-                2: { text: "女" },
+                0: { text: "女" },
             },
         },
         {
@@ -113,6 +103,19 @@ const User: FC = () => {
             title: "角色",
             dataIndex: "role",
             hideInSearch: true,
+        },
+        {
+            title: "状态",
+            dataIndex: "status",
+            search: false,
+            filters: true,
+            onFilter: true,
+            width: 100,
+            valueType: "select",
+            valueEnum: {
+                1: { text: "启用", status: "Success" },
+                0: { text: "停用", status: "Error" },
+            },
         },
         {
             title: "创建时间",
@@ -159,8 +162,13 @@ const User: FC = () => {
             key: "option",
             width: 100,
             render: (text, _record, _, action) => [
-                <a
-                    key="edit"
+                <Button
+                    style={{
+                        padding: 0,
+                    }}
+                    key="update"
+                    color="primary"
+                    variant="link"
                     onClick={() => {
                         setModalType(ModalTypeEnum.UPDATE);
                         setRecord(_record);
@@ -168,9 +176,16 @@ const User: FC = () => {
                     }}
                 >
                     修改
-                </a>,
-                <a
+                </Button>,
+                <Button
+                    style={{
+                        padding: 0,
+                    }}
                     key="delete"
+                    color="danger"
+                    variant="link"
+                    // 为避免类型不匹配问题，将 _record.role 转换为数字类型再进行比较
+                    disabled={_record.role === "root"}
                     onClick={async () => {
                         const resp = await del(_record.id);
                         if (resp) {
@@ -180,15 +195,81 @@ const User: FC = () => {
                     }}
                 >
                     删除
-                </a>,
+                </Button>,
             ],
         },
     ];
 
+    const addUser = async (params: CreateUser[]) => {
+        const resp = await create(params);
+        if (resp.success === true) {
+            actionRef.current?.reload();
+            messageApi.success("批量新增成功");
+        }
+    };
+
+    const handleImport = async (file: File) => {
+        setLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await importExcel(formData);
+            if (!response) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = JSON.parse(reader.result as string);
+                if (!result.success) {
+                    messageApi.error("导入失败");
+                    return;
+                }
+                addUser(result.data);
+            };
+            reader.onerror = () => {
+                console.log("导入失败了");
+            };
+            reader.readAsText(response);
+        } catch (error) {
+            console.error("导入失败", error);
+            messageApi.error("导入失败");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleExport = async () => {
+        try {
+            const response = await exportExcel();
+            // 直接使用response作为Blob数据，因为它已经是二进制文件流
+            const blob = new Blob([response], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            const formatted = dayjs().format("YYYY/MM/DD HH:mm:ss");
+            link.setAttribute("download", `user_template_${formatted}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+
+            // 清理
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }, 100);
+
+            messageApi.success("导出成功");
+        } catch (error) {
+            console.error("导出失败", error);
+            messageApi.error("导出失败: " + error.message);
+        }
+    };
+
     return (
         <>
             {contextHolder}
-            <ProTable<GithubIssueItem>
+            <ProTable<any>
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
@@ -221,9 +302,6 @@ const User: FC = () => {
                     defaultValue: {
                         option: { fixed: "right", disable: true },
                     },
-                    // onChange(value) {
-                    //     console.log("value: ", value);
-                    // },
                 }}
                 rowKey="id"
                 search={{
@@ -267,6 +345,22 @@ const User: FC = () => {
                     >
                         新增
                     </Button>,
+                    <Button icon={<DownloadOutlined />} onClick={handleExport}>
+                        导出Excel
+                    </Button>,
+                    <Upload
+                        name="file"
+                        accept=".xlsx,.xls"
+                        beforeUpload={(file) => {
+                            handleImport(file);
+                            return false;
+                        }}
+                        showUploadList={false}
+                    >
+                        <Button icon={<UploadOutlined />} loading={loading}>
+                            导入Excel
+                        </Button>
+                    </Upload>,
                 ]}
             />
 

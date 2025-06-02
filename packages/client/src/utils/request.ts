@@ -161,9 +161,8 @@ export const createAxiosByinterceptors = (
             if (accessToken) {
                 response.headers.Authorization = `Bearer ${accessToken}`;
             }
-
-            if (!data?.success) {
-                message.error(`${data?.message}请求失败`);
+            if (data.success && data.success === false) {
+                message.error(`${data.message || ""}请求失败`);
             }
 
             return data;

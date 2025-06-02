@@ -59,7 +59,7 @@ export class UserController {
                         user,
                     },
                 },
-                { expiresIn: "30s" },
+                { expiresIn: "30m" },
             );
             res.setHeader("Authorization", access_token);
 
@@ -70,7 +70,7 @@ export class UserController {
                     },
                 },
                 {
-                    expiresIn: "10m",
+                    expiresIn: "150m",
                 },
             );
 
@@ -133,8 +133,8 @@ export class UserController {
 
     @Post("create")
     @RequireLogin()
-    async create(@Body() createUserDto: CreateUserDto) {
-        return this.userService.create(createUserDto);
+    async create(@Body() createUserDtos: CreateUserDto[]) {
+        return this.userService.create(createUserDtos);
     }
 
     @Put("update")

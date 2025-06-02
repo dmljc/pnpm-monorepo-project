@@ -24,6 +24,7 @@ import { RequestLogInterceptor } from "./common/request.log.interceptor";
 // import { PermissionGuard } from "./common/permission.guard";
 // import { JwtAuthGuard } from "./auth/jwt.auth.guard";
 import { MinioModule } from "./minio/minio.module";
+import { ExcelModule } from "./common/excel/excel.module";
 
 @Module({
     imports: [
@@ -75,6 +76,7 @@ import { MinioModule } from "./minio/minio.module";
         RedisModule,
         EmailModule,
         MinioModule,
+        ExcelModule,
     ],
     controllers: [AppController],
     providers: [

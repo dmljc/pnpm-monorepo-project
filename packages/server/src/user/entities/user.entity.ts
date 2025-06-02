@@ -61,7 +61,7 @@ export class User {
     @Column({
         comment: "用户角色",
     })
-    role: number;
+    role: string;
 
     @Column({
         comment: "备注",
@@ -77,11 +77,6 @@ export class User {
     @CreateDateColumn({
         comment: "创建时间",
     })
-    createTime: Date;
-
-    @CreateDateColumn({
-        comment: "创建时间",
-    })
     startTime: Date;
 
     @CreateDateColumn({
@@ -89,10 +84,29 @@ export class User {
     })
     endTime: Date;
 
-    @UpdateDateColumn({
-        comment: "更新时间",
+    @CreateDateColumn({
+        transformer: {
+            to(value: Date): Date {
+                return value;
+            },
+            from(value: Date): string {
+                return value.toLocaleString();
+            },
+        },
     })
-    updateTime: Date;
+    createTime: string;
+
+    @UpdateDateColumn({
+        transformer: {
+            to(value: Date): Date {
+                return value;
+            },
+            from(value: Date): string {
+                return value.toLocaleString();
+            },
+        },
+    })
+    updateTime: string;
 
     @ManyToMany(() => Role)
     @JoinTable({

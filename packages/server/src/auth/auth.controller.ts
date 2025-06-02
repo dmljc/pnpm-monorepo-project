@@ -38,7 +38,7 @@ export class AuthController {
                         user,
                     },
                 },
-                { expiresIn: "5m" },
+                { expiresIn: "50m" },
             );
             res.setHeader("Authorization", access_token);
 
@@ -49,7 +49,7 @@ export class AuthController {
                     },
                 },
                 {
-                    expiresIn: "15m",
+                    expiresIn: "150m",
                 },
             );
 

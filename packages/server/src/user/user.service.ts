@@ -49,18 +49,20 @@ export class UserService {
 
     async list(queryData: QueryDto) {
         const { username, name, phone } = queryData;
-        // startTime, endTime
 
-        // 使用 Like 操作符进行模糊查询
-        return await this.userRepository.find({
+        const users = await this.userRepository.find({
             where: {
                 username: Like(createLikeQuery(username)),
                 name: Like(createLikeQuery(name)),
                 phone: Like(createLikeQuery(phone)),
-                // createTime: Between(startTime, endTime),
             },
             relations: ["roles"],
+            order: {
+                updateTime: "DESC", // 默认按更新时间倒序
+            },
         });
+
+        return users;
     }
 
     async findUserById(id: number) {
@@ -96,15 +98,33 @@ export class UserService {
         });
     }
 
-    async create(createUserDto: CreateUserDto) {
-        return await this.userRepository.save(createUserDto);
+    async create(createUserDtos: CreateUserDto | CreateUserDto[]) {
+        if (Array.isArray(createUserDtos)) {
+            // 批量创建时检查每个用户是否已存在
+            const usersToSave = [];
+            for (const dto of createUserDtos) {
+                const existingUser = await this.userRepository.findOne({
+                    where: { username: dto.username },
+                });
+                if (!existingUser) {
+                    usersToSave.push(dto);
+                }
+            }
+            return await this.userRepository.save(usersToSave);
+        } else {
+            // 单个创建时检查用户是否已存在
+            const existingUser = await this.userRepository.findOne({
+                where: { username: createUserDtos.username },
+            });
+            if (existingUser) {
+                throw new HttpException("用户已存在", 400);
+            }
+            return await this.userRepository.save(createUserDtos);
+        }
     }
 
     async update(updateUserDto: UpdateUserDto) {
-        return await this.userRepository.update(
-            updateUserDto.id,
-            updateUserDto,
-        );
+        return await this.userRepository.save(updateUserDto);
     }
 
     async delete(id: number) {

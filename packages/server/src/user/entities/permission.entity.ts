@@ -22,9 +22,27 @@ export class Permission {
     })
     desc: string;
 
-    @CreateDateColumn()
-    createTime: Date;
+    @CreateDateColumn({
+        transformer: {
+            to(value: Date): Date {
+                return value;
+            },
+            from(value: Date): string {
+                return value.toLocaleString();
+            },
+        },
+    })
+    createTime: string;
 
-    @UpdateDateColumn()
-    updateTime: Date;
+    @UpdateDateColumn({
+        transformer: {
+            to(value: Date): Date {
+                return value;
+            },
+            from(value: Date): string {
+                return value.toLocaleString();
+            },
+        },
+    })
+    updateTime: string;
 }
