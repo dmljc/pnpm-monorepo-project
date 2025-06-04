@@ -52,6 +52,11 @@ export const menuItems = [
                 icon: <SlidersOutlined />,
                 label: "系统配置",
             },
+            {
+                key: "/system/server",
+                icon: <SlidersOutlined />,
+                label: "服务器信息",
+            },
         ],
     },
     // {

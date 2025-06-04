@@ -73,6 +73,7 @@ export default createStyles(({ token, css }) => ({
     content: {
         height: "calc(100vh - 98px)",
         margin: "24px 24px",
+        overflow: "auto",
     },
 
     // container: {

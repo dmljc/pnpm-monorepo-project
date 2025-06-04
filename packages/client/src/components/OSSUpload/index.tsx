@@ -112,7 +112,7 @@ const OSSUpload = (props: CoverUploadProps) => {
                 disabled={uploading || pattern === "readOnly"}
                 action="" // 注意：添加空的action属性以防止默认提交行为
                 // 通过覆盖默认的上传行为，可以自定义自己的上传实现
-                customRequest={({ file, onSuccess }) => {
+                customRequest={({ onSuccess }) => {
                     onSuccess?.("ok");
                 }}
             >

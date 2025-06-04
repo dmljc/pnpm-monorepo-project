@@ -15,6 +15,7 @@ const Role = lazy(() => import("@/pages/Role"));
 const Menu = lazy(() => import("@/pages/Menu"));
 const Config = lazy(() => import("@/pages/Config"));
 const Profile = lazy(() => import("@/pages/Profile"));
+const ServerInfo = lazy(() => import("@/pages/Server.info"));
 
 // 全局
 const Login = lazy(() => import("@/pages/Login"));
@@ -62,6 +63,10 @@ const routes: RouteObject[] = [
             {
                 path: "/system/profile",
                 element: WithLoadingComponent(<Profile />),
+            },
+            {
+                path: "/system/server",
+                element: WithLoadingComponent(<ServerInfo />),
             },
         ],
     },

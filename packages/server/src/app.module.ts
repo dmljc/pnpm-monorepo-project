@@ -25,6 +25,7 @@ import { RequestLogInterceptor } from "./common/request.log.interceptor";
 // import { JwtAuthGuard } from "./auth/jwt.auth.guard";
 import { MinioModule } from "./minio/minio.module";
 import { ExcelModule } from "./common/excel/excel.module";
+import { ServerModule } from "./common/server/server.module";
 
 @Module({
     imports: [
@@ -77,6 +78,7 @@ import { ExcelModule } from "./common/excel/excel.module";
         EmailModule,
         MinioModule,
         ExcelModule,
+        ServerModule,
     ],
     controllers: [AppController],
     providers: [
