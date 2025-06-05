@@ -8,6 +8,7 @@ import {
     ConfigProvider,
     theme,
     Card,
+    Radio,
 } from "antd";
 import {
     MenuFoldOutlined,
@@ -39,6 +40,7 @@ const Layout: FC = () => {
     const [selectedKeys, setSelectedKeys] = useState([pathname]);
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
     const [isDarkModel, setIsDarkModel] = useState(false);
+    const [language, setLanguage] = useState("zh_CN");
 
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = theme;
@@ -170,6 +172,22 @@ const Layout: FC = () => {
                                 <ExpandOutlined className={ss.headerIcon} />
                             )}
                             <GithubOutlined className={ss.headerIcon} />
+
+                            <Radio.Group
+                                value={language}
+                                onChange={(e) => {
+                                    setLanguage(e.target.value);
+                                    localStorage.setItem(
+                                        "language",
+                                        e.target.value,
+                                    );
+                                }}
+                            >
+                                <Radio.Button value="zh_CN">中文</Radio.Button>
+                                <Radio.Button value="en_US">
+                                    English
+                                </Radio.Button>
+                            </Radio.Group>
 
                             <Dropdown menu={{ items: dropdownItems }}>
                                 <Button type="text" className={ss.logout}>

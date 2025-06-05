@@ -18,14 +18,14 @@
         "dayjs": "^1.11.13",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-router-dom": "^7.6.1",
+        "react-router-dom": "^7.6.2",
         "umi-request": "^1.4.0"
     },
     "devDependencies": {
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
         "@types/react": "^19.1.6",
-        "@types/react-dom": "^19.1.5",
-        "@vitejs/plugin-react-swc": "^3.10.0",
+        "@types/react-dom": "^19.1.6",
+        "@vitejs/plugin-react-swc": "^3.10.1",
         "typescript": "^5.8.3",
         "vite": "^6.3.5"
     }

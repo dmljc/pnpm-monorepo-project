@@ -1,10 +1,11 @@
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
+// import { ValidationPipe } from "@nestjs/common";
 import * as os from "os";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { HttpExceptionFilter } from "./common/http.exception.filter";
+import { I18nValidationExceptionFilter, I18nValidationPipe } from "nestjs-i18n";
+// import { HttpExceptionFilter } from "./common/http.exception.filter";
 import { HttpResppnseInterceptor } from "./common/http.response.interceptor";
 
 async function bootstrap() {
@@ -23,11 +24,17 @@ async function bootstrap() {
     app.useGlobalInterceptors(new HttpResppnseInterceptor());
 
     // 自定义全局异常过滤器
-    app.useGlobalFilters(new HttpExceptionFilter());
+    // app.useGlobalFilters(new HttpExceptionFilter());
 
     // 我们还要对参数做一些校验，校验请求体的参数需要用到 ValidationPipe
     // 现在接收到的参数是普通对象，指定 transform: true 之后，就会转为 dto 的实例了：
-    app.useGlobalPipes(new ValidationPipe({ transform: true }));
+    // app.useGlobalPipes(new ValidationPipe({ transform: true }));
+    app.useGlobalPipes(new I18nValidationPipe());
+    app.useGlobalFilters(
+        new I18nValidationExceptionFilter({
+            detailedErrors: false,
+        }),
+    );
 
     const config = new DocumentBuilder()
         .setTitle("NestJS 全栈项目接口文档")
@@ -46,7 +53,13 @@ async function bootstrap() {
     app.enableCors({
         origin: true, // 或指定域名如 ['http://localhost:3000']
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        allowedHeaders: ["Content-Type", "Authorization", "x-requested-with"],
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+            "x-requested-with",
+            "Accept-Language",
+            "Accept-Language-Custom",
+        ],
         credentials: true, // 允许携带凭证（如 cookies）
     }); // 启用cors 否则前端会因为跨域报错
 

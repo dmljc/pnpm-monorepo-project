@@ -2,12 +2,16 @@
 // 我们会通过 dto （data transfer object）来接收。
 // dto 是封装请求参数的。
 import { IsNotEmpty, MaxLength, IsOptional } from "class-validator";
+import { i18nValidationMessage } from "nestjs-i18n";
 
 export class CreateRoleDto {
-    @IsNotEmpty({ message: "角色名称不能为空" })
+    @IsNotEmpty({
+        message: i18nValidationMessage("validate.usernameNotEmpty"),
+    })
     name: string;
 
-    @IsNotEmpty({ message: "角色编码不能为空" })
+    // message: i18nValidationMessage("validate.usernameNotEmpty"),
+    @IsNotEmpty({ message: "validate.passwordNotEmpty" })
     code: string;
 
     @IsNotEmpty({ message: "角色状态不能为空" })

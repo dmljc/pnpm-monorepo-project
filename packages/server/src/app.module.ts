@@ -27,6 +27,13 @@ import { MinioModule } from "./minio/minio.module";
 import { ExcelModule } from "./common/excel/excel.module";
 import { ServerModule } from "./common/server/server.module";
 
+import {
+    AcceptLanguageResolver,
+    HeaderResolver,
+    I18nModule,
+    QueryResolver,
+} from "nestjs-i18n";
+
 @Module({
     imports: [
         // 全局配置模块，根据环境变量动态加载配置文件
@@ -66,8 +73,25 @@ import { ServerModule } from "./common/server/server.module";
             }),
         }),
 
+        // HTTP模块配置
         HttpModule.register({
             timeout: 5000,
+        }),
+
+        // 多语言配置模块
+        I18nModule.forRoot({
+            fallbackLanguage: "zh_CN",
+            loaderOptions: {
+                path: join(__dirname, "/i18n/"),
+                watch: true,
+            },
+            throwOnMissingKey: true, // 添加这一行
+            resolvers: [
+                // 注意 accept-language-custom 只能小写字母开头，否则不生效
+                new HeaderResolver(["accept-language-custom"]),
+                new QueryResolver(["lang"]),
+                AcceptLanguageResolver,
+            ],
         }),
 
         // 功能模块

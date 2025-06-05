@@ -141,9 +141,14 @@ export const createAxiosByinterceptors = (
     instance.interceptors.request.use(
         (config) => {
             const accessToken = TokenService.getAccessToken();
+            const language = localStorage.getItem("language");
             if (accessToken) {
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
+            if (language) {
+                config.headers["Accept-Language-Custom"] = language;
+            }
+
             return config;
         },
         (error) => {
