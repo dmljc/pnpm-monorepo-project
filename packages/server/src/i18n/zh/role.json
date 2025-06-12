@@ -1,0 +1,6 @@
+{
+    "idNotEmpty": "角色id不能为空",
+    "nameNotEmpty": "角色名称不能为空",
+    "codeNotEmpty": "角色编码不能为空",
+    "statusNotEmpty": "角色状态不能为空"
+}

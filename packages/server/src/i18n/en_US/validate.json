@@ -1,5 +1,0 @@
-{
-    "usernameNotEmpty": "The username cannot be empty",
-    "passwordNotEmpty": "Password cannot be empty",
-    "passwordNotLessThan6": "The password cannot be less than {num} characters"
-}

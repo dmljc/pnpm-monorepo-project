@@ -1,0 +1,6 @@
+{
+    "idNotEmpty": "Role id is not empty",
+    "nameNotEmpty": "Role name is not empty",
+    "codeNotEmpty": "Role code is not empty",
+    "statusNotEmpty": "Role Status is not empty"
+}

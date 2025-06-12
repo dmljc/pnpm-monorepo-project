@@ -4,19 +4,27 @@
 import { IsNotEmpty, MaxLength, IsOptional } from "class-validator";
 
 export class UpdateRoleDto {
-    @IsNotEmpty({ message: "id不能为空" })
+    @IsNotEmpty({
+        message: "role.idNotEmpty",
+    })
     id: number;
 
-    @IsNotEmpty({ message: "角色名称不能为空" })
+    @IsNotEmpty({
+        message: "role.nameNotEmpty",
+    })
     name: string;
 
-    @IsNotEmpty({ message: "角色编码不能为空" })
+    @IsNotEmpty({
+        message: "role.codeNotEmpty",
+    })
     code: string;
 
-    @IsNotEmpty({ message: "角色状态不能为空" })
+    @IsNotEmpty({
+        message: "role.statusNotEmpty",
+    })
     status: number;
 
     @IsOptional()
     @MaxLength(100)
-    remark: string;
+    remark?: string;
 }

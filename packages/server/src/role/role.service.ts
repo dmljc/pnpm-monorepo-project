@@ -48,8 +48,18 @@ export class RoleService {
         return await this.roleRepository.findOneBy({ id });
     }
 
+    // async create(createRoleDto: CreateRoleDto) {
+    //     return await this.roleRepository.save(createRoleDto);
+    // }
+    // ... existing code ...
     async create(createRoleDto: CreateRoleDto) {
-        return await this.roleRepository.save(createRoleDto);
+        const role = new Role();
+        role.name = createRoleDto.name; // 确保name被显式赋值
+        role.code = createRoleDto.code;
+        role.status = createRoleDto.status;
+        role.remark = createRoleDto.remark;
+        // ... 其他字段赋值 ...
+        return await this.roleRepository.save(role);
     }
 
     async update(updateRoleDto: UpdateRoleDto) {

@@ -77,7 +77,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     <Form.Item
                         label="姓名"
                         name="name"
-                        rules={[{ required: true, message: "请输入姓名" }]}
+                        rules={[{ required: false, message: "请输入姓名" }]}
                     >
                         <Input
                             showCount
@@ -89,7 +89,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     <Form.Item
                         label="编码"
                         name="code"
-                        rules={[{ required: true, message: "请输入编码" }]}
+                        rules={[{ required: false, message: "请输入编码" }]}
                     >
                         <Input
                             showCount

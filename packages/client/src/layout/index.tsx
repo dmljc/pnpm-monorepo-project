@@ -40,7 +40,9 @@ const Layout: FC = () => {
     const [selectedKeys, setSelectedKeys] = useState([pathname]);
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
     const [isDarkModel, setIsDarkModel] = useState(false);
-    const [language, setLanguage] = useState("zh_CN");
+    const [language, setLanguage] = useState(
+        localStorage.getItem("language") || "en",
+    );
 
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = theme;
@@ -183,10 +185,8 @@ const Layout: FC = () => {
                                     );
                                 }}
                             >
-                                <Radio.Button value="zh_CN">中文</Radio.Button>
-                                <Radio.Button value="en_US">
-                                    English
-                                </Radio.Button>
+                                <Radio.Button value="zh">中文</Radio.Button>
+                                <Radio.Button value="en">English</Radio.Button>
                             </Radio.Group>
 
                             <Dropdown menu={{ items: dropdownItems }}>

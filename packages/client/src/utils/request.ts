@@ -146,7 +146,7 @@ export const createAxiosByinterceptors = (
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
             if (language) {
-                config.headers["Accept-Language-Custom"] = language;
+                config.headers["x-custom-lang"] = language;
             }
 
             return config;
@@ -166,7 +166,7 @@ export const createAxiosByinterceptors = (
             if (accessToken) {
                 response.headers.Authorization = `Bearer ${accessToken}`;
             }
-            if (data.success && data.success === false) {
+            if (data.success === false) {
                 message.error(`${data.message || ""}请求失败`);
             }
 
@@ -186,6 +186,10 @@ export const createAxiosByinterceptors = (
             // data?.code === 401 第三方接口返回 401 错误，比如QQ登录
             if ((status === 401 || data?.code === 401) && !isRefreshRequest) {
                 return handleUnauthorizedError(config, refreshToken, queue);
+            }
+
+            if (status === 400) {
+                message.error(data.message);
             }
 
             return Promise.reject(error);

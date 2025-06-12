@@ -80,16 +80,16 @@ import {
 
         // 多语言配置模块
         I18nModule.forRoot({
-            fallbackLanguage: "zh_CN",
+            fallbackLanguage: "en",
             loaderOptions: {
                 path: join(__dirname, "/i18n/"),
                 watch: true,
             },
-            throwOnMissingKey: true, // 添加这一行
+            throwOnMissingKey: true,
             resolvers: [
-                // 注意 accept-language-custom 只能小写字母开头，否则不生效
-                new HeaderResolver(["accept-language-custom"]),
-                new QueryResolver(["lang"]),
+                // "x-custom-lang" 是我们自定义的语言头放在最上面
+                new HeaderResolver(["x-custom-lang"]),
+                new QueryResolver(["lang"]), // 简化参数
                 AcceptLanguageResolver,
             ],
         }),
