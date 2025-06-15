@@ -10,6 +10,7 @@ import {
     Res,
     Inject,
     Request,
+    HttpStatus,
     UnauthorizedException,
 } from "@nestjs/common";
 import { Response } from "express";
@@ -20,7 +21,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { QueryDto } from "./dto/query-user.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RequireLogin } from "../common/custom-decorator";
-import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiTags, ApiResponse } from "@nestjs/swagger";
 import { UserDetailVo } from "./vo/user.info.vo";
 
 @ApiTags("用户模块")
@@ -126,6 +127,11 @@ export class UserController {
         return this.userService.list(queryData);
     }
 
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: "success",
+        type: UserDetailVo,
+    })
     @Get("info")
     @RequireLogin()
     async info(@Request() req) {
