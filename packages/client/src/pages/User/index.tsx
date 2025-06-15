@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import { ModalTypeEnum } from "@/utils";
 import CreateModal from "./CreateModal.tsx";
 import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
-import { list, del, importExcel, exportExcel, create } from "./api.ts";
+import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
 
 const User: FC = () => {
     const actionRef = useRef<ActionType>(null);
@@ -160,7 +160,7 @@ const User: FC = () => {
             title: "操作",
             valueType: "option",
             key: "option",
-            width: 100,
+            width: 130,
             render: (text, _record, _, action) => [
                 <Button
                     style={{
@@ -196,6 +196,18 @@ const User: FC = () => {
                 >
                     删除
                 </Button>,
+                <Button
+                    style={{
+                        padding: 0,
+                    }}
+                    key="freeze"
+                    color="primary"
+                    variant="link"
+                    disabled={_record.role === "root"}
+                    onClick={() => handleFreeze(_record)}
+                >
+                    {_record.status === 1 ? "停用" : "启用"}
+                </Button>,
             ],
         },
     ];
@@ -205,6 +217,14 @@ const User: FC = () => {
         if (resp.success === true) {
             actionRef.current?.reload();
             messageApi.success("批量新增成功");
+        }
+    };
+
+    const handleFreeze = async (record: UpdateUser) => {
+        const resp = await freeze(record.id, record.status === 1 ? 0 : 1);
+        if (resp) {
+            actionRef.current?.reload();
+            messageApi.success("修改成功");
         }
     };
 
@@ -303,6 +323,7 @@ const User: FC = () => {
                         option: { fixed: "right", disable: true },
                     },
                 }}
+                key="user"
                 rowKey="id"
                 search={{
                     labelWidth: "auto",

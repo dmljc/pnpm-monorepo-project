@@ -143,6 +143,7 @@ const Role: FC = () => {
                     //     console.log("value: ", value);
                     // },
                 }}
+                key="role"
                 rowKey="id"
                 search={{
                     labelWidth: "auto",

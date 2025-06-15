@@ -168,4 +168,10 @@ export class UserController {
     async delete(@Param("id") id: string) {
         return this.userService.delete(+id);
     }
+
+    @Get("freeze")
+    @RequireLogin()
+    async freeze(@Query("id") id: number, @Query("status") status: number) {
+        return this.userService.freeze(+id, status);
+    }
 }

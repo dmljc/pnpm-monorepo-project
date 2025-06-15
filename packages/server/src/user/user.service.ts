@@ -62,7 +62,21 @@ export class UserService {
             },
         });
 
-        return users;
+        // 只返回前端需要的字段，避免 roles 字段污染 status
+        return users.map((user) => ({
+            id: user.id,
+            avatar: user.avatar,
+            username: user.username,
+            name: user.name,
+            sex: user.sex,
+            phone: user.phone,
+            email: user.email,
+            status: user.status,
+            remark: user.remark,
+            createTime: user.createTime,
+            updateTime: user.updateTime,
+            roles: user.roles,
+        }));
     }
 
     async findUserById(id: number) {
@@ -129,5 +143,11 @@ export class UserService {
 
     async delete(id: number) {
         return await this.userRepository.delete(id);
+    }
+
+    async freeze(id: number, status: number) {
+        return await this.userRepository.update(id, {
+            status,
+        });
     }
 }

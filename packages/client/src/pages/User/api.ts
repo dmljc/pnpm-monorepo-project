@@ -27,6 +27,10 @@ export const del = (id: number): Promise<any> => {
     return request.delete(`/user/delete/${id}`);
 };
 
+export const freeze = (id: number, status: number): Promise<any> => {
+    return request.get(`/user/freeze?id=${id}&status=${status}`);
+};
+
 export const importExcel = (data: FormData): Promise<any> => {
     return request.post("/excel/import", data, {
         responseType: "blob",
