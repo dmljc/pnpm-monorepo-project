@@ -23,7 +23,6 @@ const Profile: FC = () => {
                     <p>username: {userInfo.username}</p>
                     <p>password: {userInfo.password}</p>
                     <p>name: {userInfo.name}</p>
-                    <p>sex: {userInfo.sex}</p>
                     <p>phone: {userInfo.phone}</p>
                     <p>status: {userInfo.status}</p>
                     <p>remark: {userInfo.remark}</p>

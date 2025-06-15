@@ -3,7 +3,6 @@ export interface CreateUser {
     username: string;
     password: string;
     name: string;
-    sex: number;
     phone: string;
     email: string;
     status: number;
@@ -39,7 +38,6 @@ export type GithubIssueItem = {
     username: string;
     password: string;
     name: string;
-    sex: number;
     phone: string;
     email: string;
     status: number;

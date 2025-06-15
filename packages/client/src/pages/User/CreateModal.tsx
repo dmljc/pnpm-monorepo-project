@@ -103,7 +103,6 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     form={form}
                     {...layout}
                     initialValues={{
-                        sex: 1,
                         status: 1,
                         avatar: defaultAvatar,
                     }}
@@ -163,16 +162,6 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             maxLength={10}
                             placeholder="请输入姓名"
                         />
-                    </Item>
-                    <Item
-                        label="性别"
-                        name="sex"
-                        rules={[{ required: true, message: "请选择性别" }]}
-                    >
-                        <Group>
-                            <Radio value={1}>男</Radio>
-                            <Radio value={0}>女</Radio>
-                        </Group>
                     </Item>
                     <Item
                         label="手机号"

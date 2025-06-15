@@ -19,7 +19,6 @@ export class ExcelService {
                     const headerMapping: Record<string, string> = {
                         ID: "id",
                         姓名: "name",
-                        性别: "sex",
                         账号: "username",
                         密码: "password",
                         角色: "role",

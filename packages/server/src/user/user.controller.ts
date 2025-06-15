@@ -141,7 +141,6 @@ export class UserController {
         vo.id = user.id;
         vo.username = user.username;
         vo.name = user.name;
-        vo.sex = user.sex;
         vo.phone = user.phone;
         vo.email = user.email;
         vo.status = user.status;

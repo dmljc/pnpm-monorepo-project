@@ -11,9 +11,6 @@ export class UserDetailVo {
     name: string;
 
     @ApiProperty()
-    sex: number;
-
-    @ApiProperty()
     phone: string;
 
     @ApiProperty()

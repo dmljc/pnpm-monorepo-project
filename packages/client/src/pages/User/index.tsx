@@ -77,19 +77,6 @@ const User: FC = () => {
             width: 110,
         },
         {
-            title: "性别",
-            dataIndex: "sex",
-            search: false,
-            filters: true,
-            onFilter: true,
-            width: 100,
-            valueType: "select",
-            valueEnum: {
-                1: { text: "男" },
-                0: { text: "女" },
-            },
-        },
-        {
             title: "手机号",
             dataIndex: "phone",
             width: 130,

@@ -39,11 +39,6 @@ export class User {
     name: string;
 
     @Column({
-        comment: "性别",
-    })
-    sex: number;
-
-    @Column({
         comment: "手机",
     })
     phone: string;

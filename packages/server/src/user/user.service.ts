@@ -68,7 +68,7 @@ export class UserService {
             avatar: user.avatar,
             username: user.username,
             name: user.name,
-            sex: user.sex,
+            password: user.password,
             phone: user.phone,
             email: user.email,
             status: user.status,

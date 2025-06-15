@@ -17,9 +17,6 @@ export class CreateUserDto {
     @IsNotEmpty({ message: "姓名不能为空" })
     name: string;
 
-    @IsNotEmpty({ message: "性别不能为空" })
-    sex: number;
-
     @IsNotEmpty({ message: "手机号不能为空" })
     phone: string;
 
