@@ -21,6 +21,7 @@ import { QueryDto } from "./dto/query-user.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RequireLogin } from "../common/custom-decorator";
 import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { UserDetailVo } from "./vo/user.info.vo";
 
 @ApiTags("用户模块")
 @Controller("user")
@@ -128,7 +129,20 @@ export class UserController {
     @Get("info")
     @RequireLogin()
     async info(@Request() req) {
-        return this.userService.info(req.user.id);
+        const user = await this.userService.info(req.user.id);
+        const vo = new UserDetailVo();
+
+        vo.id = user.id;
+        vo.username = user.username;
+        vo.name = user.name;
+        vo.sex = user.sex;
+        vo.phone = user.phone;
+        vo.email = user.email;
+        vo.status = user.status;
+        vo.remark = user.remark;
+        vo.avatar = user.avatar;
+        vo.role = user.role;
+        return vo;
     }
 
     @Post("create")

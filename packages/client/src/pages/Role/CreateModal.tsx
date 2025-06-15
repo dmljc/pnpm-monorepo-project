@@ -75,15 +75,15 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     }}
                 >
                     <Form.Item
-                        label="姓名"
+                        label="名称"
                         name="name"
-                        rules={[{ required: false, message: "请输入姓名" }]}
+                        rules={[{ required: false, message: "请输入名称" }]}
                     >
                         <Input
                             showCount
                             allowClear
                             maxLength={10}
-                            placeholder="请输入姓名"
+                            placeholder="请输入名称"
                         />
                     </Form.Item>
                     <Form.Item
