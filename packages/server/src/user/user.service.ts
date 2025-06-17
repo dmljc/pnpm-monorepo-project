@@ -65,6 +65,7 @@ export class UserService {
         // 只返回前端需要的字段，避免 roles 字段污染 status
         return users.map((user) => ({
             id: user.id,
+            role: user.role,
             avatar: user.avatar,
             username: user.username,
             name: user.name,
