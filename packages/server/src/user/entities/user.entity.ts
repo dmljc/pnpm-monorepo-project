@@ -35,6 +35,7 @@ export class User {
 
     @Column({
         comment: "姓名",
+        unique: true,
     })
     name: string;
 
