@@ -5,10 +5,10 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-    ManyToMany,
-    JoinTable,
+    // ManyToMany,
+    // JoinTable,
 } from "typeorm";
-import { Role } from "src/role/entities/role.entity";
+// import { Role } from "src/role/entities/role.entity";
 
 @Entity()
 export class User {
@@ -104,9 +104,9 @@ export class User {
     })
     updateTime: string;
 
-    @ManyToMany(() => Role)
-    @JoinTable({
-        name: "user_role_relation",
-    })
-    roles: Role[];
+    // @ManyToMany(() => Role)
+    // @JoinTable({
+    //     name: "user_role_relation",
+    // })
+    // roles: Role[];
 }

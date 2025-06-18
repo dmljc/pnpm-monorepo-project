@@ -34,7 +34,7 @@ export class UserService {
     async login(@Body() user: LoginDto) {
         const foundUser = await this.userRepository.findOne({
             where: { username: user.username },
-            relations: ["roles"], // 关键：加载关联角色
+            // relations: ["roles"], // 关键：加载关联角色
         });
 
         if (!foundUser) {
@@ -49,23 +49,19 @@ export class UserService {
 
     async list(queryData: QueryDto) {
         const { username, name, phone } = queryData;
-
         const users = await this.userRepository.find({
             where: {
                 username: Like(createLikeQuery(username)),
                 name: Like(createLikeQuery(name)),
                 phone: Like(createLikeQuery(phone)),
             },
-            relations: ["roles"],
             order: {
-                updateTime: "DESC", // 默认按更新时间倒序
+                updateTime: "DESC",
             },
         });
-
-        // 只返回前端需要的字段，避免 roles 字段污染 status
         return users.map((user) => ({
             id: user.id,
-            role: user.role,
+            role: user.role, // 确保返回
             avatar: user.avatar,
             username: user.username,
             name: user.name,
@@ -76,7 +72,6 @@ export class UserService {
             remark: user.remark,
             createTime: user.createTime,
             updateTime: user.updateTime,
-            roles: user.roles,
         }));
     }
 
@@ -95,7 +90,7 @@ export class UserService {
     async findUserByEmail(email: string) {
         return await this.userRepository.findOne({
             where: { email },
-            relations: ["roles"],
+            // relations: ["roles"],
         });
     }
 
@@ -109,7 +104,7 @@ export class UserService {
     async info(id: number) {
         return this.userRepository.findOne({
             where: { id },
-            relations: ["roles"], // 关联角色信息
+            // relations: ["roles"], // 关联角色信息
         });
     }
 

@@ -64,7 +64,6 @@ const User: FC = () => {
             fixed: "left",
             render: (text) => <a>{text}</a>,
         },
-
         {
             title: "密码",
             dataIndex: "password",
@@ -77,6 +76,12 @@ const User: FC = () => {
             width: 110,
         },
         {
+            title: "角色",
+            dataIndex: "role",
+            hideInSearch: true,
+            width: 100,
+        },
+        {
             title: "手机号",
             dataIndex: "phone",
             width: 130,
@@ -85,11 +90,6 @@ const User: FC = () => {
             title: "邮箱",
             dataIndex: "email",
             width: 180,
-        },
-        {
-            title: "角色",
-            dataIndex: "role",
-            hideInSearch: true,
         },
         {
             title: "状态",
