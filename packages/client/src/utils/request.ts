@@ -185,6 +185,11 @@ export const createAxiosByinterceptors = (
             // status === 401 业务接口返回 401 错误
             // data?.code === 401 第三方接口返回 401 错误，比如QQ登录
             if ((status === 401 || data?.code === 401) && !isRefreshRequest) {
+                if (data?.message?.includes("禁用")) {
+                    message.error(data.message);
+                    TokenService.removeTokens();
+                    return Promise.reject(error);
+                }
                 return handleUnauthorizedError(config, refreshToken, queue);
             }
 

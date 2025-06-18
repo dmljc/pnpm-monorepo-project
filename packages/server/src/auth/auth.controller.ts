@@ -29,37 +29,37 @@ export class AuthController {
     @Post("login")
     async login(@Request() req, @Res({ passthrough: true }) res: Response) {
         const user = await this.userService.login(req.user);
-        if (user) {
-            const access_token = this.jwtService.sign(
-                {
-                    user: {
-                        id: user.id,
-                        username: user.username,
-                        user,
-                    },
-                },
-                { expiresIn: "50m" },
-            );
-            res.setHeader("Authorization", access_token);
-
-            const refresh_token = this.jwtService.sign(
-                {
-                    user: {
-                        id: user.id,
-                    },
-                },
-                {
-                    expiresIn: "150m",
-                },
-            );
-
-            return {
-                access_token,
-                refresh_token,
-            };
-        } else {
-            return "login fail";
+        if (user.status === 0) {
+            throw new UnauthorizedException("用户已被禁用");
         }
+
+        const access_token = this.jwtService.sign(
+            {
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    user,
+                },
+            },
+            { expiresIn: "50m" },
+        );
+        res.setHeader("Authorization", access_token);
+
+        const refresh_token = this.jwtService.sign(
+            {
+                user: {
+                    id: user.id,
+                },
+            },
+            {
+                expiresIn: "150m",
+            },
+        );
+
+        return {
+            access_token,
+            refresh_token,
+        };
     }
 
     // github 登录

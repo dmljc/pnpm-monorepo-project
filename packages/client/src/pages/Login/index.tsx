@@ -63,28 +63,24 @@ const Login: FC = () => {
 
     // 处理登录提交
     const handleLoginSubmit = async (values: LoginUser) => {
-        try {
-            const params = {
-                login:
-                    loginType === LoginType.ACCOUNT
-                        ? values.username
-                        : values.email,
-                code:
-                    loginType === LoginType.ACCOUNT
-                        ? values.password
-                        : values.captcha,
-            };
+        const params = {
+            login:
+                loginType === LoginType.ACCOUNT
+                    ? values.username
+                    : values.email,
+            code:
+                loginType === LoginType.ACCOUNT
+                    ? values.password
+                    : values.captcha,
+        };
 
-            const res = await login(params);
-            if (res.success) {
-                const { access_token, refresh_token } = res.data;
-                localStorage.setItem("access_token", access_token);
-                localStorage.setItem("refresh_token", refresh_token);
-                messageApi.success("登录成功");
-                setTimeout(() => navigate("/"), 1000);
-            }
-        } catch (error) {
-            messageApi.error(String(error));
+        const res = await login(params);
+        if (res.success) {
+            const { access_token, refresh_token } = res.data;
+            localStorage.setItem("access_token", access_token);
+            localStorage.setItem("refresh_token", refresh_token);
+            messageApi.success("登录成功");
+            setTimeout(() => navigate("/"), 1000);
         }
     };
 
