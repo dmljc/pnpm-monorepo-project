@@ -19,7 +19,9 @@
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
         "react-router-dom": "^7.6.2",
-        "umi-request": "^1.4.0"
+        "umi-request": "^1.4.0",
+        "zustand": "^5.0.5",
+        "zustand-persist": "^0.4.0"
     },
     "devDependencies": {
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
