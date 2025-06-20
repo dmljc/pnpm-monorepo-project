@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { useUserStore } from "@/store/userStore";
 
 /**
  * API基础URL配置
@@ -27,10 +28,10 @@ interface PendingTask {
 }
 
 /**
- * Token服务接口定义
+ * 认证服务接口定义
  * @interface
  */
-interface TokenServiceType {
+interface AuthServiceType {
     /** 获取访问令牌 */
     getAccessToken: () => string | null;
     /** 获取刷新令牌 */
@@ -41,25 +42,24 @@ interface TokenServiceType {
      * @param {string} refreshToken - 刷新令牌
      */
     setTokens: (accessToken: string, refreshToken: string) => void;
-    /** 移除所有令牌 */
-    removeTokens: () => void;
+    /** 移除所有认证信息（令牌和用户信息） */
+    removeAuth: () => void;
 }
 
 /**
- * Token服务实现
+ * 认证服务实现，统一管理 token 及用户信息
  * @constant
- * @type {TokenServiceType}
+ * @type {AuthServiceType}
  */
-const TokenService: TokenServiceType = {
-    getAccessToken: () => localStorage.getItem("access_token"),
-    getRefreshToken: () => localStorage.getItem("refresh_token"),
+const AuthService: AuthServiceType = {
+    getAccessToken: () => useUserStore.getState().accessToken,
+    getRefreshToken: () => useUserStore.getState().refreshToken,
     setTokens: (accessToken: string, refreshToken: string) => {
-        localStorage.setItem("access_token", accessToken);
-        localStorage.setItem("refresh_token", refreshToken);
+        useUserStore.getState().setAccessToken(accessToken);
+        useUserStore.getState().setRefreshToken(refreshToken);
     },
-    removeTokens: () => {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+    removeAuth: () => {
+        useUserStore.getState().resetUserStore();
         localStorage.removeItem("pro-table-singe-demos");
     },
 };
@@ -93,7 +93,7 @@ const handleUnauthorizedError = async (
         return axios(config);
     } catch (err) {
         message.error("登录过期，请重新登录");
-        TokenService.removeTokens();
+        AuthService.removeAuth();
         window.location.href = "/login";
         return Promise.reject(err);
     }
@@ -128,19 +128,19 @@ export const createAxiosByinterceptors = (
     const refreshToken = async () => {
         const res = await axios.get(`${baseURL}/user/refresh`, {
             params: {
-                refresh_token: TokenService.getRefreshToken(),
+                refresh_token: AuthService.getRefreshToken(),
             },
         });
 
         const { access_token, refresh_token } = res.data.data;
-        TokenService.setTokens(access_token, refresh_token);
+        AuthService.setTokens(access_token, refresh_token);
         return res;
     };
 
     // 请求拦截器
     instance.interceptors.request.use(
         (config) => {
-            const accessToken = TokenService.getAccessToken();
+            const accessToken = AuthService.getAccessToken();
             const language = localStorage.getItem("language");
             if (accessToken) {
                 config.headers.Authorization = `Bearer ${accessToken}`;
@@ -187,7 +187,7 @@ export const createAxiosByinterceptors = (
             if ((status === 401 || data?.code === 401) && !isRefreshRequest) {
                 if (data?.message?.includes("禁用")) {
                     message.error(data.message);
-                    TokenService.removeTokens();
+                    AuthService.removeAuth();
                     return Promise.reject(error);
                 }
                 return handleUnauthorizedError(config, refreshToken, queue);

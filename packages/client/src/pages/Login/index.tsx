@@ -82,17 +82,15 @@ const Login: FC = () => {
             setAccessToken(access_token);
             setRefreshToken(refresh_token);
             handleUserInfo();
-            messageApi.success("登录成功");
             setTimeout(() => navigate("/"), 1000);
         }
     };
 
-    // 处理用户信息获取
+    // 获取用户信息
     const handleUserInfo = async () => {
         const res = await userInfo();
         if (res.success) {
             setUserInfo(res.data);
-            messageApi.success("获取用户信息成功");
         }
     };
 

@@ -26,6 +26,7 @@ import {
 import type { MenuProps } from "antd";
 import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
 import useStyles from "./style";
+import { useUserStore } from "@/store";
 
 const { Header, Sider, Content } = AntdLayout;
 
@@ -99,9 +100,7 @@ const Layout: FC = () => {
     };
 
     const onLogout = () => {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        localStorage.removeItem("pro-table-singe-demos");
+        useUserStore.getState().logout();
         navigate("/login");
     };
 
