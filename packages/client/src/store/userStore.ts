@@ -3,16 +3,21 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import type { User } from "./interface";
 
 /**
- * 用户 Store 的状态类型定义
- * 包含用户信息、token 及相关操作方法
+ * 用户状态类型，包含用户信息和 Token
  */
-type UserStoreState = {
-    /** 用户信息对象，未登录时为 null */
+type UserState = {
+    /** 当前用户信息，初始为 null */
     userInfo: User | null;
-    /** 访问令牌，未登录时为 null */
+    /** 当前访问令牌，初始为 null */
     accessToken: string | null;
-    /** 刷新令牌，未登录时为 null */
+    /** 当前刷新令牌，初始为 null */
     refreshToken: string | null;
+};
+
+/**
+ * 用户操作方法类型
+ */
+type UserAction = {
     /** 设置用户信息 */
     setUserInfo: (userInfo: User | null) => void;
     /** 设置访问令牌 */
@@ -25,13 +30,15 @@ type UserStoreState = {
     logout: () => void;
     /** 重置 Store 状态方法 */
     resetUserStore: () => void;
+    /** 仅清除本地存储中的用户数据 */
+    removeUserStore: () => void;
 };
 
 /**
  * 用户 Store，包含用户信息和 token 的持久化管理
  * 使用 zustand + persist 插件实现本地存储
  */
-export const useUserStore = create<UserStoreState>()(
+export const useUserStore = create<UserState & UserAction>()(
     persist(
         (set, get) => ({
             /** 当前用户信息，初始为 null */
@@ -62,7 +69,7 @@ export const useUserStore = create<UserStoreState>()(
 
             /**
              * 重置 Store 状态方法
-             * 将所有用户相关状态重置为初始值，并移除 localStorage 中的 user 数据
+             * 将所有用户相关状态重置为初始值，并移除 localStorage 中的 userStore 数据
              */
             resetUserStore: () => {
                 set({
@@ -70,11 +77,19 @@ export const useUserStore = create<UserStoreState>()(
                     accessToken: null,
                     refreshToken: null,
                 });
-                localStorage.removeItem("user"); // 移除 localstorage 中的 user 数据
+                get().removeUserStore();
+            },
+
+            /**
+             * 仅清除本地存储中的用户数据
+             * 不会重置用户状态，仅移除 localStorage 中的数据
+             */
+            removeUserStore: () => {
+                localStorage.removeItem("userStore");
             },
         }),
         {
-            name: "user", // localStorage 的 key，唯一标识
+            name: "userStore", // localStorage 的 key，唯一标识
             storage: createJSONStorage(() => localStorage), // 使用 localStorage 持久化
         },
     ),

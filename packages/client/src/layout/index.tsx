@@ -26,7 +26,7 @@ import {
 import type { MenuProps } from "antd";
 import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
 import useStyles from "./style";
-import { useUserStore } from "@/store";
+import { useUserStore, useSystemStore } from "@/store";
 
 const { Header, Sider, Content } = AntdLayout;
 
@@ -34,16 +34,15 @@ const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
 
 const Layout: FC = () => {
     const { pathname } = location;
+    const { logout } = useUserStore();
+    const { systemLang, setSystemLang, systemTheme, setSystemTheme } =
+        useSystemStore();
     const navigate = useNavigate();
     const defaultOpenKey = `/${location.pathname.split("/")[1]}`;
 
     const [collapsed, setCollapsed] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState([pathname]);
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
-    const [isDarkModel, setIsDarkModel] = useState(false);
-    const [language, setLanguage] = useState(
-        localStorage.getItem("language") || "en",
-    );
 
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = theme;
@@ -100,18 +99,19 @@ const Layout: FC = () => {
     };
 
     const onLogout = () => {
-        useUserStore.getState().logout();
+        logout();
         navigate("/login");
     };
 
     return (
         <ConfigProvider
             theme={{
-                algorithm: isDarkModel ? darkAlgorithm : defaultAlgorithm,
+                algorithm:
+                    systemTheme === "light" ? defaultAlgorithm : darkAlgorithm,
                 components: {
                     // 单独处理个别组件
                     Layout: {
-                        headerBg: isDarkModel ? "#141414" : "#fff",
+                        headerBg: systemTheme === "light" ? "#fff" : "#141414",
                     },
                 },
             }}
@@ -159,30 +159,32 @@ const Layout: FC = () => {
                         </span>
 
                         <span className={ss.headerRight}>
-                            <span onClick={() => setIsDarkModel(!isDarkModel)}>
-                                {isDarkModel ? (
-                                    <SunOutlined className={ss.headerIcon} />
-                                ) : (
+                            <span
+                                onClick={() => {
+                                    setSystemTheme(
+                                        systemTheme === "light"
+                                            ? "dark"
+                                            : "light",
+                                    );
+                                }}
+                            >
+                                {systemTheme === "light" ? (
                                     <MoonOutlined className={ss.headerIcon} />
+                                ) : (
+                                    <SunOutlined className={ss.headerIcon} />
                                 )}
                             </span>
 
-                            {isDarkModel ? (
-                                <CompressOutlined className={ss.headerIcon} />
-                            ) : (
+                            {systemTheme === "light" ? (
                                 <ExpandOutlined className={ss.headerIcon} />
+                            ) : (
+                                <CompressOutlined className={ss.headerIcon} />
                             )}
                             <GithubOutlined className={ss.headerIcon} />
 
                             <Radio.Group
-                                value={language}
-                                onChange={(e) => {
-                                    setLanguage(e.target.value);
-                                    localStorage.setItem(
-                                        "language",
-                                        e.target.value,
-                                    );
-                                }}
+                                value={systemLang}
+                                onChange={(e) => setSystemLang(e.target.value)}
                             >
                                 <Radio.Button value="zh">中文</Radio.Button>
                                 <Radio.Button value="en">English</Radio.Button>

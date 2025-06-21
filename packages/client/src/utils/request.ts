@@ -1,6 +1,6 @@
 import { message } from "antd";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import { useUserStore } from "@/store/userStore";
+import { useUserStore, useSystemStore } from "@/store";
 
 /**
  * API基础URL配置
@@ -52,14 +52,22 @@ interface AuthServiceType {
  * @type {AuthServiceType}
  */
 const AuthService: AuthServiceType = {
-    getAccessToken: () => useUserStore.getState().accessToken,
-    getRefreshToken: () => useUserStore.getState().refreshToken,
+    getAccessToken: () => {
+        const { accessToken } = useUserStore.getState();
+        return accessToken;
+    },
+    getRefreshToken: () => {
+        const { refreshToken } = useUserStore.getState();
+        return refreshToken;
+    },
     setTokens: (accessToken: string, refreshToken: string) => {
-        useUserStore.getState().setAccessToken(accessToken);
-        useUserStore.getState().setRefreshToken(refreshToken);
+        const { setAccessToken, setRefreshToken } = useUserStore.getState();
+        setAccessToken(accessToken);
+        setRefreshToken(refreshToken);
     },
     removeAuth: () => {
-        useUserStore.getState().resetUserStore();
+        const { resetUserStore } = useUserStore.getState();
+        resetUserStore();
         localStorage.removeItem("pro-table-singe-demos");
     },
 };
@@ -140,15 +148,15 @@ export const createAxiosByinterceptors = (
     // 请求拦截器
     instance.interceptors.request.use(
         (config) => {
-            const accessToken = AuthService.getAccessToken();
-            const language = localStorage.getItem("language");
+            const { getAccessToken } = AuthService;
+            const { systemLang } = useSystemStore.getState();
+            const accessToken = getAccessToken();
             if (accessToken) {
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
-            if (language) {
-                config.headers["x-custom-lang"] = language;
+            if (systemLang) {
+                config.headers["x-custom-lang"] = systemLang;
             }
-
             return config;
         },
         (error) => {
