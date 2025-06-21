@@ -1,22 +1,12 @@
-import { FC, useEffect, useState } from "react";
-import { UserInfo } from "./interface";
-import { info } from "./api";
+import { FC } from "react";
+import { useUserStore } from "@/store";
 
 const Profile: FC = () => {
-    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-
-    useEffect(() => {
-        fetchUserInfo();
-    }, []);
-
-    const fetchUserInfo = async () => {
-        const res = await info();
-        setUserInfo(res?.data);
-    };
+    const userInfo = useUserStore().userInfo;
 
     return (
         <>
-            <h1>Profile</h1>
+            <h1>Profile:用户信息，取自 system store</h1>
             {userInfo && (
                 <>
                     <p>role: {userInfo.role}</p>
@@ -26,14 +16,6 @@ const Profile: FC = () => {
                     <p>phone: {userInfo.phone}</p>
                     <p>status: {userInfo.status}</p>
                     <p>remark: {userInfo.remark}</p>
-                    {userInfo?.roles?.[0] && (
-                        <>
-                            {/* <p>roles: {userInfo.roles[0].id}</p> */}
-                            <p>roles: {userInfo.roles[0].name}</p>
-                            <p>roles: {userInfo.roles[0].code}</p>
-                            <p>roles: {userInfo.roles[0].remark}</p>
-                        </>
-                    )}
                 </>
             )}
         </>
