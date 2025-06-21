@@ -17,7 +17,7 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from "@ant-design/pro-components";
-import { login, emailCaptcha, userInfo } from "./api";
+import { emailCaptcha } from "./api";
 import { useUserStore } from "@/store";
 
 import useStyles from "./style";
@@ -37,7 +37,7 @@ const ICON_STYLES: CSSProperties = {
 };
 
 // 登录用户接口
-interface LoginUser {
+export interface LoginUser {
     username: string;
     password: string;
     email: string;
@@ -61,7 +61,6 @@ const Login: FC = () => {
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
-    const { setAccessToken, setRefreshToken, setUserInfo } = useUserStore();
 
     // 处理登录提交
     const handleLoginSubmit = async (values: LoginUser) => {
@@ -76,21 +75,10 @@ const Login: FC = () => {
                     : values.captcha,
         };
 
-        const res = await login(params);
-        if (res.success) {
-            const { access_token, refresh_token } = res.data;
-            setAccessToken(access_token);
-            setRefreshToken(refresh_token);
-            handleUserInfo();
-            setTimeout(() => navigate("/"), 1000);
-        }
-    };
+        const resp = await useUserStore.getState().login(params);
 
-    // 获取用户信息
-    const handleUserInfo = async () => {
-        const res = await userInfo();
-        if (res.success) {
-            setUserInfo(res.data);
+        if (resp !== undefined && resp !== null) {
+            setTimeout(() => navigate("/"), 1000);
         }
     };
 

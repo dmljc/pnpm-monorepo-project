@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { message } from "antd";
 import type { User } from "./interface";
+import { authLogin, userInfoApi } from "./api";
+import { useSystemStore } from "./systemStore";
+
+interface LogigParams {
+    login: string;
+    code: string;
+}
 
 /**
  * 用户状态类型，包含用户信息和 Token
@@ -25,9 +33,11 @@ type UserAction = {
     /** 设置刷新令牌 */
     setRefreshToken: (refreshToken: string | null) => void;
     /** 登录方法，设置用户信息 */
-    login: (userInfo: User) => void;
+    login: (params: LogigParams) => void;
     /** 退出登录方法，重置用户状态 */
     logout: () => void;
+    /** 获取用户信息方法 */
+    getUserInfo: (accessToken: string) => void;
     /** 重置 Store 状态方法 */
     resetUserStore: () => void;
     /** 仅清除本地存储中的用户数据 */
@@ -58,13 +68,38 @@ export const useUserStore = create<UserState & UserAction>()(
                 set({ refreshToken }),
 
             /** 登录方法，设置用户信息 */
-            login: (userInfo: User) => set({ userInfo }),
+            login: async (params: LogigParams) => {
+                const res = await authLogin(params);
+                if (res.success) {
+                    set({
+                        accessToken: res.data.access_token,
+                        refreshToken: res.data.refresh_token,
+                    });
+                    message.success("登录成功");
+                    get().getUserInfo(res.data.access_token);
+                    useSystemStore.setState({ lang: "zh", theme: "light" });
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            /** 获取用户信息方法 */
+            getUserInfo: async (accessToken: string) => {
+                if (!accessToken) return;
+                const res = await userInfoApi(accessToken);
+                if (res.success) {
+                    set({
+                        userInfo: res.data,
+                    });
+                }
+            },
             /**
              * 退出登录方法
              * 会调用 resetUserStore 重置所有用户相关状态
              */
             logout: () => {
                 get().resetUserStore();
+                useSystemStore.getState().resetSystemStore();
             },
 
             /**

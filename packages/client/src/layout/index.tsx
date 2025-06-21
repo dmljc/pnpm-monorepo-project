@@ -1,14 +1,14 @@
 import { useState, FC } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
-    Layout as AntdLayout,
     Menu,
-    Dropdown,
-    Button,
-    ConfigProvider,
-    theme,
     Card,
     Radio,
+    Button,
+    Dropdown,
+    ConfigProvider,
+    theme as antdTheme,
+    Layout as AntdLayout,
 } from "antd";
 import {
     MenuFoldOutlined,
@@ -35,8 +35,7 @@ const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
 const Layout: FC = () => {
     const { pathname } = location;
     const { logout } = useUserStore();
-    const { systemLang, setSystemLang, systemTheme, setSystemTheme } =
-        useSystemStore();
+    const { lang, setLang, theme, setTheme } = useSystemStore();
     const navigate = useNavigate();
     const defaultOpenKey = `/${location.pathname.split("/")[1]}`;
 
@@ -45,7 +44,7 @@ const Layout: FC = () => {
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
 
     const { styles: ss } = useStyles();
-    const { defaultAlgorithm, darkAlgorithm } = theme;
+    const { defaultAlgorithm, darkAlgorithm } = antdTheme;
     // const { token } = theme.useToken();
     // console.log("token===", token);
 
@@ -106,12 +105,11 @@ const Layout: FC = () => {
     return (
         <ConfigProvider
             theme={{
-                algorithm:
-                    systemTheme === "light" ? defaultAlgorithm : darkAlgorithm,
+                algorithm: theme === "light" ? defaultAlgorithm : darkAlgorithm,
                 components: {
                     // 单独处理个别组件
                     Layout: {
-                        headerBg: systemTheme === "light" ? "#fff" : "#141414",
+                        headerBg: theme === "light" ? "#fff" : "#141414",
                     },
                 },
             }}
@@ -161,21 +159,19 @@ const Layout: FC = () => {
                         <span className={ss.headerRight}>
                             <span
                                 onClick={() => {
-                                    setSystemTheme(
-                                        systemTheme === "light"
-                                            ? "dark"
-                                            : "light",
+                                    setTheme(
+                                        theme === "light" ? "dark" : "light",
                                     );
                                 }}
                             >
-                                {systemTheme === "light" ? (
+                                {theme === "light" ? (
                                     <MoonOutlined className={ss.headerIcon} />
                                 ) : (
                                     <SunOutlined className={ss.headerIcon} />
                                 )}
                             </span>
 
-                            {systemTheme === "light" ? (
+                            {theme === "light" ? (
                                 <ExpandOutlined className={ss.headerIcon} />
                             ) : (
                                 <CompressOutlined className={ss.headerIcon} />
@@ -183,8 +179,8 @@ const Layout: FC = () => {
                             <GithubOutlined className={ss.headerIcon} />
 
                             <Radio.Group
-                                value={systemLang}
-                                onChange={(e) => setSystemLang(e.target.value)}
+                                value={lang}
+                                onChange={(e) => setLang(e.target.value)}
                             >
                                 <Radio.Button value="zh">中文</Radio.Button>
                                 <Radio.Button value="en">English</Radio.Button>

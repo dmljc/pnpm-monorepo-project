@@ -7,9 +7,9 @@ import { createJSONStorage, persist } from "zustand/middleware";
  */
 type State = {
     /** 当前主题（如 light/dark） */
-    systemTheme: string;
+    theme: string;
     /** 当前语言（如 zh/en） */
-    systemLang: string;
+    lang: string;
 };
 
 /**
@@ -17,9 +17,9 @@ type State = {
  */
 type Action = {
     /** 设置系统语言 */
-    setSystemLang: (lang: string) => void;
+    setLang: (lang: string) => void;
     /** 设置系统主题 */
-    setSystemTheme: (theme: string) => void;
+    setTheme: (theme: string) => void;
     /** 重置系统设置为默认值，并清除本地存储 */
     resetSystemStore: () => void;
     /** 仅清除本地存储中的系统设置 */
@@ -32,15 +32,15 @@ type Action = {
 export const useSystemStore = create<State & Action>()(
     persist(
         (set, get) => ({
-            systemTheme: "light", // 默认主题
-            systemLang: "zh", // 默认语言
-            setSystemLang: (lang: string) => set({ systemLang: lang }),
-            setSystemTheme: (theme: string) => set({ systemTheme: theme }),
+            theme: "light", // 默认主题
+            lang: "zh", // 默认语言
+            setLang: (lang: string) => set({ lang: lang }),
+            setTheme: (theme: string) => set({ theme: theme }),
             /**
              * 重置系统设置为默认值，并清除本地存储
              */
             resetSystemStore: () => {
-                set({ systemTheme: "light", systemLang: "zh" });
+                set({ theme: "light", lang: "zh" });
                 get().removeSystemStore();
             },
             /**
