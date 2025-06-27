@@ -1,5 +1,9 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import {
+    TypeOrmModule,
+    TypeOrmModuleAsyncOptions,
+    TypeOrmModuleOptions,
+} from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
@@ -31,8 +35,19 @@ import {
     AcceptLanguageResolver,
     HeaderResolver,
     I18nModule,
+    // logger,
     QueryResolver,
 } from "nestjs-i18n";
+
+import {
+    WINSTON_MODULE_NEST_PROVIDER,
+    WinstonLogger,
+    WinstonModule,
+    utilities,
+} from "nest-winston";
+import * as winston from "winston";
+import { CustomTypeOrmLogger } from "./common/custom.typeorm.logger";
+import "winston-daily-rotate-file";
 
 @Module({
     imports: [
@@ -45,8 +60,10 @@ import {
         // 数据库连接配置
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
+            useFactory: async (
+                configService: ConfigService,
+                logger: WinstonLogger,
+            ): Promise<TypeOrmModuleOptions | TypeOrmModuleAsyncOptions> => ({
                 type: configService.get("DB_TYPE") as any,
                 host: configService.get<string>("DB_HOST"),
                 port: configService.get<number>("DB_PORT"),
@@ -55,8 +72,34 @@ import {
                 database: configService.get<string>("DB_DATABASE"),
                 synchronize: configService.get<boolean>("DB_SYNCHRONIZE"),
                 logging: configService.get<boolean>("DB_LOGGING"),
+                logger: new CustomTypeOrmLogger(logger),
                 entities: [join(__dirname, "**/*.entity{.ts,.js}")],
                 poolSize: configService.get<number>("DB_POOL_SIZE"),
+            }),
+            inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
+        }),
+
+        WinstonModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                level: "debug",
+                transports: [
+                    new winston.transports.DailyRotateFile({
+                        level: configService.get("WINSTON_LOG_LEVEL"),
+                        dirname: configService.get("WINSTON_LOG_DIRNAME"),
+                        filename: configService.get("WINSTON_LOG_FILENAME"),
+                        datePattern: configService.get(
+                            "WINSTON_LOG_DATE_PATTERN",
+                        ),
+                        maxSize: configService.get("WINSTON_LOG_MAX_SIZE"),
+                    }),
+                    new winston.transports.Console({
+                        format: winston.format.combine(
+                            winston.format.timestamp(),
+                            utilities.format.nestLike(),
+                        ),
+                    }),
+                ],
             }),
         }),
 

@@ -4,6 +4,7 @@ import { AppModule } from "./app.module";
 // import { ValidationPipe } from "@nestjs/common";
 import * as os from "os";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 // import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 // import { HttpExceptionFilter } from "./common/http.exception.filter"; // 确保路径正确
 import { HttpResppnseInterceptor } from "./common/http.response.interceptor";
@@ -63,6 +64,8 @@ async function bootstrap() {
         ],
         credentials: true, // 允许携带凭证（如 cookies）
     }); // 启用cors 否则前端会因为跨域报错
+
+    app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
     const port = process.env.PORT || 3000;
 
