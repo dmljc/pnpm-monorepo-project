@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { message } from "antd";
 import type { User } from "./interface";
 import { authLogin, userInfoApi } from "./api";
 import { useSystemStore } from "./systemStore";
@@ -33,7 +32,7 @@ type UserAction = {
     /** 设置刷新令牌 */
     setRefreshToken: (refreshToken: string | null) => void;
     /** 登录方法，设置用户信息 */
-    login: (params: LogigParams) => void;
+    login: (params: LogigParams) => Promise<boolean>;
     /** 退出登录方法，重置用户状态 */
     logout: () => void;
     /** 获取用户信息方法 */
@@ -68,14 +67,13 @@ export const useUserStore = create<UserState & UserAction>()(
                 set({ refreshToken }),
 
             /** 登录方法，设置用户信息 */
-            login: async (params: LogigParams) => {
+            login: async (params: LogigParams): Promise<boolean> => {
                 const res = await authLogin(params);
                 if (res.success) {
                     set({
                         accessToken: res.data.access_token,
                         refreshToken: res.data.refresh_token,
                     });
-                    message.success("登录成功");
                     get().getUserInfo(res.data.access_token);
                     useSystemStore.setState({ lang: "zh", theme: "light" });
                     return true;

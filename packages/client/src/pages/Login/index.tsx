@@ -76,9 +76,11 @@ const Login: FC = () => {
         };
 
         const resp = await useUserStore.getState().login(params);
-
-        if (resp !== undefined && resp !== null) {
+        if (resp === true) {
+            message.success("登录成功");
             setTimeout(() => navigate("/"), 1000);
+        } else {
+            message.error("登录失败");
         }
     };
 
