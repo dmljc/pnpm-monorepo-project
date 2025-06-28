@@ -12,14 +12,14 @@
     "dependencies": {
         "@ant-design/icons": "^6.0.0",
         "@ant-design/pro-components": "^2.8.9",
-        "antd": "^5.26.1",
+        "antd": "^5.26.2",
         "antd-style": "^3.7.1",
         "axios": "^1.10.0",
         "dayjs": "^1.11.13",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-router-dom": "^7.6.2",
-        "zustand": "^5.0.5"
+        "react-router-dom": "^7.6.3",
+        "zustand": "^5.0.6"
     },
     "devDependencies": {
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
@@ -27,6 +27,6 @@
         "@types/react-dom": "^19.1.6",
         "@vitejs/plugin-react-swc": "^3.10.2",
         "typescript": "^5.8.3",
-        "vite": "^6.3.5"
+        "vite": "^7.0.0"
     }
 }

@@ -11,7 +11,8 @@
         "start:dev": "nest start --watch",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
-        "docs:generate": "compodoc -p tsconfig.json -s -o"
+        "docs:generate": "compodoc -p tsconfig.json -s -o",
+        "clean:logs": "rm -rf ./daily.log"
     },
     "dependencies": {
         "@nestjs/axios": "^4.0.0",
@@ -42,7 +43,7 @@
         "reflect-metadata": "^0.2.2",
         "request-ip": "^3.3.0",
         "rxjs": "^7.8.2",
-        "typeorm": "^0.3.24",
+        "typeorm": "^0.3.25",
         "winston": "^3.17.0",
         "winston-daily-rotate-file": "^5.0.0"
     },
@@ -54,7 +55,7 @@
         "@types/exceljs": "^1.3.2",
         "@types/express": "^5.0.3",
         "@types/multer": "^1.4.13",
-        "@types/node": "^24.0.3",
+        "@types/node": "^24.0.6",
         "@types/nodemailer": "^6.4.17",
         "@types/passport-github2": "^1.2.9",
         "@types/passport-google-oauth20": "^2.0.16",
