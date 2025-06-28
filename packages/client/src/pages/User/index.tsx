@@ -289,15 +289,15 @@ const User: FC = () => {
                         ...filter,
                     });
 
-                    // 兼容性处理，在 refresh 接口调用之后刷新页面
-                    if (!resp.success) {
-                        actionRef.current?.reload();
-                    }
-
+                    // 兼容 resp.data 可能为对象或数组
+                    const dataList = Array.isArray(resp.data)
+                        ? resp.data
+                        : resp.data?.data || [];
+                    const total = resp.data?.total ?? dataList.length;
                     return {
-                        data: Array.isArray(resp.data) ? resp.data : [],
-                        success: resp.success || true,
-                        total: resp.data.length,
+                        data: dataList,
+                        success: resp.success !== false,
+                        total,
                     };
                 }}
                 editable={{
@@ -337,7 +337,7 @@ const User: FC = () => {
                 }}
                 pagination={{
                     pageSize: 10,
-                    onChange: (page) => console.log(page),
+                    // onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
                 headerTitle="高级表格"

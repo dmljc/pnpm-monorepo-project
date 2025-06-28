@@ -83,11 +83,11 @@ const AuthService: AuthServiceType = {
  */
 const handleUnauthorizedError = async (
     config: AxiosRequestConfig,
-    refreshToken: () => Promise<any>,
+    handleRefreshToken: () => Promise<any>,
     queue: PendingTask[],
 ) => {
     try {
-        const res = await refreshToken();
+        const res = await handleRefreshToken();
         const newAccessToken = res.data.data.access_token;
 
         queue.forEach(({ config, resolve }) => {
@@ -133,7 +133,7 @@ export const createAxiosByinterceptors = (
      * @function
      * @returns {Promise<any>} 刷新令牌的响应结果
      */
-    const refreshToken = async () => {
+    const handleRefreshToken = async () => {
         const res = await axios.get(`${baseURL}/user/refresh`, {
             params: {
                 refresh_token: AuthService.getRefreshToken(),
@@ -149,13 +149,13 @@ export const createAxiosByinterceptors = (
     instance.interceptors.request.use(
         (config) => {
             const { getAccessToken } = AuthService;
-            const { systemLang } = useSystemStore.getState();
+            const { lang } = useSystemStore.getState();
             const accessToken = getAccessToken();
             if (accessToken) {
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
-            if (systemLang) {
-                config.headers["x-custom-lang"] = systemLang;
+            if (lang) {
+                config.headers["x-custom-lang"] = lang;
             }
             return config;
         },
@@ -198,7 +198,11 @@ export const createAxiosByinterceptors = (
                     AuthService.removeAuth();
                     return Promise.reject(error);
                 }
-                return handleUnauthorizedError(config, refreshToken, queue);
+                return handleUnauthorizedError(
+                    config,
+                    handleRefreshToken,
+                    queue,
+                );
             }
 
             if (status === 400) {

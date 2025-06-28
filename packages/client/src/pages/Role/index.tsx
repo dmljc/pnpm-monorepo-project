@@ -119,15 +119,15 @@ const Role: FC = () => {
                         ...sort,
                         ...filter,
                     });
-
-                    if (!resp.success) {
-                        actionRef.current?.reload();
-                    }
-
+                    // 兼容 resp.data 可能为对象或数组
+                    const dataList = Array.isArray(resp.data)
+                        ? resp.data
+                        : resp.data?.data || [];
+                    const total = resp.data?.total ?? dataList.length;
                     return {
-                        data: Array.isArray(resp.data) ? resp.data : [],
-                        success: resp.success || true,
-                        total: resp.data.length,
+                        data: dataList,
+                        success: resp.success !== false,
+                        total,
                     };
                 }}
                 editable={{
@@ -167,7 +167,7 @@ const Role: FC = () => {
                 }}
                 pagination={{
                     pageSize: 10,
-                    onChange: (page) => console.log(page),
+                    // onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
                 headerTitle="高级表格"
