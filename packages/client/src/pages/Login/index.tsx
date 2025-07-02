@@ -77,10 +77,10 @@ const Login: FC = () => {
 
         const resp = await useUserStore.getState().login(params);
         if (resp === true) {
-            message.success("登录成功");
+            messageApi.success("登录成功");
             setTimeout(() => navigate("/"), 1000);
         } else {
-            message.error("登录失败");
+            messageApi.error("登录失败");
         }
     };
 
@@ -108,7 +108,7 @@ const Login: FC = () => {
         const res = await emailCaptcha({
             address: "1593025641@qq.com",
         });
-        message.success(`您的验证码是：${res?.data}，有效期为 5 分钟`);
+        messageApi.success(`您的验证码是：${res?.data}，有效期为 5 分钟`);
     };
 
     // 渲染账号密码登录表单
