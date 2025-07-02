@@ -4,6 +4,10 @@ import {
     PlusOutlined,
     DownloadOutlined,
     UploadOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    CloseCircleOutlined,
+    CheckCircleOutlined
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
@@ -147,15 +151,14 @@ const User: FC = () => {
             title: "操作",
             valueType: "option",
             key: "option",
-            width: 130,
+            width: 200,
             render: (text, _record, _, action) => [
                 <Button
-                    style={{
-                        padding: 0,
-                    }}
                     key="update"
                     color="primary"
                     variant="link"
+                    className="btn-p0"
+                    icon={<EditOutlined />}
                     onClick={() => {
                         setModalType(ModalTypeEnum.UPDATE);
                         setRecord(_record);
@@ -165,12 +168,11 @@ const User: FC = () => {
                     修改
                 </Button>,
                 <Button
-                    style={{
-                        padding: 0,
-                    }}
                     key="delete"
                     color="danger"
                     variant="link"
+                    className="btn-p0"
+                    icon={<DeleteOutlined />}
                     // 为避免类型不匹配问题，将 _record.role 转换为数字类型再进行比较
                     disabled={_record.role === "root"}
                     onClick={async () => {
@@ -184,12 +186,17 @@ const User: FC = () => {
                     删除
                 </Button>,
                 <Button
-                    style={{
-                        padding: 0,
-                    }}
                     key="freeze"
                     color="primary"
                     variant="link"
+                    className="btn-p0"
+                    icon={
+                        _record.status === 1 ? (
+                            <CloseCircleOutlined />
+                        ) : (
+                            <CheckCircleOutlined />
+                        )
+                    }
                     disabled={_record.role === "root"}
                     onClick={() => handleFreeze(_record)}
                 >

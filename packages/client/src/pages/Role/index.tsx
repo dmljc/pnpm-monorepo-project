@@ -1,6 +1,6 @@
 import { FC, useState, useRef } from "react";
 import { Button, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { ModalTypeEnum } from "@/utils";
@@ -76,10 +76,12 @@ const Role: FC = () => {
             title: "操作",
             valueType: "option",
             key: "option",
-            width: 100,
+            width: 140,
             render: (text, _record, _, action) => [
-                <a
-                    key="edit"
+                <Button
+                    type="link"
+                    className="btn-p0"
+                    icon={<EditOutlined />}
                     onClick={() => {
                         setModalType(ModalTypeEnum.UPDATE);
                         setRecord(_record);
@@ -87,9 +89,11 @@ const Role: FC = () => {
                     }}
                 >
                     修改
-                </a>,
-                <a
-                    key="delete"
+                </Button>,
+                <Button
+                    type="link"
+                    className="btn-p0"
+                    icon={<DeleteOutlined />}
                     onClick={async () => {
                         const resp = await del(_record.id);
                         if (resp) {
@@ -99,7 +103,7 @@ const Role: FC = () => {
                     }}
                 >
                     删除
-                </a>,
+                </Button>,
             ],
         },
     ];

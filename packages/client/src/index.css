@@ -33,3 +33,7 @@ body {
 .ant-image .ant-image-mask {
     border-radius: 100%;
 }
+
+.btn-p0 {
+    padding: 0;
+}
