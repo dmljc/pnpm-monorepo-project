@@ -4,14 +4,11 @@ import type { TableColumnsType } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import CreateMenu from "./CreateMenu";
 
-// type TableRowSelection<T extends object = object> =
-//     TableProps<T>["rowSelection"];
-
 interface DataType {
-    // key: React.ReactNode;
     key: string;
     name: string;
     type: string;
+    icon?: string;
     url?: string;
     code?: string;
     component?: string;
@@ -200,16 +197,14 @@ const data: DataType[] = [
 
 const Menu: React.FC = () => {
     // const [checkStrictly, setCheckStrictly] = useState(false);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
-    const onClose = () => setOpen(false);
+    const onClose = () => {
+        setOpen(false);
+    };
 
     return (
         <>
-            {/* <Space align="center" style={{ marginBottom: 16 }}>
-                CheckStrictly:{" "}
-                <Switch checked={checkStrictly} onChange={setCheckStrictly} />
-            </Space> */}
             <Button
                 type="primary"
                 icon={<PlusOutlined />}
@@ -218,7 +213,7 @@ const Menu: React.FC = () => {
                 新增菜单
             </Button>
 
-            <CreateMenu open={open} onClose={onClose} />
+            <CreateMenu open={open} menuData={data} onClose={onClose} />
 
             <Table<DataType>
                 columns={columns}

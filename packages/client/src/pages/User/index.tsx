@@ -7,7 +7,7 @@ import {
     EditOutlined,
     DeleteOutlined,
     CloseCircleOutlined,
-    CheckCircleOutlined
+    CheckCircleOutlined,
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
