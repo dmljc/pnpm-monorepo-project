@@ -19,7 +19,6 @@ import {
 } from "@ant-design/pro-components";
 import { emailCaptcha } from "./api";
 import { useUserStore } from "@/store";
-
 import useStyles from "./style";
 
 // 登录类型枚举
@@ -77,8 +76,7 @@ const Login: FC = () => {
 
         const resp = await useUserStore.getState().login(params);
         if (resp === true) {
-            messageApi.success("登录成功");
-            setTimeout(() => navigate("/"), 1000);
+            navigate("/");
         } else {
             messageApi.error("登录失败");
         }
