@@ -11,6 +11,11 @@ import {
     TreeSelect,
 } from "antd";
 import { CloseOutlined, SaveOutlined } from "@ant-design/icons";
+import {
+    AppstoreOutlined,
+    MenuOutlined,
+    BorderOutlined,
+} from "@ant-design/icons";
 
 const { Item } = Form;
 
@@ -26,9 +31,9 @@ interface Props {
 }
 
 const typeOptions = [
-    { label: "目录", value: "catalog" },
-    { label: "菜单", value: "menu" },
-    { label: "按钮", value: "button" }, // 更换为BorderOutlined
+    { label: "目录", value: "catalog", icon: <AppstoreOutlined /> },
+    { label: "菜单", value: "menu", icon: <MenuOutlined /> },
+    { label: "按钮", value: "button", icon: <BorderOutlined /> },
 ];
 
 const CreateMenu: FC<Props> = (props) => {
