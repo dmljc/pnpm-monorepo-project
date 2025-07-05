@@ -3,7 +3,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import {
     Menu,
     Card,
-    Button,
     Dropdown,
     ConfigProvider,
     theme as antdTheme,
@@ -23,6 +22,7 @@ import {
     MoonOutlined,
     GlobalOutlined,
     TranslationOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
@@ -35,7 +35,7 @@ const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
 
 const Layout: FC = () => {
     const { pathname } = location;
-    const { logout } = useUserStore();
+    const { logout, userInfo } = useUserStore();
     const { lang, setLang, theme, setTheme } = useSystemStore();
     const navigate = useNavigate();
     const defaultOpenKey = `/${location.pathname.split("/")[1]}`;
@@ -53,6 +53,16 @@ const Layout: FC = () => {
         {
             key: "1",
             label: (
+                <a>
+                    <UserOutlined />
+                    &nbsp;
+                    {userInfo?.name}
+                </a>
+            ),
+        },
+        {
+            key: "2",
+            label: (
                 <a onClick={() => navigate("/system/profile")}>
                     <IdcardOutlined />
                     &nbsp;用户信息
@@ -60,7 +70,7 @@ const Layout: FC = () => {
             ),
         },
         {
-            key: "2",
+            key: "3",
             label: (
                 <a onClick={() => onLogout()}>
                     <LogoutOutlined />
@@ -184,6 +194,7 @@ const Layout: FC = () => {
 
                         <span className={ss.headerRight}>
                             <span
+                                className={ss.headerIconTheme}
                                 onClick={() => {
                                     setTheme(
                                         theme === "light" ? "dark" : "light",
@@ -225,15 +236,15 @@ const Layout: FC = () => {
                                 menu={{
                                     items: userItems,
                                     selectable: true,
+                                    selectedKeys: ["1"],
                                 }}
                             >
-                                <Button type="text" className={ss.logout}>
+                                <div className={ss.avatarWrapper}>
                                     <img
-                                        className={ss.avatar}
+                                        className={`${ss.headerIcon} ${ss.avatar}`}
                                         src="https://himg.bdimg.com/sys/portraitn/item/public.1.64e3a983.rQ7LkkDCsOJkvisL0IYKUw"
                                     />
-                                    张芳朝
-                                </Button>
+                                </div>
                             </Dropdown>
                         </span>
                     </Header>

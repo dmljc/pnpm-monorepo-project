@@ -1,6 +1,6 @@
 import { createStyles } from "antd-style";
 
-export default createStyles(({ token, css }) => ({
+export default createStyles(({ css }) => ({
     // 侧边栏
     side: {
         height: "100vh",
@@ -46,29 +46,42 @@ export default createStyles(({ token, css }) => ({
         paddingRight: 24,
         alignItems: "center",
     },
+    headerIconTheme: {
+        marginTop: 2,
+    },
     headerIcon: css`
-        width: 40px;
-        height: 40px;
-        line-height: 64px;
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
         font-size: 16px;
         justify-content: center;
 
         &:hover {
             cursor: pointer;
             border-radius: 100%;
+            background: rgba(0, 0, 0, 0.04);
         }
     `,
     logout: {
         padding: 4,
     },
-    avatar: {
-        width: 30,
-        height: 30,
-        lineHeight: "30px",
-        fontSize: "18px",
+    avatarWrapper: {
+        width: 44,
+        height: 44,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         borderRadius: "100%",
-        border: `1px solid ${token.colorPrimaryText}`,
-        padding: 2,
+        transition: "background 0.5s",
+
+        "&:hover": {
+            background: "rgba(0, 0, 0, 0.05)",
+        },
+    },
+    avatar: {
+        width: 32,
+        height: 32,
+        borderRadius: "100%",
     },
     content: {
         height: "calc(100vh - 98px)",
