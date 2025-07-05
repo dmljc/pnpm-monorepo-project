@@ -3,7 +3,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import {
     Menu,
     Card,
-    Radio,
     Button,
     Dropdown,
     ConfigProvider,
@@ -22,6 +21,8 @@ import {
     CompressOutlined,
     GithubOutlined,
     MoonOutlined,
+    GlobalOutlined,
+    TranslationOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
@@ -48,7 +49,7 @@ const Layout: FC = () => {
     // const { token } = theme.useToken();
     // console.log("token===", token);
 
-    const dropdownItems: MenuProps["items"] = [
+    const userItems: MenuProps["items"] = [
         {
             key: "1",
             label: (
@@ -64,6 +65,27 @@ const Layout: FC = () => {
                 <a onClick={() => onLogout()}>
                     <LogoutOutlined />
                     &nbsp;退出登录
+                </a>
+            ),
+        },
+    ];
+
+    const langItems: MenuProps["items"] = [
+        {
+            key: "zh",
+            label: (
+                <a>
+                    <GlobalOutlined style={{ marginRight: 6 }} />
+                    简体中文
+                </a>
+            ),
+        },
+        {
+            key: "en",
+            label: (
+                <a>
+                    <TranslationOutlined style={{ marginRight: 6 }} />
+                    English
                 </a>
             ),
         },
@@ -100,6 +122,10 @@ const Layout: FC = () => {
     const onLogout = () => {
         logout();
         navigate("/login");
+    };
+
+    const onClickLang: MenuProps["onClick"] = ({ key }) => {
+        setLang(key);
     };
 
     return (
@@ -178,15 +204,29 @@ const Layout: FC = () => {
                             )}
                             <GithubOutlined className={ss.headerIcon} />
 
-                            <Radio.Group
-                                value={lang}
-                                onChange={(e) => setLang(e.target.value)}
+                            <Dropdown
+                                trigger={["click"]}
+                                placement="bottomRight"
+                                menu={{
+                                    items: langItems,
+                                    selectable: true,
+                                    selectedKeys: [lang],
+                                    onClick: onClickLang,
+                                }}
                             >
-                                <Radio.Button value="zh">中文</Radio.Button>
-                                <Radio.Button value="en">English</Radio.Button>
-                            </Radio.Group>
+                                <TranslationOutlined
+                                    onClick={(e) => e.preventDefault()}
+                                    className={ss.headerIcon}
+                                />
+                            </Dropdown>
 
-                            <Dropdown menu={{ items: dropdownItems }}>
+                            <Dropdown
+                                trigger={["click"]}
+                                menu={{
+                                    items: userItems,
+                                    selectable: true,
+                                }}
+                            >
                                 <Button type="text" className={ss.logout}>
                                     <img
                                         className={ss.avatar}
