@@ -15,6 +15,8 @@ interface LogigParams {
 type UserState = {
     /** 当前用户信息，初始为 null */
     userInfo: User | null;
+    /** 是否有通知 */
+    hasNotification: boolean;
     /** 当前访问令牌，初始为 null */
     accessToken: string | null;
     /** 当前刷新令牌，初始为 null */
@@ -27,6 +29,8 @@ type UserState = {
 type UserAction = {
     /** 设置用户信息 */
     setUserInfo: (userInfo: User | null) => void;
+    /** 设置是否有通知 */
+    setHasNotification: (hasNotification: boolean) => void;
     /** 设置访问令牌 */
     setAccessToken: (accessToken: string | null) => void;
     /** 设置刷新令牌 */
@@ -52,6 +56,8 @@ export const useUserStore = create<UserState & UserAction>()(
         (set, get) => ({
             /** 当前用户信息，初始为 null */
             userInfo: null,
+            /** 是否有通知 */
+            hasNotification: false,
             /** 当前访问令牌，初始为 null */
             accessToken: null,
             /** 当前刷新令牌，初始为 null */
@@ -81,6 +87,8 @@ export const useUserStore = create<UserState & UserAction>()(
                     return false;
                 }
             },
+            setHasNotification: (hasNotification: boolean) =>
+                set({ hasNotification }),
             /** 获取用户信息方法 */
             getUserInfo: async (accessToken: string) => {
                 if (!accessToken) return;
@@ -88,6 +96,7 @@ export const useUserStore = create<UserState & UserAction>()(
                 if (res.success) {
                     set({
                         userInfo: res.data,
+                        hasNotification: false,
                     });
                 }
             },
