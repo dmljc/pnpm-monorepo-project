@@ -47,6 +47,7 @@ import {
 } from "nest-winston";
 import * as winston from "winston";
 import { CustomTypeOrmLogger } from "./common/custom.typeorm.logger";
+import { MenuModule } from "./menu/menu.module";
 import "winston-daily-rotate-file";
 
 @Module({
@@ -146,6 +147,7 @@ import "winston-daily-rotate-file";
         MinioModule,
         ExcelModule,
         ServerModule,
+        MenuModule,
     ],
     controllers: [AppController],
     providers: [

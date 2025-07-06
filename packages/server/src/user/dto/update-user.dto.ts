@@ -4,7 +4,7 @@
 import { IsNotEmpty, MinLength, MaxLength, IsOptional } from "class-validator";
 
 export class UpdateUserDto {
-    @IsNotEmpty({ message: "id不能为空" })
+    @IsNotEmpty({ message: "用户id不能为空" })
     id: number;
 
     @IsNotEmpty({ message: "角色不能为空" })

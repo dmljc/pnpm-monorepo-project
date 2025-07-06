@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Button, Space, Table, Tag } from "antd";
 import type { TableColumnsType } from "antd";
+import { ModalTypeEnum } from "@/utils";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import CreateMenu from "./CreateMenu";
+import CreateMenuModal from "./CreateMenu";
+import { UpdateMenu } from "./interface";
 
 interface DataType {
     key: string;
@@ -26,75 +28,13 @@ const typeLabelMap: Record<string, string> = {
     button: "按钮",
 };
 
-const columns: TableColumnsType<DataType> = [
-    {
-        title: "标题",
-        dataIndex: "name",
-        key: "name",
-        width: "20%",
-    },
-    {
-        title: "类型",
-        dataIndex: "type",
-        key: "type",
-        width: "20%",
-        render: (type) => {
-            return <Tag color={typeColorMap[type]}>{typeLabelMap[type]}</Tag>;
-        },
-    },
-    {
-        title: "权限编码",
-        dataIndex: "code",
-        key: "code",
-        width: "15%",
-    },
-    {
-        title: "路由地址",
-        dataIndex: "url",
-        key: "url",
-        width: "20%",
-    },
-    {
-        title: "页面组件",
-        dataIndex: "component",
-        key: "component",
-        width: "15%",
-    },
-    {
-        title: "操作",
-        dataIndex: "ctrl",
-        key: "ctrl",
-        width: "10%",
-        render: () => {
-            return (
-                <Space>
-                    <Button
-                        type="link"
-                        className="btn-p0"
-                        icon={<EditOutlined />}
-                    >
-                        编辑
-                    </Button>
-                    <Button
-                        type="link"
-                        className="btn-p0"
-                        icon={<DeleteOutlined />}
-                    >
-                        删除
-                    </Button>
-                </Space>
-            );
-        },
-    },
-];
-
 const data: DataType[] = [
     {
         key: "1",
         name: "仪表盘",
         type: "catalog",
         url: "/dashboard",
-        component: "Dashboard",
+        // component: "Dashboard",
         children: [
             {
                 key: "1.1",
@@ -117,7 +57,7 @@ const data: DataType[] = [
         name: "系统管理",
         type: "catalog",
         url: "/system",
-        component: "System",
+        // component: "System",
         children: [
             {
                 key: "2.1",
@@ -198,22 +138,108 @@ const data: DataType[] = [
 const Menu: React.FC = () => {
     // const [checkStrictly, setCheckStrictly] = useState(false);
     const [open, setOpen] = useState(true);
+    const [modalType, setModalType] = useState<ModalTypeEnum>(
+        ModalTypeEnum.CREATE,
+    );
+    const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
 
-    const onClose = () => {
+    const columns: TableColumnsType<DataType> = [
+        {
+            title: "标题",
+            dataIndex: "name",
+            key: "name",
+            width: "20%",
+        },
+        {
+            title: "类型",
+            dataIndex: "type",
+            key: "type",
+            width: "20%",
+            render: (type) => {
+                return (
+                    <Tag color={typeColorMap[type]}>{typeLabelMap[type]}</Tag>
+                );
+            },
+        },
+        {
+            title: "权限编码",
+            dataIndex: "code",
+            key: "code",
+            width: "15%",
+        },
+        {
+            title: "路由地址",
+            dataIndex: "url",
+            key: "url",
+            width: "20%",
+        },
+        {
+            title: "页面组件",
+            dataIndex: "component",
+            key: "component",
+            width: "15%",
+        },
+        {
+            title: "操作",
+            dataIndex: "ctrl",
+            key: "ctrl",
+            width: "10%",
+            render: (_, record) => {
+                return (
+                    <Space>
+                        <Button
+                            type="link"
+                            className="btn-p0"
+                            icon={<EditOutlined />}
+                            onClick={() => onUpdate(record)}
+                        >
+                            编辑
+                        </Button>
+                        <Button
+                            type="link"
+                            className="btn-p0"
+                            icon={<DeleteOutlined />}
+                        >
+                            删除
+                        </Button>
+                    </Space>
+                );
+            },
+        },
+    ];
+
+    const onAdd = () => {
+        setModalType(ModalTypeEnum.CREATE);
+        setOpen(true);
+    };
+
+    const onUpdate = (record: any) => {
+        setModalType(ModalTypeEnum.UPDATE);
+        setRecord({ ...record });
+        setOpen(true);
+    };
+
+    const handleClose = () => {
         setOpen(false);
+    };
+    const handleOk = () => {
+        setOpen(true);
     };
 
     return (
         <>
-            <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => setOpen(true)}
-            >
+            <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
                 新增菜单
             </Button>
 
-            <CreateMenu open={open} menuData={data} onClose={onClose} />
+            <CreateMenuModal
+                open={open}
+                record={record}
+                menuData={data}
+                modalType={modalType}
+                handleOk={handleOk}
+                handleClose={handleClose}
+            />
 
             <Table<DataType>
                 columns={columns}

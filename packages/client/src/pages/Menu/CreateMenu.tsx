@@ -1,34 +1,20 @@
-import { FC } from "react";
-import {
-    Drawer,
-    Button,
-    Radio,
-    Form,
-    Input,
-    Row,
-    Col,
-    Space,
-    TreeSelect,
-} from "antd";
-import { CloseOutlined, SaveOutlined } from "@ant-design/icons";
+import { FC, useEffect } from "react";
+import { Form, Input, Radio, message, Modal, TreeSelect } from "antd";
 import {
     AppstoreOutlined,
-    MenuOutlined,
     BorderOutlined,
+    MenuOutlined,
 } from "@ant-design/icons";
+import { ModalProps, UpdateMenu } from "./interface";
+import { ModalTypeEnum } from "@/utils";
+import { create, update } from "./api";
 
 const { Item } = Form;
 
 const layout = {
-    labelCol: { span: 7 },
-    wrapperCol: { span: 17 },
+    labelCol: { span: 5 },
+    wrapperCol: { span: 18 },
 };
-
-interface Props {
-    open: boolean;
-    menuData: any;
-    onClose: () => void;
-}
 
 const typeOptions = [
     { label: "目录", value: "catalog", icon: <AppstoreOutlined /> },
@@ -36,9 +22,16 @@ const typeOptions = [
     { label: "按钮", value: "button", icon: <BorderOutlined /> },
 ];
 
-const CreateMenu: FC<Props> = (props) => {
-    const { open, menuData, onClose } = props;
-    const [form] = Form.useForm();
+const typeMap = {
+    catalog: "目录",
+    menu: "菜单",
+    button: "按钮",
+};
+
+const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
+    const { menuData, modalType, open, record, handleClose, handleOk } = props;
+    const [form] = Form.useForm<UpdateMenu>();
+    const [messageApi, contextHolder] = message.useMessage();
 
     // 监听type字段
     const type = Form.useWatch
@@ -46,168 +39,179 @@ const CreateMenu: FC<Props> = (props) => {
           Form.useWatch("type", form)
         : form.getFieldValue("type");
 
-    const onFinish = (values: any) => {
+    const onChangeMenuType = () => {
+        Object.keys(form.getFieldsValue()).forEach((key) => {
+            if (key !== "type") {
+                form.setFieldsValue({ [key]: undefined });
+            }
+        });
+    };
+
+    const onOk = async () => {
+        await form.validateFields();
+        const values = form.getFieldsValue();
+        const params =
+            modalType === ModalTypeEnum.CREATE
+                ? values
+                : { ...values, id: record.id };
+
+        try {
+            const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
+            const resp = await apiUrl(params);
+            if (resp.success === true) {
+                handleOk();
+                messageApi.success(
+                    modalType === ModalTypeEnum.CREATE
+                        ? "新增成功"
+                        : "修改成功",
+                );
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        if (modalType === ModalTypeEnum.UPDATE) {
+            form.setFieldsValue({
+                ...record,
+            });
+        } else {
+            form.resetFields();
+        }
+    }, [open, modalType]);
+
+    function onFinish(values: UpdateMenu): void {
         console.log(values);
-    };
-
-    const onSubmit = () => {
-        form.submit();
-    };
-
-    const onCloseDrawer = () => {
-        form.resetFields();
-        onClose();
-    };
+    }
 
     return (
-        <Drawer
-            title="新增菜单"
-            open={open}
-            width={820}
-            onClose={onClose}
-            maskClosable={false}
-            footer={[
-                <Space key="space">
-                    <Button
-                        key="submit"
-                        onClick={onSubmit}
-                        type="primary"
-                        icon={<SaveOutlined />}
-                    >
-                        提 交
-                    </Button>
-                    <Button
-                        key="cancel"
-                        icon={<CloseOutlined />}
-                        onClick={onCloseDrawer}
-                    >
-                        取 消
-                    </Button>
-                </Space>,
-            ]}
-        >
-            <Form
-                {...layout}
-                form={form}
-                name="create-menu"
-                initialValues={{
-                    type: "catalog",
-                }}
-                onFinish={onFinish}
+        <>
+            {contextHolder}
+            <Modal
+                title={
+                    modalType === ModalTypeEnum.CREATE ? "新增菜单" : "修改菜单"
+                }
+                open={open}
+                onOk={onOk}
+                forceRender
+                onCancel={handleClose}
             >
-                <Row>
-                    <Col span={12}>
-                        <Item
-                            name="type"
-                            label="菜单类型"
-                            rules={[
-                                { required: true, message: "请选择菜单类型" },
-                            ]}
+                <Form
+                    {...layout}
+                    form={form}
+                    name="create-menu"
+                    initialValues={{
+                        type: "catalog",
+                    }}
+                    onFinish={onFinish}
+                >
+                    <Item
+                        name="type"
+                        label="菜单类型"
+                        rules={[
+                            {
+                                required: true,
+                                message: "请选择菜单类型",
+                            },
+                        ]}
+                    >
+                        <Radio.Group
+                            optionType="button"
+                            buttonStyle="solid"
+                            onChange={onChangeMenuType}
                         >
-                            <Radio.Group
-                                optionType="button"
-                                buttonStyle="solid"
-                            >
-                                {typeOptions.map((item) => (
-                                    <Radio.Button
-                                        key={item.value}
-                                        value={item.value}
-                                    >
-                                        {item.icon} {item.label}
-                                    </Radio.Button>
-                                ))}
-                            </Radio.Group>
-                        </Item>
-                    </Col>
-                </Row>
-                {/* 下面根据type动态渲染 */}
-                <Row>
-                    <Col span={12}>
-                        <Item
-                            name="name"
-                            label="菜单名称"
-                            rules={[
-                                { required: true, message: "请输入菜单名称" },
-                            ]}
-                        >
-                            <Input placeholder="请输入菜单名称" />
-                        </Item>
-                    </Col>
+                            {typeOptions.map((item) => (
+                                <Radio.Button
+                                    key={item.value}
+                                    value={item.value}
+                                >
+                                    {item.icon} {item.label}
+                                </Radio.Button>
+                            ))}
+                        </Radio.Group>
+                    </Item>
+                    {/* 下面根据type动态渲染 */}
+                    <Item
+                        name="name"
+                        label={`${typeMap[type as keyof typeof typeMap]}名称`}
+                        rules={[
+                            {
+                                required: true,
+                                message: "请输入菜单名称",
+                            },
+                        ]}
+                    >
+                        <Input placeholder="请输入菜单名称" />
+                    </Item>
                     {type === "button" && (
-                        <Col span={12}>
-                            <Item
-                                name="code"
-                                label="权限字符"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入权限字符",
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="请输入权限字符" />
-                            </Item>
-                        </Col>
-                    )}
-                    {type === "menu" && (
-                        <Col span={12}>
-                            <Item
-                                name="parent"
-                                label="上级菜单"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请选择上级菜单",
-                                    },
-                                ]}
-                            >
-                                <TreeSelect
-                                    showSearch
-                                    allowClear
-                                    treeData={menuData}
-                                    fieldNames={{
-                                        label: "name",
-                                        value: "key",
-                                    }}
-                                    treeDefaultExpandAll
-                                    treeNodeFilterProp="name"
-                                    placeholder="请选择上级菜单"
-                                />
-                            </Item>
-                        </Col>
-                    )}
-                </Row>
-                <Row>
-                    <Col span={12}>
                         <Item
-                            name="url"
-                            label="路由地址"
+                            name="code"
+                            label="权限字符"
                             rules={[
-                                { required: true, message: "请输入路由地址" },
+                                {
+                                    required: true,
+                                    message: "请输入权限字符",
+                                },
                             ]}
                         >
-                            <Input placeholder="请输入路由地址" />
+                            <Input placeholder="请输入权限字符" />
                         </Item>
-                    </Col>
-                    {type === "menu" && (
-                        <Col span={12}>
-                            <Item
-                                name="component"
-                                label="页面组件"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入页面组件",
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="请输入页面组件" />
-                            </Item>
-                        </Col>
                     )}
-                </Row>
-            </Form>
-        </Drawer>
+                    {type === "menu" && (
+                        <Item
+                            name="parent"
+                            label="上级菜单"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请选择上级菜单",
+                                },
+                            ]}
+                        >
+                            <TreeSelect
+                                showSearch
+                                allowClear
+                                treeData={menuData}
+                                fieldNames={{
+                                    label: "name",
+                                    value: "key",
+                                }}
+                                treeDefaultExpandAll
+                                treeNodeFilterProp="name"
+                                placeholder="请选择上级菜单"
+                            />
+                        </Item>
+                    )}
+                    <Item
+                        name="url"
+                        label="路由地址"
+                        rules={[
+                            {
+                                required: true,
+                                message: "请输入路由地址",
+                            },
+                        ]}
+                    >
+                        <Input placeholder="请输入路由地址" />
+                    </Item>
+                    {type === "menu" && (
+                        <Item
+                            name="component"
+                            label="页面组件"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请输入页面组件",
+                                },
+                            ]}
+                        >
+                            <Input placeholder="请输入页面组件" />
+                        </Item>
+                    )}
+                </Form>
+            </Modal>
+        </>
     );
 };
 
