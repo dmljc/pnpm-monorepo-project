@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -13,27 +13,31 @@ export class MenuService {
     ) {}
 
     async create(createMenuDto: CreateMenuDto) {
-        const menu = new Menu();
-        menu.type = createMenuDto.type;
-        menu.name = createMenuDto.name;
-        menu.url = createMenuDto.url;
-        return await this.menuRepository.save(menu);
+        const existingMenu = await this.menuRepository.findOne({
+            where: { name: createMenuDto.name },
+        });
+        if (existingMenu) {
+            throw new HttpException("菜单已存在", 400);
+        }
+        return await this.menuRepository.insert(createMenuDto);
     }
 
-    findAll() {
-        return `This action returns all menu`;
+    async findAll() {
+        return await this.menuRepository.find();
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} menu`;
+    async findOne(id: number) {
+        return await this.menuRepository.findOneBy({ id });
     }
 
-    update(id: number, updateMenuDto: UpdateMenuDto) {
-        console.log("updateMenuDto", updateMenuDto);
-        return `This action updates a #${id} menu`;
+    async update(updateMenuDto: UpdateMenuDto) {
+        return await this.menuRepository.update(
+            updateMenuDto.id,
+            updateMenuDto,
+        );
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} menu`;
+    async remove(id: number) {
+        return await this.menuRepository.delete(id);
     }
 }

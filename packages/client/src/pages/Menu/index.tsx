@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import { Button, Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, message, Space, Table, Tag } from "antd";
 import type { TableColumnsType } from "antd";
 import { ModalTypeEnum } from "@/utils";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import CreateMenuModal from "./CreateMenu";
 import { UpdateMenu } from "./interface";
+import { list, del } from "./api";
 
 interface DataType {
-    key: string;
+    id: number;
     name: string;
     type: string;
+    parentId?: string;
     icon?: string;
     url?: string;
     code?: string;
@@ -28,95 +30,102 @@ const typeLabelMap: Record<string, string> = {
     button: "按钮",
 };
 
-const data: DataType[] = [
-    {
-        key: "1",
-        name: "仪表盘",
-        type: "catalog",
-        url: "/dashboard",
-        // component: "Dashboard",
-        children: [
-            {
-                key: "1.1",
-                type: "menu",
-                url: "/dashboard/workplace",
-                component: "Workplace",
-                name: "工作台",
-            },
-            {
-                key: "1.2",
-                type: "menu",
-                url: "/dashboard/analysis",
-                component: "Analysis",
-                name: "分析页",
-            },
-        ],
-    },
-    {
-        key: "2",
-        name: "系统管理",
-        type: "catalog",
-        url: "/system",
-        // component: "System",
-        children: [
-            {
-                key: "2.1",
-                type: "menu",
-                url: "/system/user",
-                component: "User",
-                name: "用户管理",
-                children: [
-                    {
-                        key: "2.1.1",
-                        type: "button",
-                        name: "新增",
-                        code: "user:add",
-                    },
-                    {
-                        key: "2.1.2",
-                        type: "button",
-                        name: "修改",
-                        code: "user:update",
-                    },
-                    {
-                        key: "2.1.3",
-                        type: "button",
-                        name: "删除",
-                        code: "user:delete",
-                    },
-                ],
-            },
-            {
-                key: "2.2",
-                type: "menu",
-                url: "/system/role",
-                component: "Role",
-                name: "角色管理",
-            },
-            {
-                key: "2.3",
-                type: "menu",
-                url: "/system/menu",
-                component: "Menu",
-                name: "菜单管理",
-            },
-            {
-                key: "2.4",
-                type: "menu",
-                url: "/system/config",
-                component: "Config",
-                name: "系统配置",
-            },
-            {
-                key: "2.5",
-                type: "menu",
-                url: "/system/server",
-                component: "Server",
-                name: "服务器信息",
-            },
-        ],
-    },
-];
+// const data: DataType[] = [
+//     {
+//         id: "1",
+//         name: "仪表盘",
+//         type: "catalog",
+//         url: "/dashboard",
+//         parentId: "",
+//         children: [
+//             {
+//                 id: "1.1",
+//                 type: "menu",
+//                 url: "/dashboard/workplace",
+//                 component: "Workplace",
+//                 name: "工作台",
+//                 parentId: "1",
+//             },
+//             {
+//                 id: "1.2",
+//                 type: "menu",
+//                 url: "/dashboard/analysis",
+//                 component: "Analysis",
+//                 name: "分析页",
+//                 parentId: "1",
+//             },
+//         ],
+//     },
+//     {
+//         id: "2",
+//         name: "系统管理",
+//         type: "catalog",
+//         url: "/system",
+//         parentId: "",
+//         children: [
+//             {
+//                 id: "2.1",
+//                 type: "menu",
+//                 url: "/system/user",
+//                 component: "User",
+//                 name: "用户管理",
+//                 parentId: "2",
+//                 children: [
+//                     {
+//                         id: "2.1.1",
+//                         type: "button",
+//                         name: "新增",
+//                         code: "user:add",
+//                     },
+//                     {
+//                         id: "2.1.2",
+//                         type: "button",
+//                         name: "修改",
+//                         code: "user:update",
+//                     },
+//                     {
+//                         id: "2.1.3",
+//                         type: "button",
+//                         name: "删除",
+//                         code: "user:delete",
+//                     },
+//                 ],
+//             },
+//             {
+//                 id: "2.2",
+//                 type: "menu",
+//                 url: "/system/role",
+//                 component: "Role",
+//                 name: "角色管理",
+//                 parentId: "2",
+//             },
+//             {
+//                 id: "2.3",
+//                 type: "menu",
+//                 url: "/system/menu",
+//                 component: "Menu",
+//                 name: "菜单管理",
+//                 parentId: "2",
+//             },
+//             {
+//                 id: "2.4",
+//                 type: "menu",
+//                 url: "/system/config",
+//                 component: "Config",
+//                 name: "系统配置",
+//                 parentId: "2",
+//             },
+//             {
+//                 id: "2.5",
+//                 type: "menu",
+//                 url: "/system/server",
+//                 component: "Server",
+//                 name: "服务器信息",
+//                 parentId: "2",
+//             },
+//         ],
+//     },
+// ];
 
 // rowSelection objects indicates the need for row selection
 // const rowSelection: TableRowSelection<DataType> = {
@@ -137,11 +146,12 @@ const data: DataType[] = [
 
 const Menu: React.FC = () => {
     // const [checkStrictly, setCheckStrictly] = useState(false);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
     const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
+    const [messageApi, contextHolder] = message.useMessage();
 
     const columns: TableColumnsType<DataType> = [
         {
@@ -191,7 +201,9 @@ const Menu: React.FC = () => {
                             type="link"
                             className="btn-p0"
                             icon={<EditOutlined />}
-                            onClick={() => onUpdate(record)}
+                            onClick={() =>
+                                handleUpdate(record as unknown as UpdateMenu)
+                            }
                         >
                             编辑
                         </Button>
@@ -199,6 +211,7 @@ const Menu: React.FC = () => {
                             type="link"
                             className="btn-p0"
                             icon={<DeleteOutlined />}
+                            onClick={() => handleDelete(record as DataType)}
                         >
                             删除
                         </Button>
@@ -208,43 +221,72 @@ const Menu: React.FC = () => {
         },
     ];
 
-    const onAdd = () => {
-        setModalType(ModalTypeEnum.CREATE);
-        setOpen(true);
+    const [dataSource, setDataSource] = useState<DataType[]>([]);
+
+    useEffect(() => {
+        feechList();
+    }, []);
+
+    const feechList = async () => {
+        const res = await list({
+            current: 1,
+            pageSize: 10,
+        });
+        setDataSource(res.data);
     };
 
-    const onUpdate = (record: any) => {
-        setModalType(ModalTypeEnum.UPDATE);
-        setRecord({ ...record });
+    const handleCreate = () => {
         setOpen(true);
+        setModalType(ModalTypeEnum.CREATE);
+    };
+
+    const handleUpdate = (record: UpdateMenu) => {
+        setOpen(true);
+        setRecord({ ...record });
+        setModalType(ModalTypeEnum.UPDATE);
+    };
+
+    const handleDelete = async (record: DataType) => {
+        const res = await del(record.id);
+        if (res.success) {
+            messageApi.success("删除成功");
+            feechList();
+        }
     };
 
     const handleClose = () => {
         setOpen(false);
     };
-    const handleOk = () => {
-        setOpen(true);
+    const handleOk = async () => {
+        handleClose();
+        feechList?.();
     };
 
     return (
         <>
-            <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
+            {contextHolder}
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={handleCreate}
+            >
                 新增菜单
             </Button>
 
             <CreateMenuModal
                 open={open}
                 record={record}
-                menuData={data}
+                menuData={dataSource}
                 modalType={modalType}
                 handleOk={handleOk}
                 handleClose={handleClose}
             />
 
             <Table<DataType>
+                rowKey="id"
                 columns={columns}
                 // rowSelection={{ ...rowSelection, checkStrictly }}
-                dataSource={data}
+                dataSource={dataSource}
                 pagination={false}
             />
         </>

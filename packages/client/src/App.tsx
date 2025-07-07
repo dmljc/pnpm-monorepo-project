@@ -1,5 +1,4 @@
 import { notification } from "antd";
-import { SmileOutlined } from "@ant-design/icons";
 import { useRoutes } from "react-router-dom";
 import routes from "./routers/index";
 import { useUserStore } from "./store";
@@ -17,13 +16,6 @@ const App = () => {
                 message: "登录成功",
                 description: (
                     <span style={{ display: "flex", alignItems: "center" }}>
-                        <SmileOutlined
-                            style={{
-                                color: "#faad14",
-                                fontSize: 20,
-                                marginRight: 8,
-                            }}
-                        />
                         欢迎回来: {userInfo.name}
                     </span>
                 ),

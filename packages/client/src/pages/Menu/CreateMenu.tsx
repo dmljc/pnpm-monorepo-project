@@ -142,7 +142,11 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             },
                         ]}
                     >
-                        <Input placeholder="请输入菜单名称" />
+                        <Input
+                            allowClear
+                            maxLength={8}
+                            placeholder="请输入菜单名称"
+                        />
                     </Item>
                     {type === "button" && (
                         <Item
@@ -155,12 +159,16 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 },
                             ]}
                         >
-                            <Input placeholder="请输入权限字符" />
+                            <Input
+                                allowClear
+                                maxLength={8}
+                                placeholder="请输入权限字符"
+                            />
                         </Item>
                     )}
                     {type === "menu" && (
                         <Item
-                            name="parent"
+                            name="parentId"
                             label="上级菜单"
                             rules={[
                                 {
@@ -175,7 +183,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 treeData={menuData}
                                 fieldNames={{
                                     label: "name",
-                                    value: "key",
+                                    value: "id",
                                 }}
                                 treeDefaultExpandAll
                                 treeNodeFilterProp="name"
@@ -183,18 +191,24 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             />
                         </Item>
                     )}
-                    <Item
-                        name="url"
-                        label="路由地址"
-                        rules={[
-                            {
-                                required: true,
-                                message: "请输入路由地址",
-                            },
-                        ]}
-                    >
-                        <Input placeholder="请输入路由地址" />
-                    </Item>
+                    {["catalog", "menu"].includes(type) && (
+                        <Item
+                            name="url"
+                            label="路由地址"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请输入路由地址",
+                                },
+                            ]}
+                        >
+                            <Input
+                                allowClear
+                                maxLength={30}
+                                placeholder="请输入路由地址"
+                            />
+                        </Item>
+                    )}
                     {type === "menu" && (
                         <Item
                             name="component"
@@ -206,7 +220,11 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 },
                             ]}
                         >
-                            <Input placeholder="请输入页面组件" />
+                            <Input
+                                allowClear
+                                maxLength={30}
+                                placeholder="请输入页面组件"
+                            />
                         </Item>
                     )}
                 </Form>

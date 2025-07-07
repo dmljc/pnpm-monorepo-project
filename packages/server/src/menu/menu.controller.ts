@@ -3,9 +3,9 @@ import {
     Get,
     Post,
     Body,
-    Patch,
     Param,
     Delete,
+    Put,
 } from "@nestjs/common";
 import { RequireLogin } from "../common/custom-decorator";
 import { MenuService } from "./menu.service";
@@ -34,13 +34,13 @@ export class MenuController {
         return this.menuService.findOne(+id);
     }
 
-    @Patch(":id")
+    @Put("update")
     @RequireLogin()
-    update(@Param("id") id: string, @Body() updateMenuDto: UpdateMenuDto) {
-        return this.menuService.update(+id, updateMenuDto);
+    update(@Body() updateMenuDto: UpdateMenuDto) {
+        return this.menuService.update(updateMenuDto);
     }
 
-    @Delete(":id")
+    @Delete("delete/:id")
     @RequireLogin()
     remove(@Param("id") id: string) {
         return this.menuService.remove(+id);

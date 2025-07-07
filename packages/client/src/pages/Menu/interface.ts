@@ -1,5 +1,4 @@
 export interface CreateMenu {
-    key: string | number;
     name: string;
     type: string;
     icon?: string;
@@ -7,6 +6,7 @@ export interface CreateMenu {
     code?: string;
     component?: string;
     children?: CreateMenu[];
+    parentId?: string;
 }
 
 export interface UpdateMenu extends CreateMenu {
