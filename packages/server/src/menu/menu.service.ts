@@ -17,7 +17,7 @@ export class MenuService {
             where: { name: createMenuDto.name },
         });
         if (existingMenu) {
-            throw new HttpException("菜单已存在", 400);
+            throw new HttpException("目录/菜单名称已存在", 400);
         }
         return await this.menuRepository.insert(createMenuDto);
     }
