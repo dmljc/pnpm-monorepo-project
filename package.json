@@ -13,7 +13,7 @@
         "server:clean-all-logs": "pnpm -F server clean:all-logs",
         "server:clean-old-logs": "pnpm -F server clean:old-logs",
         "clean:all-dists": "rm -rf ./packages/*/dist ./dist",
-        "clean:all-node_modules": "rm -rf ./node_modules ./packages/*/node_modules",
+        "clean:all-node_modules": "rm -rf ./node_modules ./packages/*/node_modules pnpm-lock.yaml",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
         "docs:dev": "vitepress dev docs  --host 0.0.0.0",
@@ -70,7 +70,7 @@
         "prettier": "^3.6.2",
         "stylelint": "^16.21.1",
         "stylelint-config-standard": "^38.0.0",
-        "typescript-eslint": "^8.35.1",
+        "typescript-eslint": "^8.36.0",
         "vitepress": "^1.6.3"
     },
     "keywords": [],
