@@ -4,20 +4,8 @@ import type { TableColumnsType } from "antd";
 import { ModalTypeEnum } from "@/utils";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import CreateMenuModal from "./CreateMenu";
-import { UpdateMenu } from "./interface";
+import type { UpdateMenu, DataType } from "./interface";
 import { list, del } from "./api";
-
-interface DataType {
-    id: number;
-    name: string;
-    type: string;
-    parentId?: string;
-    icon?: string;
-    url?: string;
-    code?: string;
-    component?: string;
-    children?: DataType[];
-}
 
 const typeColorMap: Record<string, string> = {
     catalog: "geekblue",
@@ -30,128 +18,16 @@ const typeLabelMap: Record<string, string> = {
     button: "按钮",
 };
 
-// const data: DataType[] = [
-//     {
-//         id: "1",
-//         name: "仪表盘",
-//         type: "catalog",
-//         url: "/dashboard",
-//         parentId: "",
-//         children: [
-//             {
-//                 id: "1.1",
-//                 type: "menu",
-//                 url: "/dashboard/workplace",
-//                 component: "Workplace",
-//                 name: "工作台",
-//                 parentId: "1",
-//             },
-//             {
-//                 id: "1.2",
-//                 type: "menu",
-//                 url: "/dashboard/analysis",
-//                 component: "Analysis",
-//                 name: "分析页",
-//                 parentId: "1",
-//             },
-//         ],
-//     },
-//     {
-//         id: "2",
-//         name: "系统管理",
-//         type: "catalog",
-//         url: "/system",
-//         parentId: "",
-//         children: [
-//             {
-//                 id: "2.1",
-//                 type: "menu",
-//                 url: "/system/user",
-//                 component: "User",
-//                 name: "用户管理",
-//                 parentId: "2",
-//                 children: [
-//                     {
-//                         id: "2.1.1",
-//                         type: "button",
-//                         name: "新增",
-//                         code: "user:add",
-//                     },
-//                     {
-//                         id: "2.1.2",
-//                         type: "button",
-//                         name: "修改",
-//                         code: "user:update",
-//                     },
-//                     {
-//                         id: "2.1.3",
-//                         type: "button",
-//                         name: "删除",
-//                         code: "user:delete",
-//                     },
-//                 ],
-//             },
-//             {
-//                 id: "2.2",
-//                 type: "menu",
-//                 url: "/system/role",
-//                 component: "Role",
-//                 name: "角色管理",
-//                 parentId: "2",
-//             },
-//             {
-//                 id: "2.3",
-//                 type: "menu",
-//                 url: "/system/menu",
-//                 component: "Menu",
-//                 name: "菜单管理",
-//                 parentId: "2",
-//             },
-//             {
-//                 id: "2.4",
-//                 type: "menu",
-//                 url: "/system/config",
-//                 component: "Config",
-//                 name: "系统配置",
-//                 parentId: "2",
-//             },
-//             {
-//                 id: "2.5",
-//                 type: "menu",
-//                 url: "/system/server",
-//                 component: "Server",
-//                 name: "服务器信息",
-//                 parentId: "2",
-//             },
-//         ],
-//     },
-// ];
-
-// rowSelection objects indicates the need for row selection
-// const rowSelection: TableRowSelection<DataType> = {
-//     onChange: (selectedRowKeys, selectedRows) => {
-//         console.log(
-//             `selectedRowKeys: ${selectedRowKeys}`,
-//             "selectedRows: ",
-//             selectedRows,
-//         );
-//     },
-//     onSelect: (record, selected, selectedRows) => {
-//         console.log(record, selected, selectedRows);
-//     },
-//     onSelectAll: (selected, selectedRows, changeRows) => {
-//         console.log(selected, selectedRows, changeRows);
-//     },
-// };
-
 const Menu: React.FC = () => {
     // const [checkStrictly, setCheckStrictly] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
     const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
-    const [messageApi, contextHolder] = message.useMessage();
+    const [dataSource, setDataSource] = useState<DataType[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const columns: TableColumnsType<DataType> = [
         {
@@ -221,18 +97,18 @@ const Menu: React.FC = () => {
         },
     ];
 
-    const [dataSource, setDataSource] = useState<DataType[]>([]);
-
     useEffect(() => {
         feechList();
     }, []);
 
     const feechList = async () => {
+        setLoading(true);
         const res = await list({
             current: 1,
             pageSize: 10,
         });
         setDataSource(res.data);
+        setLoading(false);
     };
 
     const handleCreate = () => {
@@ -254,9 +130,8 @@ const Menu: React.FC = () => {
         }
     };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const handleClose = () => setOpen(false);
+
     const handleOk = async () => {
         handleClose();
         feechList?.();
@@ -284,6 +159,7 @@ const Menu: React.FC = () => {
 
             <Table<DataType>
                 rowKey="id"
+                loading={loading}
                 columns={columns}
                 // rowSelection={{ ...rowSelection, checkStrictly }}
                 dataSource={dataSource}

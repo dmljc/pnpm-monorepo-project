@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Form, Input, Radio, message, Modal, TreeSelect } from "antd";
 import {
     AppstoreOutlined,
@@ -31,6 +31,8 @@ const typeMap = {
 const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     const { menuData, modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateMenu>();
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
     const [messageApi, contextHolder] = message.useMessage();
 
     // 监听type字段
@@ -56,18 +58,21 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 : { ...values, id: record.id };
 
         try {
+            setConfirmLoading(true);
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
-                handleOk();
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
                         ? "新增成功"
                         : "修改成功",
                 );
+                handleOk();
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setConfirmLoading(false);
         }
     };
 
@@ -96,6 +101,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 onOk={onOk}
                 forceRender
                 onCancel={handleClose}
+                confirmLoading={confirmLoading}
             >
                 <Form
                     {...layout}

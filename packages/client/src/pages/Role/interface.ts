@@ -24,3 +24,13 @@ export interface ListParams {
     startTime?: Date;
     endTime?: Date;
 }
+
+export type GithubIssueItem = {
+    id: number;
+    name: string;
+    code: string;
+    status: number;
+    remark: string;
+    createTime: string;
+    updateTime: string;
+};

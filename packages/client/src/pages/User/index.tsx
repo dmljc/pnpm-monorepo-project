@@ -13,13 +13,13 @@ import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import dayjs from "dayjs";
 import { ModalTypeEnum } from "@/utils";
-import CreateModal from "./CreateModal.tsx";
+import CreateUserModal from "./CreateModal.tsx";
 import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
 import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
 
 const User: FC = () => {
     const actionRef = useRef<ActionType>(null);
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
@@ -152,7 +152,7 @@ const User: FC = () => {
             valueType: "option",
             key: "option",
             width: 200,
-            render: (text, _record, _, action) => [
+            render: (_text, _record, _, action) => [
                 <Button
                     key="update"
                     color="primary"
@@ -162,7 +162,7 @@ const User: FC = () => {
                     onClick={() => {
                         setModalType(ModalTypeEnum.UPDATE);
                         setRecord(_record);
-                        setModalOpen(true);
+                        setOpen(true);
                     }}
                 >
                     修改
@@ -206,7 +206,7 @@ const User: FC = () => {
         },
     ];
 
-    const addUser = async (params: CreateUser[]) => {
+    const addUser = async (params: CreateUser) => {
         const resp = await create(params);
         if (resp.success === true) {
             actionRef.current?.reload();
@@ -276,7 +276,10 @@ const User: FC = () => {
             messageApi.success("导出成功");
         } catch (error) {
             console.error("导出失败", error);
-            messageApi.error("导出失败: " + error.message);
+            messageApi.error(
+                "导出失败: " +
+                    (error instanceof Error ? error.message : String(error)),
+            );
         }
     };
 
@@ -354,7 +357,7 @@ const User: FC = () => {
                         icon={<PlusOutlined />}
                         onClick={() => {
                             setModalType(ModalTypeEnum.CREATE);
-                            setModalOpen(true);
+                            setOpen(true);
                         }}
                         type="primary"
                     >
@@ -379,20 +382,18 @@ const User: FC = () => {
                 ]}
             />
 
-            {modalOpen && (
-                <CreateModal
-                    open={modalOpen}
-                    modalType={modalType}
-                    record={record!}
-                    handleClose={() => {
-                        setModalOpen(false);
-                    }}
-                    handleOk={() => {
-                        setModalOpen(false);
-                        actionRef.current?.reload();
-                    }}
-                />
-            )}
+            <CreateUserModal
+                open={open}
+                modalType={modalType}
+                record={record!}
+                handleClose={() => {
+                    setOpen(false);
+                }}
+                handleOk={() => {
+                    setOpen(false);
+                    actionRef.current?.reload();
+                }}
+            />
         </>
     );
 };

@@ -4,28 +4,19 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { ModalTypeEnum } from "@/utils";
-import CreateModal from "./CreateModal.tsx";
-import { UpdateRole } from "./interface.ts";
+import CreateRoleModal from "./CreateModal.tsx";
+import type { UpdateRole, GithubIssueItem } from "./interface.ts";
 import { list, del } from "./api.ts";
 
-type GithubIssueItem = {
-    id: number;
-    name: string;
-    code: string;
-    status: number;
-    remark: string;
-    createTime: string;
-    updateTime: string;
-};
-
 const Role: FC = () => {
+    const [messageApi, contextHolder] = message.useMessage();
+
     const actionRef = useRef<ActionType>(null);
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
     const [record, setRecord] = useState<UpdateRole>();
-    const [messageApi, contextHolder] = message.useMessage();
 
     const columns: ProColumns<GithubIssueItem>[] = [
         {
@@ -77,28 +68,30 @@ const Role: FC = () => {
             valueType: "option",
             key: "option",
             width: 140,
-            render: (text, _record, _, action) => [
+            render: (_text, _record, _, action) => [
                 <Button
                     type="link"
+                    key="update"
                     className="btn-p0"
                     icon={<EditOutlined />}
                     onClick={() => {
                         setModalType(ModalTypeEnum.UPDATE);
                         setRecord(_record);
-                        setModalOpen(true);
+                        setOpen(true);
                     }}
                 >
                     修改
                 </Button>,
                 <Button
                     type="link"
+                    key="delete"
                     className="btn-p0"
                     icon={<DeleteOutlined />}
                     onClick={async () => {
                         const resp = await del(_record.id);
                         if (resp) {
-                            action?.reload();
                             messageApi.success("删除成功");
+                            action?.reload();
                         }
                     }}
                 >
@@ -143,9 +136,6 @@ const Role: FC = () => {
                     defaultValue: {
                         option: { fixed: "right", disable: true },
                     },
-                    // onChange(value) {
-                    //     console.log("value: ", value);
-                    // },
                 }}
                 key="role"
                 rowKey="id"
@@ -171,7 +161,6 @@ const Role: FC = () => {
                 }}
                 pagination={{
                     pageSize: 10,
-                    // onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
                 headerTitle="高级表格"
@@ -181,7 +170,7 @@ const Role: FC = () => {
                         icon={<PlusOutlined />}
                         onClick={() => {
                             setModalType(ModalTypeEnum.CREATE);
-                            setModalOpen(true);
+                            setOpen(true);
                         }}
                         type="primary"
                     >
@@ -190,20 +179,18 @@ const Role: FC = () => {
                 ]}
             />
 
-            {modalOpen && (
-                <CreateModal
-                    open={modalOpen}
-                    modalType={modalType}
-                    record={record!}
-                    handleClose={() => {
-                        setModalOpen(false);
-                    }}
-                    handleOk={() => {
-                        setModalOpen(false);
-                        actionRef.current?.reload();
-                    }}
-                />
-            )}
+            <CreateRoleModal
+                open={open}
+                modalType={modalType}
+                record={record!}
+                handleClose={() => {
+                    setOpen(false);
+                }}
+                handleOk={() => {
+                    setOpen(false);
+                    actionRef.current?.reload();
+                }}
+            />
         </>
     );
 };

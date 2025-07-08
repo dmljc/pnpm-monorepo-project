@@ -28,6 +28,8 @@ import type { MenuProps } from "antd";
 import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
 import useStyles from "./style";
 import { useUserStore, useSystemStore } from "@/store";
+import enUS from "antd/locale/en_US";
+import zhCN from "antd/locale/zh_CN";
 
 const { Header, Sider, Content } = AntdLayout;
 
@@ -140,6 +142,7 @@ const Layout: FC = () => {
 
     return (
         <ConfigProvider
+            locale={lang === "zh" ? zhCN : enUS}
             theme={{
                 algorithm: theme === "light" ? defaultAlgorithm : darkAlgorithm,
                 components: {

@@ -20,9 +20,12 @@ const defaultAvatar =
 
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
+
     const [form] = Form.useForm<UpdateUser>();
-    const [messageApi, contextHolder] = message.useMessage();
     const [roleOptions, setRoleOptions] = useState([]);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
+    const [messageApi, contextHolder] = message.useMessage();
 
     const onOk = async () => {
         await form.validateFields();
@@ -33,18 +36,21 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 : { ...values, id: record.id };
 
         try {
+            setConfirmLoading(true);
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
-                handleOk();
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
                         ? "新增成功"
                         : "修改成功",
                 );
+                handleOk();
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setConfirmLoading(false);
         }
     };
 
@@ -98,6 +104,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 onOk={onOk}
                 forceRender
                 onCancel={handleClose}
+                confirmLoading={confirmLoading}
             >
                 <Form
                     form={form}

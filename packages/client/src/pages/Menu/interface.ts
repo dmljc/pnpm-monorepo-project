@@ -29,3 +29,15 @@ export interface ListParams {
     startTime?: Date;
     endTime?: Date;
 }
+
+export interface DataType {
+    id: number;
+    name: string;
+    type: string;
+    parentId?: string;
+    icon?: string;
+    url?: string;
+    code?: string;
+    component?: string;
+    children?: DataType[];
+}

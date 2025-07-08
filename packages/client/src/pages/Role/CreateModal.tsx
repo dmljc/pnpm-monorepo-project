@@ -1,10 +1,11 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Form, Input, Radio, message, Modal } from "antd";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
 
 const { TextArea } = Input;
+const { Item } = Form;
 
 const layout = {
     labelCol: { span: 5 },
@@ -14,6 +15,8 @@ const layout = {
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateRole>();
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
     const [messageApi, contextHolder] = message.useMessage();
 
     const onOk = async () => {
@@ -25,18 +28,21 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 : { ...values, id: record.id };
 
         try {
+            setConfirmLoading(true);
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
-                handleOk();
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
                         ? "新增成功"
                         : "修改成功",
                 );
+                handleOk();
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setConfirmLoading(false);
         }
     };
 
@@ -66,6 +72,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 onOk={onOk}
                 forceRender
                 onCancel={handleClose}
+                confirmLoading={confirmLoading}
             >
                 <Form
                     form={form}
@@ -74,7 +81,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         status: 1,
                     }}
                 >
-                    <Form.Item
+                    <Item
                         label="名称"
                         name="name"
                         rules={[{ required: false, message: "请输入名称" }]}
@@ -85,8 +92,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             maxLength={10}
                             placeholder="请输入名称"
                         />
-                    </Form.Item>
-                    <Form.Item
+                    </Item>
+                    <Item
                         label="编码"
                         name="code"
                         rules={[{ required: false, message: "请输入编码" }]}
@@ -97,8 +104,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             maxLength={10}
                             placeholder="请输入编码"
                         />
-                    </Form.Item>
-                    <Form.Item
+                    </Item>
+                    <Item
                         label="状态"
                         name="status"
                         rules={[{ required: true, message: "请选择状态" }]}
@@ -107,8 +114,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             <Radio value={1}>启用</Radio>
                             <Radio value={0}>停用</Radio>
                         </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
+                    </Item>
+                    <Item
                         label="备注"
                         name="remark"
                         rules={[{ required: false, message: "请输入备注" }]}
@@ -120,7 +127,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             autoSize={{ minRows: 4, maxRows: 6 }}
                             placeholder="请输入备注"
                         />
-                    </Form.Item>
+                    </Item>
                 </Form>
             </Modal>
         </>
