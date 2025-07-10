@@ -154,25 +154,8 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             placeholder="请输入菜单名称"
                         />
                     </Item>
-                    {type === "button" && (
-                        <Item
-                            name="code"
-                            label="权限字符"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "请输入权限字符",
-                                },
-                            ]}
-                        >
-                            <Input
-                                allowClear
-                                maxLength={8}
-                                placeholder="请输入权限字符"
-                            />
-                        </Item>
-                    )}
-                    {type === "menu" && (
+
+                    {["menu", "button"].includes(type) && (
                         <Item
                             name="parentId"
                             label="上级菜单"
@@ -194,6 +177,24 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 treeDefaultExpandAll
                                 treeNodeFilterProp="name"
                                 placeholder="请选择上级菜单"
+                            />
+                        </Item>
+                    )}
+                    {type === "button" && (
+                        <Item
+                            name="code"
+                            label="权限字符"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请输入权限字符",
+                                },
+                            ]}
+                        >
+                            <Input
+                                allowClear
+                                maxLength={30}
+                                placeholder="请输入权限字符"
                             />
                         </Item>
                     )}

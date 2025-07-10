@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class UpdateMenuDto {
     @IsNotEmpty({ message: "菜单id不能为空" })
@@ -10,6 +10,21 @@ export class UpdateMenuDto {
     @IsNotEmpty({ message: "菜单名称不能为空" })
     name: string;
 
-    @IsNotEmpty({ message: "菜单路由不能为空" })
-    url: string;
+    @IsOptional()
+    url?: string;
+
+    @IsOptional()
+    parentId?: string;
+
+    @IsOptional()
+    icon?: string;
+
+    @IsOptional()
+    code?: string;
+
+    @IsOptional()
+    component?: string;
+
+    @IsOptional()
+    children?: UpdateMenuDto[];
 }
