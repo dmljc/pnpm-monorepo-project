@@ -102,13 +102,18 @@ const Menu: React.FC = () => {
     }, []);
 
     const feechList = async () => {
-        setLoading(true);
-        const res = await list({
-            current: 1,
-            pageSize: 10,
-        });
-        setDataSource(res.data);
-        setLoading(false);
+        try {
+            setLoading(true);
+            const res = await list({
+                current: 1,
+                pageSize: 10,
+            });
+            setDataSource(res.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleCreate = () => {

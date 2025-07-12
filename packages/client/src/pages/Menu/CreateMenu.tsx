@@ -50,15 +50,15 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     };
 
     const onOk = async () => {
-        await form.validateFields();
-        const values = form.getFieldsValue();
-        const params =
-            modalType === ModalTypeEnum.CREATE
-                ? values
-                : { ...values, id: record.id };
-
         try {
             setConfirmLoading(true);
+            await form.validateFields();
+            const values = form.getFieldsValue();
+            const params =
+                modalType === ModalTypeEnum.CREATE
+                    ? values
+                    : { ...values, id: record.id };
+
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {

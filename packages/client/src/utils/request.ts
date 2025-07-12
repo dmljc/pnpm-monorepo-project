@@ -93,12 +93,12 @@ const handleUnauthorizedError = async (
         queue.forEach(({ config, resolve }) => {
             config.headers = config.headers || {};
             config.headers.Authorization = `Bearer ${newAccessToken}`;
-            resolve(axios(config));
+            resolve(axios(config).then((r) => r.data));
         });
 
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${newAccessToken}`;
-        return axios(config);
+        return axios(config).then((r) => r.data); // 关键：只返回后端 data
     } catch (err) {
         message.error("登录过期，请重新登录");
         AuthService.removeAuth();
