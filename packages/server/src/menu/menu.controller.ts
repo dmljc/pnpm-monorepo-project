@@ -11,21 +11,6 @@ import { RequireLogin } from "../common/custom-decorator";
 import { MenuService } from "./menu.service";
 import { CreateMenuDto } from "./dto/create-menu.dto";
 import { UpdateMenuDto } from "./dto/update-menu.dto";
-import { Menu } from "./entities/menu.entity";
-
-function serializeMenu(menu: Menu): any {
-    return {
-        id: menu.id,
-        name: menu.name,
-        type: menu.type,
-        url: menu.url,
-        icon: menu.icon,
-        code: menu.code,
-        component: menu.component,
-        parentId: menu.parent ? menu.parent.id : (menu.parentId ?? null),
-        children: menu.children ? menu.children.map(serializeMenu) : [],
-    };
-}
 
 @Controller("menu")
 export class MenuController {
@@ -40,8 +25,7 @@ export class MenuController {
     @Get("list")
     @RequireLogin()
     async findAll() {
-        const tree = await this.menuService.findAll();
-        return tree.map(serializeMenu);
+        return await this.menuService.findAll();
     }
 
     @Get(":id")
