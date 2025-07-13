@@ -25,7 +25,7 @@ export class MenuController {
     @Get("list")
     @RequireLogin()
     async findAll() {
-        return await this.menuService.findAll();
+        return await this.menuService.findAllAsTree();
     }
 
     @Get(":id")
