@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, message, Space, Table, Tag } from "antd";
 import type { TableColumnsType } from "antd";
-import { ModalTypeEnum } from "@/utils";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import CreateMenuModal from "./CreateMenu";
 import type { UpdateMenu, DataType } from "./interface";
+import { typeColorMap, typeLabelMap } from "./constant";
+import CreateMenuModal from "./CreateMenu";
+import { ModalTypeEnum } from "@/utils";
 import { list, del } from "./api";
-
-const typeColorMap: Record<string, string> = {
-    catalog: "geekblue",
-    menu: "green",
-    button: "volcano",
-};
-const typeLabelMap: Record<string, string> = {
-    catalog: "目录",
-    menu: "菜单",
-    button: "按钮",
-};
 
 const Menu: React.FC = () => {
     // const [checkStrictly, setCheckStrictly] = useState(false);

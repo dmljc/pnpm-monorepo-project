@@ -1,31 +1,15 @@
 import { FC, useEffect, useState } from "react";
 import { Form, Input, Radio, message, Modal, TreeSelect } from "antd";
-import {
-    AppstoreOutlined,
-    BorderOutlined,
-    MenuOutlined,
-} from "@ant-design/icons";
 import { ModalProps, UpdateMenu } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
+import { typeOptions, typeMap } from "./constant";
 
 const { Item } = Form;
 
 const layout = {
     labelCol: { span: 5 },
     wrapperCol: { span: 18 },
-};
-
-const typeOptions = [
-    { label: "目录", value: "catalog", icon: <AppstoreOutlined /> },
-    { label: "菜单", value: "menu", icon: <MenuOutlined /> },
-    { label: "按钮", value: "button", icon: <BorderOutlined /> },
-];
-
-const typeMap = {
-    catalog: "目录",
-    menu: "菜单",
-    button: "按钮",
 };
 
 const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
