@@ -18,8 +18,8 @@ export const typeMap: Record<string, string> = {
 
 export const typeColorMap: Record<string, string> = {
     catalog: "geekblue",
-    menu: "green",
-    button: "volcano",
+    menu: "",
+    button: "#1677ff",
 };
 
 export const typeLabelMap: Record<string, string> = {
