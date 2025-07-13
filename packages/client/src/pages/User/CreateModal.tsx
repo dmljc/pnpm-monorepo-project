@@ -108,6 +108,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
             >
                 <Form
                     form={form}
+                    name="create-user"
                     {...layout}
                     initialValues={{
                         status: 1,
