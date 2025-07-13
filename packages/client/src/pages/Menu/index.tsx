@@ -140,7 +140,7 @@ const Menu: React.FC = () => {
                 icon={<PlusOutlined />}
                 onClick={handleCreate}
             >
-                新增菜单
+                新增
             </Button>
 
             <CreateMenuModal
