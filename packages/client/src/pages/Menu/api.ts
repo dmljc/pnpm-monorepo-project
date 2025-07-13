@@ -1,10 +1,8 @@
 import { request } from "@/utils";
-import { CreateMenu, UpdateMenu, ListParams } from "./interface.ts";
+import { CreateMenu, UpdateMenu } from "./interface.ts";
 
-export const list = (data: ListParams): Promise<any> => {
-    return request.get("/menu/list", {
-        params: data,
-    });
+export const list = (): Promise<any> => {
+    return request.get("/menu/list", {});
 };
 
 export const create = (data: CreateMenu): Promise<any> => {
