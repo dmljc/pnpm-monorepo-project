@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import type { User } from "./interface";
 import { authLogin, userInfoApi } from "./api";
 import { useSystemStore } from "./systemStore";
+import { useMenuStore } from "./menuStore";
 
 interface LogigParams {
     login: string;
@@ -82,6 +83,7 @@ export const useUserStore = create<UserState & UserAction>()(
                     });
                     get().getUserInfo(res.data.access_token);
                     useSystemStore.setState({ lang: "zh", theme: "light" });
+                    useMenuStore.getState().getMenuList();
                     return true;
                 } else {
                     return false;
