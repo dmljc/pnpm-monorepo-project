@@ -159,6 +159,7 @@ const Menu: React.FC = () => {
                 // rowSelection={{ ...rowSelection, checkStrictly }}
                 dataSource={dataSource}
                 pagination={false}
+                className="mt-16"
             />
         </>
     );
