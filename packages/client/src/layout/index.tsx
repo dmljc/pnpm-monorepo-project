@@ -25,15 +25,13 @@ import {
     UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { menuItems, getLevelKeys, LevelKeysProps } from "./utils";
+import { getLevelKeys, LevelKeysProps } from "./utils";
 import useStyles from "./style";
-import { useUserStore, useSystemStore } from "@/store";
+import { useUserStore, useSystemStore, useMenuStore } from "@/store";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 
 const { Header, Sider, Content } = AntdLayout;
-
-const levelKeys = getLevelKeys(menuItems as LevelKeysProps[]);
 
 const Layout: FC = () => {
     const { pathname } = location;
@@ -50,6 +48,10 @@ const Layout: FC = () => {
     const { defaultAlgorithm, darkAlgorithm } = antdTheme;
     // const { token } = theme.useToken();
     // console.log("token===", token);
+
+    const menuList = useMenuStore.getState().menuList as LevelKeysProps[];
+    console.log("menuList===>", menuList);
+    const levelKeys = getLevelKeys(menuList);
 
     const userItems: MenuProps["items"] = [
         {
@@ -126,9 +128,24 @@ const Layout: FC = () => {
         }
     };
 
-    const clickMenuItem = (e: any) => {
-        setSelectedKeys([e.key]);
-        navigate(e.key);
+    const clickMenuItem: MenuProps["onClick"] = (e) => {
+        // 递归查找当前点击项
+        function findMenuItemByKey(items: any[], key: string): any | undefined {
+            for (const item of items) {
+                if (item.key === key) return item;
+                if (item.children) {
+                    const found = findMenuItemByKey(item.children, key);
+                    if (found) return found;
+                }
+            }
+            return undefined;
+        }
+        const item = findMenuItemByKey(menuList, e.key);
+        // 只允许type为menu的项跳转
+        if (item && item.type === "menu" && item.key) {
+            setSelectedKeys([item.key]);
+            navigate(item.key);
+        }
     };
 
     const onLogout = () => {
@@ -173,7 +190,7 @@ const Layout: FC = () => {
                     </a>
                     <Menu
                         mode="inline"
-                        items={menuItems}
+                        items={menuList as MenuProps["items"]}
                         className={ss.menu}
                         defaultSelectedKeys={["/"]}
                         openKeys={stateOpenKeys}

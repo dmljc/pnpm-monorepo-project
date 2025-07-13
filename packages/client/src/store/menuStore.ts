@@ -1,6 +1,8 @@
 import { create } from "zustand";
-import { menuListApi } from "./api";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { convertMenuListToMenuItems } from "@/layout/utils";
+import type { LevelKeysProps } from "@/layout/utils";
+import { menuListApi } from "./api";
 
 /**
  * 菜单项类型定义
@@ -21,7 +23,7 @@ export interface Item {
  * 菜单状态类型
  */
 type State = {
-    menuList: Item[]; // 菜单列表
+    menuList: LevelKeysProps[]; // 菜单列表（已转换）
 };
 
 /**
@@ -53,7 +55,7 @@ export const useMenuStore = create<State & Action>()(
             getMenuList: async () => {
                 const res = await menuListApi();
                 if (res.success) {
-                    set({ menuList: res.data });
+                    set({ menuList: convertMenuListToMenuItems(res.data) });
                 }
             },
             setMenuList: (menuList) => set({ menuList }),

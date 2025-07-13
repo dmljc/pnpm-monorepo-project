@@ -9,7 +9,7 @@ import {
     SlidersOutlined,
 } from "@ant-design/icons";
 
-export const menuItems = [
+export const menuItems: LevelKeysProps[] = [
     {
         key: "/dashboard",
         icon: <DashboardOutlined />,
@@ -71,8 +71,49 @@ export const menuItems = [
     // },
 ];
 
+/**
+ * type到icon的映射表
+ */
+// const typeIconMap: Record<string, React.ReactNode> = {
+//     catalog: <SettingOutlined />,
+//     menu: <MenuOutlined />,
+//     button: undefined, // 按钮类型菜单一般不显示在侧边栏
+// };
+
+/**
+ * 将menuList（Item[]）递归转换为menuItems（LevelKeysProps[]）
+ * 只保留类型为catalog（目录）和menu（菜单）的数据
+ * @param menuList 菜单列表
+ * @returns menuItems格式数组
+ */
+export function convertMenuListToMenuItems(menuList: any[]): LevelKeysProps[] {
+    return menuList
+        .filter((item) => item.type === "catalog" || item.type === "menu")
+        .map((item, idx) => {
+            const children = item.children
+                ? convertMenuListToMenuItems(item.children)
+                : [];
+            // 保证 key 唯一：优先 url，其次 id，否则用 type+name+idx
+            const key =
+                item.url ||
+                (item.id !== undefined
+                    ? String(item.id)
+                    : `${item.type}-${item.name}-${idx}`);
+            return {
+                key,
+                // icon: typeIconMap[item.type] || undefined,
+                label: item.name,
+                type: item.type,
+                ...(children.length >= 1 ? { children } : {}),
+                // 不要 parentId、id、component、code 等无关字段
+            };
+        });
+}
+
 export interface LevelKeysProps {
     key?: string;
+    icon?: React.ReactNode;
+    label?: string;
     children?: LevelKeysProps[];
 }
 
