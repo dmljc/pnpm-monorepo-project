@@ -95,7 +95,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
             {contextHolder}
             <Modal
                 title={
-                    modalType === ModalTypeEnum.CREATE ? "新增菜单" : "修改菜单"
+                    modalType === ModalTypeEnum.CREATE ? "新增菜单" : "编辑菜单"
                 }
                 open={open}
                 onOk={onOk}

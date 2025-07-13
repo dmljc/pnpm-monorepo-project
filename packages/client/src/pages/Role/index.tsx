@@ -80,7 +80,7 @@ const Role: FC = () => {
                         setOpen(true);
                     }}
                 >
-                    修改
+                    编辑
                 </Button>,
                 <Button
                     type="link"
