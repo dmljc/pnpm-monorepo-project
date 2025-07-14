@@ -109,6 +109,7 @@ export const useUserStore = create<UserState & UserAction>()(
             logout: () => {
                 get().resetUserStore();
                 useSystemStore.getState().resetSystemStore();
+                useMenuStore.getState().resetMenuList();
             },
 
             /**

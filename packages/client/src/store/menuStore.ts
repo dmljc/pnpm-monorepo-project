@@ -43,6 +43,10 @@ type Action = {
      * 重置菜单列表
      */
     resetMenuList: () => void;
+    /**
+     * 仅清除本地存储中的菜单列表
+     */
+    removeMenuList: () => void;
 };
 
 /**
@@ -50,7 +54,7 @@ type Action = {
  */
 export const useMenuStore = create<State & Action>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             menuList: [],
             getMenuList: async () => {
                 const res = await menuListApi();
@@ -61,6 +65,10 @@ export const useMenuStore = create<State & Action>()(
             setMenuList: (menuList) => set({ menuList }),
             resetMenuList: () => {
                 set({ menuList: [] });
+                get().removeMenuList();
+            },
+            removeMenuList: () => {
+                localStorage.removeItem("menuStore");
             },
         }),
         {
