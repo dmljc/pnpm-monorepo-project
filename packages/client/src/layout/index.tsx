@@ -1,4 +1,4 @@
-import { useState, FC } from "react";
+import { useState, FC, useMemo } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
     Menu,
@@ -19,32 +19,58 @@ import {
     TranslationOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { getLevelKeys, LevelKeysProps } from "./utils";
+import { getLevelKeys } from "./utils";
 import useStyles from "./style";
 import { useUserStore, useSystemStore, useMenuStore } from "@/store";
+import { getUserItems, getLangItems } from "./constants";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
-import { getUserItems, getLangItems } from "./constants";
 
 const { Header, Sider, Content } = AntdLayout;
 
 const Layout: FC = () => {
-    const { pathname } = location;
     const { logout, userInfo } = useUserStore();
     const { lang, setLang, theme, setTheme } = useSystemStore();
     const navigate = useNavigate();
     const defaultOpenKey = `/${location.pathname.split("/")[1]}`;
-
     const [collapsed, setCollapsed] = useState(false);
-    const [selectedKeys, setSelectedKeys] = useState([pathname]);
+    const [selectedKeys, setSelectedKeys] = useState([location.pathname]);
     const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
-
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = antdTheme;
 
-    const menuList = useMenuStore.getState().menuList as LevelKeysProps[];
+    // 响应式获取菜单
+    const menuList = useMenuStore((state) => state.menuList);
     const levelKeys = getLevelKeys(menuList);
 
+    // 使用 useMemo 仅在 menuList 变化时构建 key -> item 的映射表，提升查找性能
+    const keyItemMap = useMemo(() => {
+        const map = new Map();
+        // 递归遍历菜单树，将每个菜单项的 key 与其对象建立映射关系
+        function traverse(items: any[]) {
+            for (const item of items) {
+                // 建立 key 到菜单项的映射
+                map.set(item.key, item);
+                // 递归处理子菜单
+                if (item.children) traverse(item.children);
+            }
+        }
+        traverse(menuList);
+        return map;
+    }, [menuList]);
+
+    // 菜单点击事件
+    const clickMenuItem: MenuProps["onClick"] = (e) => {
+        // 直接查表获取菜单项
+        const item = keyItemMap.get(e.key);
+        // 只允许type为menu的项跳转
+        if (item && item.type === "menu" && item.key) {
+            setSelectedKeys([item.key]);
+            navigate(item.key);
+        }
+    };
+
+    // 退出登录事件
     const onLogout = () => {
         logout();
         navigate("/login");
@@ -53,6 +79,7 @@ const Layout: FC = () => {
     const userItems = getUserItems(userInfo, navigate, onLogout);
     const langItems = getLangItems();
 
+    // 菜单展开事件
     const onOpenChange: MenuProps["onOpenChange"] = (openKeys) => {
         const currentOpenKey = openKeys.find(
             (key) => stateOpenKeys.indexOf(key) === -1,
@@ -64,11 +91,9 @@ const Layout: FC = () => {
                 .findIndex(
                     (key) => levelKeys[key] === levelKeys[currentOpenKey],
                 );
-
             const openKeyList = openKeys
                 .filter((_, index) => index !== repeatIndex)
                 .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey]);
-
             setStateOpenKeys(openKeyList);
         } else {
             // close
@@ -76,26 +101,7 @@ const Layout: FC = () => {
         }
     };
 
-    const clickMenuItem: MenuProps["onClick"] = (e) => {
-        // 递归查找当前点击项
-        function findMenuItemByKey(items: any[], key: string): any | undefined {
-            for (const item of items) {
-                if (item.key === key) return item;
-                if (item.children) {
-                    const found = findMenuItemByKey(item.children, key);
-                    if (found) return found;
-                }
-            }
-            return undefined;
-        }
-        const item = findMenuItemByKey(menuList, e.key);
-        // 只允许type为menu的项跳转
-        if (item && item.type === "menu" && item.key) {
-            setSelectedKeys([item.key]);
-            navigate(item.key);
-        }
-    };
-
+    // 语言切换事件
     const onClickLang: MenuProps["onClick"] = ({ key }) => {
         setLang(key);
     };
@@ -154,15 +160,14 @@ const Layout: FC = () => {
                                 <MenuFoldOutlined className={ss.headerIcon} />
                             )}
                         </span>
-
                         <span className={ss.headerRight}>
                             <span
                                 className={ss.headerIconTheme}
-                                onClick={() => {
+                                onClick={() =>
                                     setTheme(
                                         theme === "light" ? "dark" : "light",
-                                    );
-                                }}
+                                    )
+                                }
                             >
                                 {theme === "light" ? (
                                     <MoonOutlined className={ss.headerIcon} />
@@ -170,14 +175,12 @@ const Layout: FC = () => {
                                     <SunOutlined className={ss.headerIcon} />
                                 )}
                             </span>
-
                             {theme === "light" ? (
                                 <ExpandOutlined className={ss.headerIcon} />
                             ) : (
                                 <CompressOutlined className={ss.headerIcon} />
                             )}
                             <GithubOutlined className={ss.headerIcon} />
-
                             <Dropdown
                                 trigger={["click"]}
                                 placement="bottomRight"
@@ -193,7 +196,6 @@ const Layout: FC = () => {
                                     className={ss.headerIcon}
                                 />
                             </Dropdown>
-
                             <Dropdown
                                 trigger={["click"]}
                                 menu={{
