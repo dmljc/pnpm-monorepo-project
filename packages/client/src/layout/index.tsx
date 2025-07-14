@@ -11,18 +11,12 @@ import {
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    IdcardOutlined,
-    LogoutOutlined,
     SunOutlined,
-    // FullscreenOutlined,
-    // FullscreenExitOutlined,
     ExpandOutlined,
     CompressOutlined,
     GithubOutlined,
     MoonOutlined,
-    GlobalOutlined,
     TranslationOutlined,
-    UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { getLevelKeys, LevelKeysProps } from "./utils";
@@ -30,6 +24,7 @@ import useStyles from "./style";
 import { useUserStore, useSystemStore, useMenuStore } from "@/store";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
+import { getUserItems, getLangItems } from "./constants";
 
 const { Header, Sider, Content } = AntdLayout;
 
@@ -46,64 +41,17 @@ const Layout: FC = () => {
 
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = antdTheme;
-    // const { token } = theme.useToken();
-    // console.log("token===", token);
 
     const menuList = useMenuStore.getState().menuList as LevelKeysProps[];
-    console.log("menuList===>", menuList);
     const levelKeys = getLevelKeys(menuList);
 
-    const userItems: MenuProps["items"] = [
-        {
-            key: "1",
-            label: (
-                <a>
-                    <UserOutlined />
-                    &nbsp;
-                    {userInfo?.name}
-                </a>
-            ),
-        },
-        {
-            key: "2",
-            label: (
-                <a onClick={() => navigate("/system/profile")}>
-                    <IdcardOutlined />
-                    &nbsp;用户信息
-                </a>
-            ),
-        },
-        {
-            key: "3",
-            label: (
-                <a onClick={() => onLogout()}>
-                    <LogoutOutlined />
-                    &nbsp;退出登录
-                </a>
-            ),
-        },
-    ];
+    const onLogout = () => {
+        logout();
+        navigate("/login");
+    };
 
-    const langItems: MenuProps["items"] = [
-        {
-            key: "zh",
-            label: (
-                <a>
-                    <GlobalOutlined style={{ marginRight: 6 }} />
-                    简体中文
-                </a>
-            ),
-        },
-        {
-            key: "en",
-            label: (
-                <a>
-                    <TranslationOutlined style={{ marginRight: 6 }} />
-                    English
-                </a>
-            ),
-        },
-    ];
+    const userItems = getUserItems(userInfo, navigate, onLogout);
+    const langItems = getLangItems();
 
     const onOpenChange: MenuProps["onOpenChange"] = (openKeys) => {
         const currentOpenKey = openKeys.find(
@@ -146,11 +94,6 @@ const Layout: FC = () => {
             setSelectedKeys([item.key]);
             navigate(item.key);
         }
-    };
-
-    const onLogout = () => {
-        logout();
-        navigate("/login");
     };
 
     const onClickLang: MenuProps["onClick"] = ({ key }) => {
