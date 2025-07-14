@@ -157,15 +157,17 @@ const ServerInfo: FC = () => {
             <Table<SysInfo>
                 title={() => <h3>服务器信息</h3>}
                 columns={SysColumns}
-                dataSource={[data?.sys]}
+                dataSource={data?.sys ? [data.sys] : []}
                 pagination={false}
+                rowKey="computerIp"
             />
             <Divider />
             <Table<DistInfo>
                 title={() => <h3>磁盘信息</h3>}
                 columns={columns}
-                dataSource={data?.dist}
+                dataSource={data?.dist || []}
                 pagination={false}
+                rowKey="dirName"
             />
         </Spin>
     );
