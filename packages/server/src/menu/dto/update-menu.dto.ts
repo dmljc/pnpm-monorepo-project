@@ -8,13 +8,13 @@ export class UpdateMenuDto {
     type: string;
 
     @IsNotEmpty({ message: "菜单名称不能为空" })
-    name: string;
+    label: string;
 
     @IsOptional()
-    url?: string;
+    path?: string;
 
     @IsOptional()
-    parentId?: string;
+    parentId?: number;
 
     @IsOptional()
     icon?: string;

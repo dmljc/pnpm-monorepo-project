@@ -9,7 +9,6 @@ import { ModalTypeEnum } from "@/utils";
 import { list, del } from "./api";
 
 const Menu: React.FC = () => {
-    // const [checkStrictly, setCheckStrictly] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
@@ -22,8 +21,8 @@ const Menu: React.FC = () => {
     const columns: TableColumnsType<DataType> = [
         {
             title: "标题",
-            dataIndex: "name",
-            key: "name",
+            dataIndex: "label",
+            key: "label",
             width: "20%",
         },
         {
@@ -45,8 +44,8 @@ const Menu: React.FC = () => {
         },
         {
             title: "路由地址",
-            dataIndex: "url",
-            key: "url",
+            dataIndex: "path",
+            key: "path",
             width: "20%",
         },
         {
@@ -94,10 +93,7 @@ const Menu: React.FC = () => {
     const feechList = async () => {
         try {
             setLoading(true);
-            const res = await list({
-                current: 1,
-                pageSize: 10,
-            });
+            const res = await list();
             setDataSource(res.data);
         } catch (error) {
             console.log(error);
@@ -156,7 +152,6 @@ const Menu: React.FC = () => {
                 rowKey="id"
                 loading={loading}
                 columns={columns}
-                // rowSelection={{ ...rowSelection, checkStrictly }}
                 dataSource={dataSource}
                 pagination={false}
                 className="mt-16"

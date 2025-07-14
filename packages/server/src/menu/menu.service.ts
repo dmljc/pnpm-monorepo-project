@@ -14,7 +14,7 @@ export class MenuService {
 
     async create(createMenuDto: CreateMenuDto) {
         const existingMenu = await this.menuRepository.findOne({
-            where: { name: createMenuDto.name },
+            where: { label: createMenuDto.label },
         });
         // 仅类型为目录和菜单时候才需要判断
         if (existingMenu && ["catalog", "menu"].includes(createMenuDto.type)) {
@@ -24,7 +24,7 @@ export class MenuService {
         let parent = null;
         if (createMenuDto.parentId) {
             parent = await this.menuRepository.findOne({
-                where: { id: Number(createMenuDto.parentId) },
+                where: { id: createMenuDto.parentId },
             });
         }
 

@@ -9,13 +9,13 @@ export class CreateMenuDto {
     // 新增 @IsNotEmpty 验证非空
     @IsString({ message: "菜单名称必须是字符串" })
     @IsNotEmpty({ message: "菜单名称不能为空" })
-    name: string;
+    label: string;
 
     @IsOptional()
-    url?: string;
+    path?: string;
 
     @IsOptional()
-    parentId?: string;
+    parentId?: number;
 
     @IsOptional()
     icon?: string;

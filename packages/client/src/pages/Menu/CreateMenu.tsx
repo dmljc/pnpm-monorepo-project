@@ -123,7 +123,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                     </Item>
                     {/* 下面根据type动态渲染 */}
                     <Item
-                        name="name"
+                        name="label"
                         label={`${typeMap[type as keyof typeof typeMap]}名称`}
                         rules={[
                             {
@@ -155,7 +155,6 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 allowClear
                                 treeData={menuData}
                                 fieldNames={{
-                                    label: "name",
                                     value: "id",
                                 }}
                                 treeDefaultExpandAll
@@ -184,7 +183,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                     )}
                     {["catalog", "menu"].includes(type) && (
                         <Item
-                            name="url"
+                            name="path"
                             label="路由地址"
                             rules={[
                                 {

@@ -49,9 +49,7 @@ const Layout: FC = () => {
         // 递归遍历菜单树，将每个菜单项的 key 与其对象建立映射关系
         function traverse(items: any[]) {
             for (const item of items) {
-                // 建立 key 到菜单项的映射
-                map.set(item.key, item);
-                // 递归处理子菜单
+                map.set(item.key, item); // 用 key 作为 key
                 if (item.children) traverse(item.children);
             }
         }
@@ -61,12 +59,10 @@ const Layout: FC = () => {
 
     // 菜单点击事件
     const clickMenuItem: MenuProps["onClick"] = (e) => {
-        // 直接查表获取菜单项
         const item = keyItemMap.get(e.key);
-        // 只允许type为menu的项跳转
-        if (item && item.type === "menu" && item.key) {
+        if (item && item.type === "menu" && item.path) {
             setSelectedKeys([item.key]);
-            navigate(item.key);
+            navigate(item.path);
         }
     };
 

@@ -9,11 +9,11 @@ import { menuListApi } from "./api";
  */
 export interface Item {
     id: number; // 菜单唯一标识
-    name: string; // 菜单名称
+    label: string; // 菜单名称
     type: string; // 菜单类型（如目录、菜单、按钮等）
-    parentId?: string; // 父级菜单ID
+    parentId?: number; // 父级菜单ID
     icon?: string; // 菜单图标
-    url?: string; // 路由地址
+    path?: string; // 路由地址
     code?: string; // 权限编码
     component?: string; // 组件路径
     children?: Item[]; // 子菜单

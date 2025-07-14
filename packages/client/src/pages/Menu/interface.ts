@@ -1,8 +1,8 @@
 export interface CreateMenu {
-    name: string;
+    label: string;
     type: string;
     icon?: string;
-    url?: string;
+    path?: string;
     code?: string;
     component?: string;
     children?: CreateMenu[];
@@ -22,21 +22,13 @@ export interface ModalProps {
     handleOk: () => void;
 }
 
-export interface ListParams {
-    current: number;
-    pageSize: number;
-    name?: string;
-    startTime?: Date;
-    endTime?: Date;
-}
-
 export interface DataType {
     id: number;
-    name: string;
+    label: string;
     type: string;
     parentId?: string;
     icon?: string;
-    url?: string;
+    path?: string;
     code?: string;
     component?: string;
     children?: DataType[];

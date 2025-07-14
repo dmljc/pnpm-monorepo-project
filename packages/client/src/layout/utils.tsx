@@ -102,8 +102,9 @@ export function convertMenuListToMenuItems(menuList: any[]): LevelKeysProps[] {
             return {
                 key,
                 // icon: typeIconMap[item.type] || undefined,
-                label: item.name,
+                label: item.label,
                 type: item.type,
+                path: item.path,
                 ...(children.length >= 1 ? { children } : {}),
                 // 不要 parentId、id、component、code 等无关字段
             };

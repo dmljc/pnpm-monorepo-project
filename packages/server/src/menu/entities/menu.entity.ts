@@ -17,13 +17,13 @@ export class Menu {
     type: string;
 
     @Column({ comment: "菜单名称" })
-    name: string;
+    label: string;
 
     @Column({ comment: "菜单路由", nullable: true })
-    url?: string;
+    path?: string;
 
     @Column({ comment: "父级菜单ID", nullable: true })
-    parentId?: string;
+    parentId?: number;
 
     @Column({ comment: "菜单图标", nullable: true })
     icon?: string;
