@@ -98,6 +98,7 @@ export const useUserStore = create<UserState & UserAction>()(
                 get().resetUserStore();
                 useSystemStore.getState().resetSystemStore();
                 useMenuStore.getState().resetMenuList();
+                localStorage.removeItem("pro-table-singe-demos");
             },
 
             /**
