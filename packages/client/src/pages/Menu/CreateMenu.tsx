@@ -90,7 +90,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 <Form
                     {...layout}
                     form={form}
-                    name="create-menu"
+                    name="createMenu"
                     initialValues={{
                         type: "catalog",
                     }}

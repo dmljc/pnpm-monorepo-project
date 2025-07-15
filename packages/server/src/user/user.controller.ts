@@ -53,7 +53,7 @@ export class UserController {
         const user = await this.userService.login(loginUser);
 
         if (user) {
-            const access_token = this.jwtService.sign(
+            const accessToken = this.jwtService.sign(
                 {
                     user: {
                         id: user.id,
@@ -63,9 +63,9 @@ export class UserController {
                 },
                 { expiresIn: "5m" },
             );
-            res.setHeader("Authorization", access_token);
+            res.setHeader("Authorization", accessToken);
 
-            const refresh_token = this.jwtService.sign(
+            const refreshToken = this.jwtService.sign(
                 {
                     user: {
                         id: user.id,
@@ -77,8 +77,8 @@ export class UserController {
             );
 
             return {
-                access_token,
-                refresh_token,
+                accessToken,
+                refreshToken,
             };
         } else {
             return "login fail";
@@ -86,35 +86,29 @@ export class UserController {
     }
 
     @Get("refresh")
-    async refresh(@Query("refresh_token") refreshToken: string) {
+    async refresh(@Query("refreshToken") refreshToken: string) {
         try {
             const data = this.jwtService.verify(refreshToken);
 
             const user = await this.userService.findUserById(data.id);
 
-            const access_token = this.jwtService.sign(
+            const accessToken = this.jwtService.sign(
                 {
                     id: user.id,
-                    username: user.username,
-                    user,
                 },
-                {
-                    expiresIn: "5m",
-                },
+                { expiresIn: "5m" },
             );
 
-            const refresh_token = this.jwtService.sign(
+            const refreshTokenNew = this.jwtService.sign(
                 {
                     id: user.id,
                 },
-                {
-                    expiresIn: "15m",
-                },
+                { expiresIn: "7d" },
             );
 
             return {
-                access_token,
-                refresh_token,
+                accessToken,
+                refreshToken: refreshTokenNew,
             };
         } catch {
             throw new UnauthorizedException("token 已失效，请重新登录");

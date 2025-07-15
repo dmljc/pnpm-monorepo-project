@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { User } from "./interface";
-import { authLogin, userInfoApi } from "./api";
+import { authLogin } from "./api";
 import { useSystemStore } from "./systemStore";
 import { useMenuStore } from "./menuStore";
 
@@ -40,8 +40,6 @@ type UserAction = {
     login: (params: LogigParams) => Promise<boolean>;
     /** 退出登录方法，重置用户状态 */
     logout: () => void;
-    /** 获取用户信息方法 */
-    getUserInfo: (accessToken: string) => void;
     /** 重置 Store 状态方法 */
     resetUserStore: () => void;
     /** 仅清除本地存储中的用户数据 */
@@ -77,11 +75,12 @@ export const useUserStore = create<UserState & UserAction>()(
             login: async (params: LogigParams): Promise<boolean> => {
                 const res = await authLogin(params);
                 if (res.success) {
+                    const { userInfo, accessToken, refreshToken } = res.data;
                     set({
-                        accessToken: res.data.access_token,
-                        refreshToken: res.data.refresh_token,
+                        userInfo,
+                        accessToken,
+                        refreshToken,
                     });
-                    get().getUserInfo(res.data.access_token);
                     useSystemStore.setState({ lang: "zh", theme: "light" });
                     useMenuStore.getState().getMenuList();
                     return true;
@@ -91,17 +90,6 @@ export const useUserStore = create<UserState & UserAction>()(
             },
             setHasNotification: (hasNotification: boolean) =>
                 set({ hasNotification }),
-            /** 获取用户信息方法 */
-            getUserInfo: async (accessToken: string) => {
-                if (!accessToken) return;
-                const res = await userInfoApi(accessToken);
-                if (res.success) {
-                    set({
-                        userInfo: res.data,
-                        hasNotification: false,
-                    });
-                }
-            },
             /**
              * 退出登录方法
              * 会调用 resetUserStore 重置所有用户相关状态
@@ -121,6 +109,7 @@ export const useUserStore = create<UserState & UserAction>()(
                     userInfo: null,
                     accessToken: null,
                     refreshToken: null,
+                    hasNotification: false, // 这里重置
                 });
                 get().removeUserStore();
             },

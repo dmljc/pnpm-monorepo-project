@@ -88,7 +88,7 @@ const handleUnauthorizedError = async (
 ) => {
     try {
         const res = await handleRefreshToken();
-        const newAccessToken = res.data.data.access_token;
+        const newAccessToken = res.data.data.accessToken;
 
         queue.forEach(({ config, resolve }) => {
             config.headers = config.headers || {};
@@ -136,12 +136,12 @@ export const createAxiosByinterceptors = (
     const handleRefreshToken = async () => {
         const res = await axios.get(`${baseURL}/user/refresh`, {
             params: {
-                refresh_token: AuthService.getRefreshToken(),
+                refreshToken: AuthService.getRefreshToken(),
             },
         });
 
-        const { access_token, refresh_token } = res.data.data;
-        AuthService.setTokens(access_token, refresh_token);
+        const { accessToken, refreshToken } = res.data.data;
+        AuthService.setTokens(accessToken, refreshToken);
         return res;
     };
 
@@ -169,7 +169,7 @@ export const createAxiosByinterceptors = (
     instance.interceptors.response.use(
         (response) => {
             const { data } = response;
-            const accessToken = data.data?.access_token;
+            const accessToken = data.data?.accessToken;
 
             if (accessToken) {
                 response.headers.Authorization = `Bearer ${accessToken}`;

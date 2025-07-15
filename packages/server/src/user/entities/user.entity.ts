@@ -72,13 +72,29 @@ export class User {
 
     @CreateDateColumn({
         comment: "创建时间",
+        transformer: {
+            to(value: Date): Date {
+                return value;
+            },
+            from(value: Date): string {
+                return value.toLocaleString();
+            },
+        },
     })
-    startTime: Date;
+    startTime: string;
 
     @CreateDateColumn({
         comment: "创建时间",
+        transformer: {
+            to(value: Date): Date {
+                return value;
+            },
+            from(value: Date): string {
+                return value.toLocaleString();
+            },
+        },
     })
-    endTime: Date;
+    endTime: string;
 
     @CreateDateColumn({
         transformer: {

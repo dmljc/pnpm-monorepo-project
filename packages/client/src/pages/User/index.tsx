@@ -334,7 +334,7 @@ const User: FC = () => {
                     },
                 }}
                 form={{
-                    name: "user-list",
+                    name: "userList",
                     // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
                     syncToUrl: (values, type) => {
                         if (type === "get") {

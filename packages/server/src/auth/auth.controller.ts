@@ -21,7 +21,6 @@ export class AuthController {
     @Inject(JwtService)
     private jwtService: JwtService;
 
-    // constructor(private authService: AuthService) {}
     constructor(private readonly userService: UserService) {}
 
     @RequireLogin(false)
@@ -33,7 +32,7 @@ export class AuthController {
             throw new UnauthorizedException("用户已被禁用");
         }
 
-        const access_token = this.jwtService.sign(
+        const accessToken = this.jwtService.sign(
             {
                 user: {
                     id: user.id,
@@ -43,9 +42,9 @@ export class AuthController {
             },
             { expiresIn: "50s" },
         );
-        res.setHeader("Authorization", access_token);
+        res.setHeader("Authorization", accessToken);
 
-        const refresh_token = this.jwtService.sign(
+        const refreshToken = this.jwtService.sign(
             {
                 user: {
                     id: user.id,
@@ -57,8 +56,9 @@ export class AuthController {
         );
 
         return {
-            access_token,
-            refresh_token,
+            accessToken,
+            refreshToken,
+            userInfo: user,
         };
     }
 
