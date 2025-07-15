@@ -1,29 +1,14 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { convertMenuListToMenuItems } from "@/layout/utils";
-import type { LevelKeysProps } from "@/layout/utils";
+import type { MenuItem } from "@/layout/utils";
 import { menuListApi } from "./api";
-
-/**
- * 菜单项类型定义
- */
-export interface Item {
-    id: number; // 菜单唯一标识
-    label: string; // 菜单名称
-    type: string; // 菜单类型（如目录、菜单、按钮等）
-    parentId?: number; // 父级菜单ID
-    icon?: string; // 菜单图标
-    path?: string; // 路由地址
-    code?: string; // 权限编码
-    component?: string; // 组件路径
-    children?: Item[]; // 子菜单
-}
 
 /**
  * 菜单状态类型
  */
 type State = {
-    menuList: LevelKeysProps[]; // 菜单列表（已转换）
+    menuList: MenuItem[]; // 菜单列表（已转换）
 };
 
 /**
@@ -38,7 +23,7 @@ type Action = {
      * 设置菜单列表
      * @param menuList 新的菜单列表
      */
-    setMenuList: (menuList: Item[]) => void;
+    setMenuList: (menuList: MenuItem[]) => void;
     /**
      * 重置菜单列表
      */

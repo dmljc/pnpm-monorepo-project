@@ -1,4 +1,4 @@
-import { useState, FC, useMemo } from "react";
+import { useState, FC, useMemo, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
     Menu,
@@ -32,16 +32,82 @@ const Layout: FC = () => {
     const { logout, userInfo } = useUserStore();
     const { lang, setLang, theme, setTheme } = useSystemStore();
     const navigate = useNavigate();
-    const defaultOpenKey = `/${location.pathname.split("/")[1]}`;
-    const [collapsed, setCollapsed] = useState(false);
-    const [selectedKeys, setSelectedKeys] = useState([location.pathname]);
-    const [stateOpenKeys, setStateOpenKeys] = useState([defaultOpenKey]);
-    const { styles: ss } = useStyles();
-    const { defaultAlgorithm, darkAlgorithm } = antdTheme;
 
     // 响应式获取菜单
     const menuList = useMenuStore((state) => state.menuList);
     const levelKeys = getLevelKeys(menuList);
+
+    // 根据当前路径和菜单数据计算默认的选中和展开状态
+    const getDefaultKeys = () => {
+        const currentPath = location.pathname;
+        let selectedKey = "";
+        let openKey = "";
+
+        // 递归查找匹配当前路径的菜单项
+        const findMenuByPath = (items: any[]): any => {
+            for (const item of items) {
+                if (item.path === currentPath) {
+                    return item;
+                }
+                if (item.children) {
+                    const found = findMenuByPath(item.children);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+
+        const currentMenuItem = findMenuByPath(menuList);
+        if (currentMenuItem) {
+            selectedKey = currentMenuItem.key;
+            // 找到父级菜单作为展开项
+            const findParentKey = (items: any[], targetKey: string): string => {
+                for (const item of items) {
+                    if (item.children) {
+                        const hasChild = item.children.some(
+                            (child: any) => child.key === targetKey,
+                        );
+                        if (hasChild) return item.key;
+
+                        // 递归查找更深层的子菜单
+                        const parentKey = findParentKey(
+                            item.children,
+                            targetKey,
+                        );
+                        if (parentKey) return item.key;
+                    }
+                }
+                return "";
+            };
+            openKey = findParentKey(menuList, selectedKey);
+        }
+
+        // 如果没有找到匹配的菜单项，使用默认值
+        if (!selectedKey && menuList.length > 0) {
+            selectedKey =
+                menuList[0]?.children?.[0]?.key ?? menuList[0]?.key ?? "";
+            openKey = menuList[0]?.key ?? "";
+        }
+
+        return { selectedKey, openKey };
+    };
+
+    const [stateOpenKeys, setStateOpenKeys] = useState<string[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+
+    // 当menuList变化时，更新选中和展开状态
+    useEffect(() => {
+        if (menuList.length > 0) {
+            const { selectedKey, openKey } = getDefaultKeys();
+            setSelectedKeys(selectedKey ? [selectedKey] : []);
+            setStateOpenKeys(openKey ? [openKey] : []);
+        }
+    }, [menuList]);
+
+    const [collapsed, setCollapsed] = useState(false);
+
+    const { styles: ss } = useStyles();
+    const { defaultAlgorithm, darkAlgorithm } = antdTheme;
 
     // 使用 useMemo 仅在 menuList 变化时构建 key -> item 的映射表，提升查找性能
     const keyItemMap = useMemo(() => {
@@ -133,16 +199,17 @@ const Layout: FC = () => {
                             {!collapsed && "Nest React19 Admin"}
                         </span>
                     </a>
-                    <Menu
-                        mode="inline"
-                        items={menuList as MenuProps["items"]}
-                        className={ss.menu}
-                        defaultSelectedKeys={["/"]}
-                        openKeys={stateOpenKeys}
-                        selectedKeys={selectedKeys}
-                        onOpenChange={onOpenChange}
-                        onClick={clickMenuItem}
-                    />
+                    {menuList.length > 0 && (
+                        <Menu
+                            mode="inline"
+                            items={menuList as MenuProps["items"]}
+                            className={ss.menu}
+                            openKeys={stateOpenKeys}
+                            selectedKeys={selectedKeys}
+                            onOpenChange={onOpenChange}
+                            onClick={clickMenuItem}
+                        />
+                    )}
                 </Sider>
                 <AntdLayout>
                     <Header className={ss.header}>
