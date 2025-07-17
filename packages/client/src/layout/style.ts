@@ -88,6 +88,24 @@ export default createStyles(({ css }) => ({
         margin: "24px 24px",
         overflow: "auto",
     },
+    footer: {
+        width: "calc(100% - 250px)",
+        position: "fixed",
+        bottom: 0,
+        left: 250,
+        right: 0,
+
+        backgroundColor: "#fff",
+        padding: "10px 0",
+        textAlign: "center",
+        color: "rgba(0, 0, 0, 0.45)",
+        fontSize: 12,
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+    },
 
     // container: {
     //     backgroundColor: token.colorBgLayout,

@@ -1,18 +1,10 @@
 import { FC, useState } from "react";
-import { Form, Upload, Input, Space, Button } from "antd";
+import { Form, Upload, Input, Button } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
 import useStyles from "./style";
 
 const { Item } = Form;
-
-const layout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 8 },
-};
-const tailLayout = {
-    wrapperCol: { span: 16 },
-};
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -52,7 +44,6 @@ const Config: FC = () => {
         <Form
             form={form}
             layout="vertical"
-            {...layout}
             name="systemConfig"
             className={ss.root}
         >
@@ -83,7 +74,7 @@ const Config: FC = () => {
                 <Input
                     showCount
                     allowClear
-                    maxLength={10}
+                    maxLength={15}
                     placeholder="请输入系统名称"
                 />
             </Item>
@@ -96,7 +87,7 @@ const Config: FC = () => {
                 <Input
                     showCount
                     allowClear
-                    maxLength={10}
+                    maxLength={30}
                     placeholder="请输入系统描述"
                 />
             </Item>
@@ -109,7 +100,7 @@ const Config: FC = () => {
                 <Input
                     showCount
                     allowClear
-                    maxLength={10}
+                    maxLength={60}
                     placeholder="请输入版权说明"
                 />
             </Item>
@@ -122,18 +113,16 @@ const Config: FC = () => {
                 <Input
                     showCount
                     allowClear
-                    maxLength={20}
+                    maxLength={30}
                     placeholder="请输入备案号"
                 />
             </Item>
-            <Form.Item {...tailLayout}>
-                <Space>
-                    <Button type="primary" htmlType="submit">
-                        保存
-                    </Button>
-                    <Button htmlType="button">重置</Button>
-                </Space>
-            </Form.Item>
+            <Item>
+                <Button type="primary" htmlType="submit">
+                    保存
+                </Button>
+                <Button htmlType="button">重置</Button>
+            </Item>
         </Form>
     );
 };

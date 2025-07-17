@@ -26,7 +26,7 @@ import { getUserItems, getLangItems } from "./constants";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 
-const { Header, Sider, Content } = AntdLayout;
+const { Header, Sider, Content, Footer } = AntdLayout;
 
 const Layout: FC = () => {
     const { logout, userInfo } = useUserStore();
@@ -282,6 +282,11 @@ const Layout: FC = () => {
                             <Outlet />
                         </Card>
                     </Content>
+                    <Footer className={ss.footer}>
+                        {/* <div className={ss.footerText}> */}
+                        <span>Copyright © 2024 Nest React19 Admin</span>
+                        {/* </div> */}
+                    </Footer>
                 </AntdLayout>
             </AntdLayout>
         </ConfigProvider>
