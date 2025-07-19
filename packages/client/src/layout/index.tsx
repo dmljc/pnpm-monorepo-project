@@ -25,6 +25,7 @@ import { useUserStore, useSystemStore, useMenuStore } from "@/store";
 import { getUserItems, getLangItems } from "./constants";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
+import IconRenderer from "@/components/IconComponent/IconRenderer";
 
 const { Header, Sider, Content, Footer } = AntdLayout;
 
@@ -36,6 +37,26 @@ const Layout: FC = () => {
     // 响应式获取菜单
     const menuList = useMenuStore((state) => state.menuList);
     const levelKeys = getLevelKeys(menuList);
+
+    // 自定义图标渲染函数
+    const renderIcon = (icon: any) => {
+        if (!icon || typeof icon !== "string") return null;
+        return <IconRenderer icon={icon} />;
+    };
+
+    // 处理菜单项，添加自定义图标渲染
+    const processedMenuList = useMemo(() => {
+        const processMenuItems = (items: any[]): any[] => {
+            return items.map((item) => ({
+                ...item,
+                icon: item.icon ? renderIcon(item.icon) : undefined,
+                children: item.children
+                    ? processMenuItems(item.children)
+                    : undefined,
+            }));
+        };
+        return processMenuItems(menuList);
+    }, [menuList]);
 
     // 根据当前路径和菜单数据计算默认的选中和展开状态
     const getDefaultKeys = () => {
@@ -202,7 +223,7 @@ const Layout: FC = () => {
                     {menuList.length > 0 && (
                         <Menu
                             mode="inline"
-                            items={menuList as MenuProps["items"]}
+                            items={processedMenuList as MenuProps["items"]}
                             className={ss.menu}
                             openKeys={stateOpenKeys}
                             selectedKeys={selectedKeys}

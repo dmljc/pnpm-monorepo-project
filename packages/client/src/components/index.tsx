@@ -3,6 +3,8 @@ import WithLoadingComponent from "./WithLoadingComponent";
 import Coverupload from "./Coverupload/index";
 import OSSUpload from "./OSSUpload";
 import NotFound from "./NotFound";
+import IconComponent from "./IconComponent";
+import IconRenderer from "./IconComponent/IconRenderer";
 
 export {
     AuthComponent,
@@ -10,4 +12,6 @@ export {
     WithLoadingComponent,
     OSSUpload,
     NotFound,
+    IconComponent,
+    IconRenderer,
 };

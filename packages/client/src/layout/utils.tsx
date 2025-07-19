@@ -1,84 +1,4 @@
-// import {
-//     UserOutlined,
-//     DashboardOutlined,
-//     DesktopOutlined,
-//     LineChartOutlined,
-//     SettingOutlined,
-//     TeamOutlined,
-//     MenuOutlined,
-//     SlidersOutlined,
-// } from "@ant-design/icons";
-
-// export const menuItems: MenuItem[] = [
-//     {
-//         key: "/dashboard",
-//         icon: <DashboardOutlined />,
-//         label: "仪表盘",
-//         children: [
-//             {
-//                 key: "/dashboard/workplace",
-//                 icon: <DesktopOutlined />,
-//                 label: "工作台",
-//             },
-//             {
-//                 key: "/dashboard/analysis",
-//                 icon: <LineChartOutlined />,
-//                 label: "分析页",
-//             },
-//         ],
-//     },
-//     {
-//         key: "/system",
-//         icon: <SettingOutlined />,
-//         label: "系统管理",
-//         children: [
-//             {
-//                 key: "/system/user",
-//                 icon: <UserOutlined />,
-//                 label: "用户管理",
-//             },
-//             {
-//                 key: "/system/role",
-//                 icon: <TeamOutlined />,
-//                 label: "角色管理",
-//             },
-//             {
-//                 key: "/system/menu",
-//                 icon: <MenuOutlined />,
-//                 label: "菜单管理",
-//             },
-//             {
-//                 key: "/system/config",
-//                 icon: <SlidersOutlined />,
-//                 label: "系统配置",
-//             },
-//             {
-//                 key: "/system/server",
-//                 icon: <SlidersOutlined />,
-//                 label: "服务器信息",
-//             },
-//         ],
-//     },
-//     // {
-//     //     key: "book",
-//     //     icon: <UserOutlined />,
-//     //     label: "图书管理",
-//     // },
-//     // {
-//     //     key: "login",
-//     //     icon: <UserOutlined />,
-//     //     label: "登录",
-//     // },
-// ];
-
-/**
- * type到icon的映射表
- */
-// const typeIconMap: Record<string, React.ReactNode> = {
-//     catalog: <SettingOutlined />,
-//     menu: <MenuOutlined />,
-//     button: undefined, // 按钮类型菜单一般不显示在侧边栏
-// };
+import React from "react";
 
 /**
  * 将menuList（Item[]）递归转换为menuItems（MenuItem[]）
@@ -99,9 +19,10 @@ export function convertMenuListToMenuItems(menuList: any[]): MenuItem[] {
                 (item.id !== undefined
                     ? String(item.id)
                     : `${item.type}-${item.name}-${idx}`);
+
             return {
                 key,
-                // icon: typeIconMap[item.type] || undefined,
+                icon: item.icon, // 直接传递图标字符串，让 Ant Design Menu 组件自己处理
                 id: item.id,
                 label: item.label,
                 type: item.type,
@@ -112,16 +33,6 @@ export function convertMenuListToMenuItems(menuList: any[]): MenuItem[] {
         });
 }
 
-// export interface MenuItem {
-//     id: number;
-//     key: string;
-//     // icon?: React.ReactNode;
-//     label?: string;
-//     type?: string;
-//     path?: string;
-//     children?: MenuItem[];
-// }
-
 /**
  * 菜单项类型定义
  */
@@ -131,7 +42,7 @@ export interface MenuItem {
     label: string; // 菜单名称
     type: string; // 菜单类型（如目录、菜单、按钮等）
     parentId?: number; // 父级菜单ID
-    icon?: string; // 菜单图标
+    icon?: React.ReactNode; // 菜单图标
     path?: string; // 路由地址
     code?: string; // 权限编码
     component?: string; // 组件路径

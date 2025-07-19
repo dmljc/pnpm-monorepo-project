@@ -83,6 +83,12 @@ importers:
       '@ant-design/pro-components':
         specifier: ^2.8.9
         version: 2.8.9(antd@5.26.5(moment@2.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(rc-field-form@2.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@emotion/css':
+        specifier: ^11.13.5
+        version: 11.13.5
+      '@iconify/react':
+        specifier: ^6.0.0
+        version: 6.0.0(react@19.1.0)
       antd:
         specifier: ^5.26.5
         version: 5.26.5(moment@2.30.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1631,6 +1637,11 @@ packages:
 
   '@iconify-json/simple-icons@1.2.43':
     resolution: {integrity: sha512-JERgKGFRfZdyjGyTvVBVW5rftahy9tNUX+P+0QUnbaAEWvEMexXHE9863YVMVrIRhoj/HybGsibg8ZWieo/NDg==}
+
+  '@iconify/react@6.0.0':
+    resolution: {integrity: sha512-eqNscABVZS8eCpZLU/L5F5UokMS9mnCf56iS1nM9YYHdH8ZxqZL9zyjSwW60IOQFsXZkilbBiv+1paMXBhSQnw==}
+    peerDependencies:
+      react: '>=16'
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -8325,6 +8336,11 @@ snapshots:
   '@iconify-json/simple-icons@1.2.43':
     dependencies:
       '@iconify/types': 2.0.0
+
+  '@iconify/react@6.0.0(react@19.1.0)':
+    dependencies:
+      '@iconify/types': 2.0.0
+      react: 19.1.0
 
   '@iconify/types@2.0.0': {}
 

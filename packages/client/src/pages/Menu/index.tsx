@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, message, Space, Table, Tag } from "antd";
+import { Button, message, Space, Table, Tag, Form } from "antd";
 import type { TableColumnsType } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import type { UpdateMenu, DataType } from "./interface";
@@ -7,6 +7,7 @@ import { typeColorMap, typeLabelMap } from "./constant";
 import CreateMenuModal from "./CreateMenu";
 import { ModalTypeEnum } from "@/utils";
 import { list, del } from "./api";
+import IconRenderer from "@/components/IconComponent/IconRenderer";
 
 const Menu: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
@@ -17,19 +18,29 @@ const Menu: React.FC = () => {
     const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
     const [dataSource, setDataSource] = useState<DataType[]>([]);
     const [loading, setLoading] = useState(false);
+    const [form] = Form.useForm();
 
     const columns: TableColumnsType<DataType> = [
         {
             title: "标题",
             dataIndex: "label",
             key: "label",
-            width: "20%",
+            width: "15%",
+        },
+        {
+            title: "图标",
+            dataIndex: "icon",
+            key: "icon",
+            width: "10%",
+            render: (icon) => {
+                return icon ? <IconRenderer icon={icon} /> : null;
+            },
         },
         {
             title: "类型",
             dataIndex: "type",
             key: "type",
-            width: "20%",
+            width: "15%",
             render: (type) => {
                 return (
                     <Tag color={typeColorMap[type]}>{typeLabelMap[type]}</Tag>
@@ -46,7 +57,7 @@ const Menu: React.FC = () => {
             title: "路由地址",
             dataIndex: "path",
             key: "path",
-            width: "20%",
+            width: "15%",
         },
         {
             title: "页面组件",
@@ -58,7 +69,7 @@ const Menu: React.FC = () => {
             title: "操作",
             dataIndex: "ctrl",
             key: "ctrl",
-            width: "10%",
+            width: "15%",
             render: (_, record) => {
                 return (
                     <Space>
@@ -105,12 +116,14 @@ const Menu: React.FC = () => {
     const handleCreate = () => {
         setOpen(true);
         setModalType(ModalTypeEnum.CREATE);
+        form.resetFields();
     };
 
     const handleUpdate = (record: UpdateMenu) => {
         setOpen(true);
         setRecord({ ...record });
         setModalType(ModalTypeEnum.UPDATE);
+        form.setFieldsValue(record);
     };
 
     const handleDelete = async (record: DataType) => {
@@ -146,6 +159,7 @@ const Menu: React.FC = () => {
                 modalType={modalType}
                 handleOk={handleOk}
                 handleClose={handleClose}
+                form={form}
             />
 
             <Table<DataType>

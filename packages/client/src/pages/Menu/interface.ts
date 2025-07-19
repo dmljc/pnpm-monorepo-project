@@ -1,3 +1,5 @@
+import type { FormInstance } from "antd";
+
 export interface CreateMenu {
     label: string;
     type: string;
@@ -20,6 +22,7 @@ export interface ModalProps {
     record: UpdateMenu;
     handleClose: () => void;
     handleOk: () => void;
+    form?: FormInstance;
 }
 
 export interface DataType {
