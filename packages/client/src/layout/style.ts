@@ -16,6 +16,11 @@ export default createStyles(({ css }) => ({
         fontSize: 18,
         fontWeight: "bold",
         paddingInlineStart: 24,
+        width: 250,
+        transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
     },
     logo: {
         width: 32,
@@ -24,11 +29,30 @@ export default createStyles(({ css }) => ({
         verticalAlign: "middle",
     },
     text: {
-        width: 32,
-        height: 32,
-        lineHeight: "32px",
+        display: "inline-block",
         verticalAlign: "middle",
         paddingInlineStart: 8,
+        whiteSpace: "nowrap",
+        transition:
+            "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1) 0.05s",
+        width: 180,
+        opacity: 1,
+    },
+    // 收起时的样式
+    sideCollapsed: {
+        width: 80,
+        transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    logoContainerCollapsed: {
+        width: 80,
+        transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    textCollapsed: {
+        width: 0,
+        opacity: 0,
+        transition:
+            "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
+        paddingInlineStart: 0,
     },
     // 头部区域
     header: {
@@ -94,6 +118,8 @@ export default createStyles(({ css }) => ({
         bottom: 0,
         left: 250,
         right: 0,
+        transition:
+            "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), left 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
 
         backgroundColor: "#fff",
         padding: "10px 0",

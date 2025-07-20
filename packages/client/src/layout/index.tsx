@@ -126,6 +126,16 @@ const Layout: FC = () => {
     }, [menuList]);
 
     const [collapsed, setCollapsed] = useState(false);
+    const [footerAnimation, setFooterAnimation] = useState(false);
+
+    // 监听折叠状态变化，同步Footer动画
+    useEffect(() => {
+        setFooterAnimation(true);
+        const timer = setTimeout(() => {
+            setFooterAnimation(false);
+        }, 200); // 与动画时间一致
+        return () => clearTimeout(timer);
+    }, [collapsed]);
 
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = antdTheme;
@@ -205,19 +215,35 @@ const Layout: FC = () => {
             <AntdLayout>
                 <Sider
                     theme="light"
-                    width={250}
+                    width={collapsed ? 80 : 250}
+                    collapsedWidth={80}
                     collapsible
                     trigger={null}
-                    className={ss.side}
+                    className={
+                        collapsed ? `${ss.side} ${ss.sideCollapsed}` : ss.side
+                    }
                     collapsed={collapsed}
+                    style={{ transition: 'width 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }}
                 >
-                    <a className={ss.logoContainer}>
+                    <a
+                        className={
+                            collapsed
+                                ? `${ss.logoContainer} ${ss.logoContainerCollapsed}`
+                                : ss.logoContainer
+                        }
+                    >
                         <img
                             className={ss.logo}
                             src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
                         />
-                        <span className={ss.text}>
-                            {!collapsed && "Nest React19 Admin"}
+                        <span
+                            className={
+                                collapsed
+                                    ? `${ss.text} ${ss.textCollapsed}`
+                                    : ss.text
+                            }
+                        >
+                            Nest React19 Admin
                         </span>
                     </a>
                     {menuList.length > 0 && (
@@ -304,9 +330,24 @@ const Layout: FC = () => {
                         </Card>
                     </Content>
                     <Footer className={ss.footer}>
-                        {/* <div className={ss.footerText}> */}
-                        <span>Copyright © 2024 Nest React19 Admin</span>
-                        {/* </div> */}
+                        <span
+                            style={{
+                                left: collapsed ? 80 : 250,
+                                width: `calc(100% - ${collapsed ? 80 : 250}px)`,
+                                transition: footerAnimation ? "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), left 0.2s cubic-bezier(0.4, 0, 0.2, 1)" : "none",
+                                position: "fixed",
+                                bottom: 0,
+                                right: 0,
+                                background: "#fff",
+                                textAlign: "center",
+                                color: "rgba(0,0,0,0.45)",
+                                fontSize: 12,
+                                padding: "10px 0",
+                                zIndex: 10,
+                            }}
+                        >
+                            Copyright © 2024 Nest React19 Admin
+                        </span>
                     </Footer>
                 </AntdLayout>
             </AntdLayout>
