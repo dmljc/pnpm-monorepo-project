@@ -223,7 +223,9 @@ const Layout: FC = () => {
                         collapsed ? `${ss.side} ${ss.sideCollapsed}` : ss.side
                     }
                     collapsed={collapsed}
-                    style={{ transition: 'width 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                    style={{
+                        transition: "width 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    }}
                 >
                     <a
                         className={
@@ -334,7 +336,9 @@ const Layout: FC = () => {
                             style={{
                                 left: collapsed ? 80 : 250,
                                 width: `calc(100% - ${collapsed ? 80 : 250}px)`,
-                                transition: footerAnimation ? "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), left 0.2s cubic-bezier(0.4, 0, 0.2, 1)" : "none",
+                                transition: footerAnimation
+                                    ? "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), left 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                                    : "none",
                                 position: "fixed",
                                 bottom: 0,
                                 right: 0,
