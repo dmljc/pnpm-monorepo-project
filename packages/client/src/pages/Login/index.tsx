@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { Divider, Space, Tabs, message } from "antd";
@@ -18,7 +18,8 @@ import {
     ProFormText,
 } from "@ant-design/pro-components";
 import { emailCaptcha } from "./api";
-import { useUserStore } from "@/store";
+import { configDetail } from "@/pages/SystemConfig/api";
+import { useUserStore, useSystemStore } from "@/store";
 import useStyles from "./style";
 
 // 登录类型枚举
@@ -60,6 +61,18 @@ const Login: FC = () => {
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
+    const { systemConfig, setSystemConfig } = useSystemStore.getState();
+
+    useEffect(() => {
+        getSystemConfig();
+    }, []);
+
+    const getSystemConfig = async () => {
+        const res = await configDetail();
+        if (res.success) {
+            setSystemConfig(res.data);
+        }
+    };
 
     // 处理登录提交
     const handleLoginSubmit = async (values: LoginUser) => {
@@ -216,20 +229,25 @@ const Login: FC = () => {
         </div>
     );
 
+    // 渲染版权信息
+    const renderCopyright = () => {
+        if (!systemConfig || !systemConfig.copyright) return null;
+        return <div className={ss.copyright}>{systemConfig.copyright}</div>;
+    };
+
     return (
         <div className={ss.root}>
             <LoginFormPage
                 initialValues={{
                     username: "zfcstring",
                     password: "999999",
-
                     email: "1593025641@qq.com",
                 }}
                 backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
-                logo="https://github.githubassets.com/favicons/favicon.png"
-                title="Github"
+                logo={systemConfig.logo}
+                title={systemConfig.name}
                 onFinish={handleLoginSubmit}
-                subTitle="全球最大的代码托管平台"
+                subTitle={systemConfig.description}
                 actions={renderOtherLoginMethods()}
             >
                 <Tabs
@@ -251,6 +269,7 @@ const Login: FC = () => {
                 </div>
                 {contextHolder}
             </LoginFormPage>
+            {renderCopyright()}
         </div>
     );
 };

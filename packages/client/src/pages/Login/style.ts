@@ -67,4 +67,15 @@ export default createStyles(({ token }) => ({
     checkbox: { marginBlockEnd: 24 },
 
     forget: { float: "right" },
+
+    copyright: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        textAlign: "center",
+        fontSize: 12,
+        color: "rgba(0, 0, 0, 0.45)",
+        padding: "10px 0",
+    },
 }));

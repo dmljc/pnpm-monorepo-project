@@ -13,7 +13,7 @@ const Analysis = lazy(() => import("@/pages/Analysis"));
 const User = lazy(() => import("@/pages/User"));
 const Role = lazy(() => import("@/pages/Role"));
 const Menu = lazy(() => import("@/pages/Menu"));
-const Config = lazy(() => import("@/pages/Config"));
+const Config = lazy(() => import("@/pages/SystemConfig"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const ServerInfo = lazy(() => import("@/pages/Server.info"));
 

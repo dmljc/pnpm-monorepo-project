@@ -41,3 +41,16 @@ body {
 .mt-16 {
     margin-top: 16px;
 }
+
+/* 覆盖 LoginFormPage logo 图片样式 */
+.ant-pro-form-login-page-logo img {
+    /* 例如，设置宽高、圆角等 */
+    width: 54px;
+    height: 54px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.ant-pro-form-login-page-title {
+    font-size: 30px;
+}
