@@ -61,7 +61,7 @@ const Login: FC = () => {
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
-    const { systemConfig, setSystemConfig } = useSystemStore.getState();
+    const { systemConfig, setSystemConfig } = useSystemStore();
 
     useEffect(() => {
         getSystemConfig();
