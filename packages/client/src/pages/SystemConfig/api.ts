@@ -10,7 +10,7 @@ export const update = (data: UpdateSystemConfig): Promise<any> => {
 };
 
 export const configDetail = (): Promise<any> => {
-    return request.get(`/system/config/detail`);
+    return request.get(`/system/config`);
 };
 
 export const del = (id: number): Promise<any> => {

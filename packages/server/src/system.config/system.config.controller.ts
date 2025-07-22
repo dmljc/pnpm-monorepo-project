@@ -14,7 +14,7 @@ export class SystemConfigController {
     }
 
     @RequireLogin(false)
-    @Get("detail")
+    @Get("")
     detail() {
         return this.systemConfigService.detail();
     }
