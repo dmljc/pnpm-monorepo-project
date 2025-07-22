@@ -31,7 +31,7 @@ const { Header, Sider, Content, Footer } = AntdLayout;
 
 const Layout: FC = () => {
     const { logout, userInfo } = useUserStore();
-    const { lang, setLang, theme, setTheme } = useSystemStore();
+    const { lang, setLang, theme, setTheme, systemConfig } = useSystemStore();
     const navigate = useNavigate();
 
     // 响应式获取菜单
@@ -350,7 +350,7 @@ const Layout: FC = () => {
                                 zIndex: 10,
                             }}
                         >
-                            Copyright © 2024 Nest React19 Admin
+                            {systemConfig?.copyright}
                         </span>
                     </Footer>
                 </AntdLayout>

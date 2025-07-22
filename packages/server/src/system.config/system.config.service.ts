@@ -14,16 +14,21 @@ export class SystemConfigService {
     async create(createSystemConfigDto: CreateSystemConfigDto) {
         const exist = await this.menuRepository.find();
         if (exist.length > 0) {
-            return await this.menuRepository.update(
+            await this.menuRepository.update(
                 exist[0].id,
                 createSystemConfigDto,
             );
+            // 更新后查一次
+            const updated = await this.menuRepository.findOneBy({
+                id: exist[0].id,
+            });
+            return updated;
         } else {
             const systemConfig = this.menuRepository.create(
                 createSystemConfigDto,
             );
-            await this.menuRepository.save(systemConfig);
-            return systemConfig;
+            const saved = await this.menuRepository.save(systemConfig);
+            return saved;
         }
     }
 
