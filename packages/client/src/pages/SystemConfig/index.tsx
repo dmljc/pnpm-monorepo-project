@@ -71,10 +71,6 @@ const Config: FC = () => {
         }
     };
 
-    const handleReset = () => {
-        form.resetFields();
-    };
-
     return (
         <>
             {contextHolder}
@@ -155,11 +151,12 @@ const Config: FC = () => {
                     />
                 </Item>
                 <Item>
-                    <Button type="primary" onClick={handleSubmit}>
+                    <Button
+                        style={{ width: "100%" }}
+                        type="primary"
+                        onClick={handleSubmit}
+                    >
                         保存
-                    </Button>
-                    <Button htmlType="button" onClick={handleReset}>
-                        重置
                     </Button>
                 </Item>
             </Form>

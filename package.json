@@ -21,7 +21,7 @@
         "docs:preview": "vitepress preview docs",
         "prepare": "husky",
         "lint:lint-staged": "lint-staged",
-        "commit": "pnpm lint && pnpm lint:fix && git-cz"
+        "commit": "git-cz"
     },
     "lint-staged": {
         "*.{js,ts}": [
