@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input, Tree, Dropdown } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import { EllipsisOutlined } from "@ant-design/icons";
 import ss from "./style";
 
 interface TreeData {
@@ -74,9 +74,8 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                 <Dropdown
                     menu={{ items: getMenuItems(item) }}
                     trigger={["click"]}
-                    placement="bottomRight"
                 >
-                    <MoreOutlined className={ss.actionIcon} />
+                    <EllipsisOutlined className={ss.actionIcon} />
                 </Dropdown>
             </div>
         );

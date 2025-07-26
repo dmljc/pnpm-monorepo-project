@@ -10,7 +10,7 @@ export default createStyles(({ token }) => ({
     left: {
         width: 220,
         height: "100%",
-        marginRight: 20,
+        marginRight: 16,
 
         // border: "1px solid " + token.colorBorder,
     },

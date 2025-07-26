@@ -74,7 +74,6 @@ const nodeTitle = css`
 
 // 操作图标样式
 const actionIcon = css`
-    color: #999;
     font-size: 16px;
     cursor: pointer;
     padding: 4px;
