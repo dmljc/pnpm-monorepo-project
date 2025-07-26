@@ -15,7 +15,7 @@ const layout = {
 };
 
 const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
-    const { modalType, open, record, handleClose, handleOk } = props;
+    const { modalType, open, record, handleClose } = props;
     const menuStore = useMenuStore();
     const [form] = Form.useForm<UpdateMenu>();
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -54,7 +54,8 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                         ? "新增成功"
                         : "修改成功",
                 );
-                handleOk();
+                menuStore.getMenuList();
+                handleClose();
             }
         } catch (error) {
             console.log(error);

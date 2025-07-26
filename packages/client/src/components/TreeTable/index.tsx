@@ -153,16 +153,12 @@ const TreeTable = <T extends Record<string, any>>({
         const res = await del(record.id);
         if (res.success) {
             messageApi.success("删除成功");
-            // feechList();
+            menuStore.getMenuList();
         }
     };
 
     const handleClose = () => setOpen(false);
 
-    const handleOk = async () => {
-        handleClose();
-        // feechList?.();
-    };
 
     return (
         <>
@@ -191,7 +187,6 @@ const TreeTable = <T extends Record<string, any>>({
                 open={open}
                 record={record}
                 modalType={modalType}
-                handleOk={handleOk}
                 handleClose={handleClose}
             />
             {contextHolder}

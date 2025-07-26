@@ -44,7 +44,6 @@ export interface ModalProps {
     modalType: string;
     record: UpdateMenu;
     handleClose: () => void;
-    handleOk: () => void;
 }
 
 export interface DataType {
