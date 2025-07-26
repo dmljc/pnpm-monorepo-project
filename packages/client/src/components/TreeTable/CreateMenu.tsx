@@ -5,6 +5,7 @@ import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
 import { typeOptions, typeMap } from "./constant";
 import { IconComponent } from "@/components";
+import { useMenuStore } from "@/store";
 
 const { Item } = Form;
 
@@ -14,17 +15,9 @@ const layout = {
 };
 
 const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
-    const {
-        menuData,
-        modalType,
-        open,
-        record,
-        handleClose,
-        handleOk,
-        form: propForm,
-    } = props;
+    const { modalType, open, record, handleClose, handleOk } = props;
+    const menuStore = useMenuStore();
     const [form] = Form.useForm<UpdateMenu>();
-    const usedForm = propForm || form;
     const [confirmLoading, setConfirmLoading] = useState(false);
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -32,13 +25,13 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     // 监听type字段
     const type = Form.useWatch
         ? // eslint-disable-next-line react-hooks/rules-of-hooks
-          Form.useWatch("type", usedForm)
-        : usedForm.getFieldValue("type");
+          Form.useWatch("type", form)
+        : form.getFieldValue("type");
 
     const onChangeMenuType = () => {
-        Object.keys(usedForm.getFieldsValue()).forEach((key) => {
+        Object.keys(form.getFieldsValue()).forEach((key) => {
             if (key !== "type") {
-                usedForm.setFieldsValue({ [key]: undefined });
+                form.setFieldsValue({ [key]: undefined });
             }
         });
     };
@@ -46,8 +39,8 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     const onOk = async () => {
         try {
             setConfirmLoading(true);
-            await usedForm.validateFields();
-            const values = usedForm.getFieldsValue();
+            await form.validateFields();
+            const values = form.getFieldsValue();
             const params =
                 modalType === ModalTypeEnum.CREATE
                     ? values
@@ -72,11 +65,11 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
 
     useEffect(() => {
         if (modalType === ModalTypeEnum.UPDATE) {
-            usedForm.setFieldsValue({
+            form.setFieldsValue({
                 ...record,
             });
         } else {
-            usedForm.resetFields();
+            form.resetFields();
         }
     }, [open, modalType]);
 
@@ -99,7 +92,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
             >
                 <Form
                     {...layout}
-                    form={usedForm}
+                    form={form}
                     name="createMenu"
                     initialValues={{
                         type: "catalog",
@@ -159,9 +152,9 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                         ]}
                     >
                         <IconComponent
-                            value={usedForm.getFieldValue("icon") as string}
+                            value={form.getFieldValue("icon") as string}
                             onChange={(value) => {
-                                usedForm.setFieldsValue({ icon: value });
+                                form.setFieldsValue({ icon: value });
                             }}
                             style={{ width: "100%" }}
                         />
@@ -181,7 +174,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             <TreeSelect
                                 showSearch
                                 allowClear
-                                treeData={menuData}
+                                treeData={menuStore.menuList}
                                 fieldNames={{
                                     value: "id",
                                 }}

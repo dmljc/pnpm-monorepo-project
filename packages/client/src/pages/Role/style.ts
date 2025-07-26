@@ -11,14 +11,12 @@ export default createStyles(({ token }) => ({
         width: 220,
         height: "100%",
         marginRight: 16,
-
-        // border: "1px solid " + token.colorBorder,
     },
 
     right: {
         flex: 1,
         height: "100%",
+        paddingLeft: 16,
         borderLeft: "1px solid " + token.colorBorder,
-        // backgroundColor: "blue",
     },
 }));

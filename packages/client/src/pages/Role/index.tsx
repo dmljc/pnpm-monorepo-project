@@ -7,6 +7,7 @@ import { ModalTypeEnum } from "@/utils";
 import type { UpdateRole } from "./interface.ts";
 import { list, del } from "./api.ts";
 import { Button, message, Modal } from "antd";
+import TreeTable from "@/components/TreeTable";
 
 const Role: FC = () => {
     const { styles: ss } = useStyles();
@@ -99,7 +100,9 @@ const Role: FC = () => {
                         </Button>
                     </TreeComponent>
                 </div>
-                <div className={ss.right}></div>
+                <div className={ss.right}>
+                    <TreeTable showRowSelection={true} editable={true} />
+                </div>
 
                 <CreateRoleModal
                     open={open}
