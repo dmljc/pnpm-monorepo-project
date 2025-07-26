@@ -3,7 +3,7 @@ import { createStyles } from "antd-style";
 export default createStyles(({ token }) => ({
     root: {
         backgroundColor: "white",
-        height: "calc(100vh - 182px)",
+        height: "calc(100vh - 174px)",
         display: "flex",
     },
 
