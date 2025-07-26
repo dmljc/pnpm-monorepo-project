@@ -109,7 +109,7 @@ export default createStyles(({ css }) => ({
     },
     content: {
         height: "calc(100vh - 98px)",
-        margin: "24px 24px",
+        margin: "20px 20px",
         overflow: "auto",
     },
     footer: {

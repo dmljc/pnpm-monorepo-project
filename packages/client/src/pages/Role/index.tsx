@@ -1,197 +1,119 @@
-import { FC, useState, useRef } from "react";
-import { Button, message } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { ProTable } from "@ant-design/pro-components";
+import { FC, useEffect, useState } from "react";
+import useStyles from "./style";
+import TreeComponent from "@/components/TreeComponent";
+import { PlusOutlined, SmileOutlined } from "@ant-design/icons";
+import CreateRoleModal from "./CreateRoleModal";
 import { ModalTypeEnum } from "@/utils";
-import CreateRoleModal from "./CreateModal.tsx";
-import type { UpdateRole, GithubIssueItem } from "./interface.ts";
+import type { UpdateRole } from "./interface.ts";
 import { list, del } from "./api.ts";
+import { Button, message, Modal } from "antd";
 
 const Role: FC = () => {
-    const [messageApi, contextHolder] = message.useMessage();
-
-    const actionRef = useRef<ActionType>(null);
+    const { styles: ss } = useStyles();
+    const [treeData, setTreeData] = useState<any[]>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
     const [record, setRecord] = useState<UpdateRole>();
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const columns: ProColumns<GithubIssueItem>[] = [
-        {
-            title: "角色姓名",
-            dataIndex: "name",
-        },
-        {
-            title: "角色编码",
-            dataIndex: "code",
-        },
-        {
-            title: "角色状态",
-            dataIndex: "status",
-            search: false,
-            filters: true,
-            onFilter: true,
-            width: 100,
-            valueType: "select",
-            valueEnum: {
-                0: { text: "停用" },
-                1: { text: "启用" },
+    useEffect(() => {
+        getTreeData();
+    }, []);
+
+    const getTreeData = async () => {
+        try {
+            const resp = await list({
+                current: 1,
+                pageSize: 10,
+            });
+
+            const data = resp.data.map((item: any) => ({
+                icon: <SmileOutlined />,
+                ...item,
+            }));
+
+            setTreeData(data);
+        } catch (error) {
+            console.error("获取角色列表失败:", error);
+            messageApi.error("获取角色列表失败");
+        }
+    };
+
+    // 处理树节点操作
+    const handleItemAction = (action: string, item: any) => {
+        console.log("Action:", action, "Item:", item);
+
+        switch (action) {
+            case "edit":
+                setRecord(item);
+                setModalType(ModalTypeEnum.UPDATE);
+                setOpen(true);
+                break;
+            case "delete":
+                handleDelete(item);
+                break;
+            default:
+                break;
+        }
+    };
+
+    // 删除角色
+    const handleDelete = (item: any) => {
+        Modal.confirm({
+            title: "确认删除",
+            content: `确定要删除角色"${item.name}"吗？此操作不可恢复。`,
+            okText: "确认删除",
+            cancelText: "取消",
+            okType: "danger",
+            onOk: async () => {
+                try {
+                    const response = await del(item.id);
+                    if (response.success) {
+                        messageApi.success("删除成功");
+                        // 重新获取数据
+                        getTreeData();
+                    } else {
+                        messageApi.error(response.message || "删除失败");
+                    }
+                } catch (error) {
+                    console.error("删除失败:", error);
+                    messageApi.error("删除失败，请稍后重试");
+                }
             },
-        },
-        {
-            title: "创建时间",
-            dataIndex: "createTime",
-            valueType: "dateTime",
-            sorter: true,
-            hideInSearch: true,
-            width: 180,
-        },
-        {
-            title: "更新时间",
-            dataIndex: "updateTime",
-            valueType: "dateTime",
-            sorter: true,
-            hideInSearch: true,
-            width: 180,
-        },
-        {
-            title: "备注",
-            dataIndex: "remark",
-            search: false,
-            ellipsis: true,
-            copyable: true,
-        },
-        {
-            title: "操作",
-            valueType: "option",
-            key: "option",
-            width: 140,
-            render: (_text, _record, _, action) => [
-                <Button
-                    type="link"
-                    key="update"
-                    className="btn-p0"
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                        setModalType(ModalTypeEnum.UPDATE);
-                        setRecord(_record);
-                        setOpen(true);
-                    }}
-                >
-                    编辑
-                </Button>,
-                <Button
-                    type="link"
-                    key="delete"
-                    className="btn-p0"
-                    icon={<DeleteOutlined />}
-                    onClick={async () => {
-                        const resp = await del(_record.id);
-                        if (resp) {
-                            messageApi.success("删除成功");
-                            action?.reload();
-                        }
-                    }}
-                >
-                    删除
-                </Button>,
-            ],
-        },
-    ];
+        });
+    };
 
     return (
         <>
             {contextHolder}
-            <ProTable<GithubIssueItem>
-                columns={columns}
-                actionRef={actionRef}
-                cardBordered
-                request={async (params, sort, filter) => {
-                    const resp = await list({
-                        current: params.current ?? 1,
-                        pageSize: params.pageSize ?? 10,
-                        ...params,
-                        ...sort,
-                        ...filter,
-                    });
-                    // 兼容 resp.data 可能为对象或数组
-                    const dataList = Array.isArray(resp.data)
-                        ? resp.data
-                        : resp.data?.data || [];
-                    const total = resp.data?.total ?? dataList.length;
-                    return {
-                        data: dataList,
-                        success: resp.success !== false,
-                        total,
-                    };
-                }}
-                editable={{
-                    type: "multiple",
-                }}
-                columnsState={{
-                    persistenceKey: "pro-table-singe-demos",
-                    persistenceType: "localStorage",
-                    defaultValue: {
-                        option: { fixed: "right", disable: true },
-                    },
-                }}
-                key="role"
-                rowKey="id"
-                search={{
-                    labelWidth: "auto",
-                }}
-                options={{
-                    setting: {
-                        listsHeight: 400,
-                    },
-                }}
-                form={{
-                    name: "roleList",
-                    // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
-                    syncToUrl: (values, type) => {
-                        if (type === "get") {
-                            return {
-                                ...values,
-                                createTime: [values.startTime, values.endTime],
-                            };
-                        }
-                        return values;
-                    },
-                }}
-                pagination={{
-                    pageSize: 10,
-                }}
-                dateFormatter="string"
-                headerTitle="高级表格"
-                toolBarRender={() => [
-                    <Button
-                        key="button"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            setModalType(ModalTypeEnum.CREATE);
-                            setOpen(true);
-                        }}
-                        type="primary"
+            <div className={ss.root}>
+                <div className={ss.left}>
+                    <TreeComponent
+                        treeData={treeData}
+                        onItemAction={handleItemAction}
                     >
-                        新增
-                    </Button>,
-                ]}
-            />
+                        <Button type="primary" onClick={() => setOpen(true)}>
+                            <PlusOutlined />
+                        </Button>
+                    </TreeComponent>
+                </div>
+                <div className={ss.right}></div>
 
-            <CreateRoleModal
-                open={open}
-                modalType={modalType}
-                record={record!}
-                handleClose={() => {
-                    setOpen(false);
-                }}
-                handleOk={() => {
-                    setOpen(false);
-                    actionRef.current?.reload();
-                }}
-            />
+                <CreateRoleModal
+                    open={open}
+                    modalType={modalType}
+                    record={record!}
+                    handleClose={() => {
+                        setOpen(false);
+                    }}
+                    handleOk={() => {
+                        setOpen(false);
+                        getTreeData(); // 刷新数据
+                    }}
+                />
+            </div>
         </>
     );
 };

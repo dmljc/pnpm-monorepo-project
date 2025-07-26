@@ -5,6 +5,7 @@ import OSSUpload from "./OSSUpload";
 import NotFound from "./NotFound";
 import IconComponent from "./IconComponent";
 import IconRenderer from "./IconComponent/IconRenderer";
+import TreeComponent from "./TreeComponent";
 
 export {
     AuthComponent,
@@ -14,4 +15,5 @@ export {
     NotFound,
     IconComponent,
     IconRenderer,
+    TreeComponent,
 };

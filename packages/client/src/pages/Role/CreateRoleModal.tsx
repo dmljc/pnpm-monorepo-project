@@ -12,7 +12,7 @@ const layout = {
     wrapperCol: { span: 17 },
 };
 
-const CreateModal: FC<ModalProps> = (props: ModalProps) => {
+const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateRole>();
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -135,4 +135,4 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     );
 };
 
-export default CreateModal;
+export default CreateRoleModal;
