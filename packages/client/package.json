@@ -17,19 +17,19 @@
         "antd": "^5.26.6",
         "antd-img-crop": "^4.25.0",
         "antd-style": "^3.7.1",
-        "axios": "^1.10.0",
+        "axios": "^1.11.0",
         "dayjs": "^1.11.13",
-        "react": "^19.1.0",
-        "react-dom": "^19.1.0",
-        "react-router-dom": "^7.7.0",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "react-router-dom": "^7.7.1",
         "zustand": "^5.0.6"
     },
     "devDependencies": {
         "@ant-design/v5-patch-for-react-19": "^1.0.3",
-        "@types/react": "^19.1.8",
-        "@types/react-dom": "^19.1.6",
+        "@types/react": "^19.1.9",
+        "@types/react-dom": "^19.1.7",
         "@vitejs/plugin-react-swc": "^3.11.0",
         "typescript": "^5.8.3",
-        "vite": "^7.0.5"
+        "vite": "^7.0.6"
     }
 }
