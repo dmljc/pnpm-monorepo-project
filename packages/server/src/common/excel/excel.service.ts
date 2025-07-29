@@ -34,13 +34,11 @@ export class ExcelService {
                     const rowDataObj = rowData.reduce((acc, value, index) => {
                         const header = worksheet.getCell(1, index + 1)
                             .value as string;
-                        console.log("header:", header);
                         return {
                             ...acc,
                             [headerMapping[header] || header]: value,
                         };
                     }, {});
-                    console.log("rowDataObj:", rowDataObj);
                     data.push(rowDataObj);
                 }
             }

@@ -24,7 +24,6 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-    console.log(treeData);
     const [searchTreeData, setSearchTreeData] = useState<TreeData[]>(treeData);
 
     const onExpand = (newExpandedKeys: React.Key[]) => {

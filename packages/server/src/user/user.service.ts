@@ -94,8 +94,7 @@ export class UserService {
         });
     }
 
-    async findUserByGithubId(id: string) {
-        console.log("----id----", id);
+    async findUserByGithubId() {
         return await this.userRepository.findOne({
             // where: { id },
         });

@@ -348,7 +348,6 @@ const User: FC = () => {
                 }}
                 pagination={{
                     pageSize: 10,
-                    // onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
                 headerTitle="高级表格"

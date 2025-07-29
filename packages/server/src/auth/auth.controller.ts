@@ -71,9 +71,8 @@ export class AuthController {
 
     @Get("github/callback")
     @UseGuards(AuthGuard("github"))
-    async githubCallback(@Req() req) {
-        console.log("---callback--req.user----", req.user);
-        return this.userService.findUserByGithubId(req.user.id);
+    async githubCallback() {
+        return this.userService.findUserByGithubId();
         // return req.user;
     }
 
@@ -85,7 +84,6 @@ export class AuthController {
     @Get("google/callback")
     @UseGuards(AuthGuard("google"))
     googleCallback(@Req() req, @Res() res) {
-        console.log("--googleCallback----", req.user);
         if (!req.user) throw new UnauthorizedException();
 
         // 返回 JSON 数据

@@ -29,28 +29,17 @@ export class PermissionGuard implements CanActivate {
             return true;
         }
 
-        // console.log("PermissionGuard==request.user===>", request.user);
-
-        const roles = await this.roleService.findRolesByIds(
-            [1],
-            // request.user.roles.map((item) => item.id),
-        );
-
-        console.log("===roles===", roles);
+        // const roles = await this.roleService.findRolesByIds([1]);
 
         // const permissions: Permission[] = roles.reduce((total, current) => {
         //     total.push(...current.permissions);
         //     return total;
         // }, []);
 
-        // console.log("permissions==>", permissions);
-
         // const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
         //     "require-permission",
         //     [context.getClass(), context.getHandler()],
         // );
-
-        // console.log(requiredPermissions);
 
         // for (let i = 0; i < requiredPermissions.length; i++) {
         //     const curPermission = requiredPermissions[i];

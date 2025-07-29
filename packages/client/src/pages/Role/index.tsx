@@ -95,7 +95,14 @@ const Role: FC = () => {
                         treeData={treeData}
                         onItemAction={handleItemAction}
                     >
-                        <Button type="primary" onClick={() => setOpen(true)}>
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                setRecord(undefined);
+                                setModalType(ModalTypeEnum.CREATE);
+                                setOpen(true);
+                            }}
+                        >
                             <PlusOutlined />
                         </Button>
                     </TreeComponent>

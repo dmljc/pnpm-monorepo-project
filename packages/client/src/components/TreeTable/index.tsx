@@ -21,7 +21,7 @@ const TreeTable = <T extends Record<string, any>>({
 }: TreeTableProps<T>) => {
     const [messageApi, contextHolder] = message.useMessage();
     const menuStore = useMenuStore();
-    const [checkStrictly, setCheckStrictly] = useState(false);
+    const [checkStrictly] = useState(false);
 
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
@@ -158,7 +158,6 @@ const TreeTable = <T extends Record<string, any>>({
     };
 
     const handleClose = () => setOpen(false);
-
 
     return (
         <>

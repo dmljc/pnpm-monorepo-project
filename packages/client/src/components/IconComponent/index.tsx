@@ -1,10 +1,4 @@
-import React, {
-    useEffect,
-    useState,
-    useRef,
-    useCallback,
-    useMemo,
-} from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Select, Input, Spin, Pagination, Row, Col } from "antd";
 import { Icon } from "@iconify/react";
 import {
@@ -80,7 +74,6 @@ class IconCache {
 
     private async fetchIcons(): Promise<string[]> {
         try {
-            console.log("IconComponent: 开始全局初始化图标列表");
             const response = await fetch(CONSTANTS.API.DEFAULT_URL);
 
             if (!response.ok) {
@@ -102,11 +95,6 @@ class IconCache {
             const allIcons = this.uniq([...FALLBACK_ICONS, ...icons]);
             this.cache = allIcons;
 
-            console.log(
-                "IconComponent: 全局图标列表初始化完成，共",
-                allIcons.length,
-                "个图标",
-            );
             return allIcons;
         } catch (error) {
             console.warn("Iconify API 请求失败，使用默认图标:", error);
@@ -273,7 +261,6 @@ const IconSelector: React.FC<{
     const [search, setSearch] = useState("");
     const [current, setCurrent] = useState(1);
     const [filtered, setFiltered] = useState<string[]>([]);
-    const instanceId = useRef(++componentInstanceCount);
 
     // 图标缓存实例
     const iconCache = useMemo(() => IconCache.getInstance(), []);
@@ -281,16 +268,12 @@ const IconSelector: React.FC<{
     // 初始化加载图标
     useEffect(() => {
         const loadIcons = async () => {
-            console.log(`IconComponent[${instanceId.current}]: 组件挂载`);
             setLoading(true);
 
             try {
                 const icons = await iconCache.getIcons();
                 setIconList(icons);
                 setFiltered(icons);
-                console.log(
-                    `IconComponent[${instanceId.current}]: 图标列表加载完成`,
-                );
             } catch (error) {
                 console.error("加载图标失败:", error);
                 setIconList(FALLBACK_ICONS);
@@ -475,8 +458,5 @@ const IconComponent: React.FC<IconComponentProps> = (props) => {
     // 否则渲染图标选择器
     return <IconSelector {...props} />;
 };
-
-// 全局计数器
-let componentInstanceCount = 0;
 
 export default React.memo(IconComponent);
