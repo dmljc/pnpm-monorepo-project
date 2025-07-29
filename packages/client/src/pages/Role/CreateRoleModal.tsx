@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Form, Input, Radio, message, Modal } from "antd";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
+import IconComponent from "@/components/IconComponent";
 import { create, update } from "./api";
 
 const { TextArea } = Input;
@@ -93,6 +94,13 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                             maxLength={10}
                             placeholder="请输入名称"
                         />
+                    </Item>
+                    <Item
+                        label="图标"
+                        name="icon"
+                        rules={[{ required: true, message: "请选择图标" }]}
+                    >
+                        <IconComponent />
                     </Item>
                     <Item
                         label="编码"

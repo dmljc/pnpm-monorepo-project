@@ -49,27 +49,25 @@ const treeNodeStyle = css`
 const nodeContent = css`
     display: flex;
     align-items: center;
-    flex: 1;
-    min-width: 0;
+    width: 100%;
+    // border: 1px solid #ccc;
 `;
 
 // 节点图标样式
 const nodeIcon = css`
-    margin-right: 8px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+    // background-color: #f66;
+    // color: #f66;
 `;
 
 // 节点标题样式
 const nodeTitle = css`
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-right: 8px;
-    font-size: 14px;
-    line-height: 1.5;
+    // flex: 1;
+    // overflow: hidden;
+    // text-overflow: ellipsis;
+    // white-space: nowrap;
+    // margin-left: 8px;
+    // font-size: 14px;
+    // line-height: 1.5;
 `;
 
 // 操作图标样式

@@ -55,6 +55,7 @@ export class RoleService {
     async create(createRoleDto: CreateRoleDto) {
         const role = new Role();
         role.name = createRoleDto.name; // 确保name被显式赋值
+        role.icon = createRoleDto.icon;
         role.code = createRoleDto.code;
         role.status = createRoleDto.status;
         role.remark = createRoleDto.remark;

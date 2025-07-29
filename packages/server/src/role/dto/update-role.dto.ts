@@ -15,6 +15,11 @@ export class UpdateRoleDto {
     name: string;
 
     @IsNotEmpty({
+        message: "role.iconNotEmpty",
+    })
+    icon: string;
+
+    @IsNotEmpty({
         message: "role.codeNotEmpty",
     })
     code: string;

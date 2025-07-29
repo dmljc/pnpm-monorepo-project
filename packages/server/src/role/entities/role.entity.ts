@@ -21,6 +21,11 @@ export class Role {
     name: string;
 
     @Column({
+        comment: "角色图标",
+    })
+    icon: string;
+
+    @Column({
         comment: "角色编码",
     })
     code: string;

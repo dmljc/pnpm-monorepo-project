@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input, Tree, Dropdown } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
+import IconRenderer from "../IconComponent/IconRenderer";
 import ss from "./style";
 
 interface TreeData {
@@ -65,9 +66,7 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
         return (
             <div className={ss.treeNodeStyle}>
                 <div className={ss.nodeContent}>
-                    {item.icon && (
-                        <span className={ss.nodeIcon}>{item.icon}</span>
-                    )}
+                    <IconRenderer icon={item.icon as string} />
                     <span className={ss.nodeTitle}>{item.name}</span>
                 </div>
                 <Dropdown
