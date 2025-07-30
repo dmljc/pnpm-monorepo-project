@@ -50,24 +50,11 @@ const nodeContent = css`
     display: flex;
     align-items: center;
     width: 100%;
-    // border: 1px solid #ccc;
-`;
-
-// 节点图标样式
-const nodeIcon = css`
-    // background-color: #f66;
-    // color: #f66;
 `;
 
 // 节点标题样式
 const nodeTitle = css`
-    // flex: 1;
-    // overflow: hidden;
-    // text-overflow: ellipsis;
-    // white-space: nowrap;
-    // margin-left: 8px;
-    // font-size: 14px;
-    // line-height: 1.5;
+    margin-left: 4px;
 `;
 
 // 操作图标样式
@@ -91,7 +78,6 @@ export default {
     searchAreaStyle,
     treeNodeStyle,
     nodeContent,
-    nodeIcon,
     nodeTitle,
     actionIcon,
 };

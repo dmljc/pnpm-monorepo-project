@@ -58,3 +58,7 @@ body {
 .ant-card-body {
     padding: 16px !important;
 }
+
+.ant-menu-title-content {
+    margin-inline-start: 4px !important;
+}
