@@ -1,13 +1,44 @@
 import React from "react";
 
 /**
+ * 处理菜单数据，将空的children数组转换为null
+ * @param menuList 菜单列表
+ * @returns 处理后的菜单列表
+ */
+export function processMenuChildren(menuList: MenuItem[]): MenuItem[] {
+    return menuList.map((item) => {
+        const processedItem = { ...item };
+
+        if (processedItem.children && Array.isArray(processedItem.children)) {
+            if (processedItem.children.length === 0) {
+                // 如果children为空数组，设置为null
+                processedItem.children = null;
+            } else {
+                // 递归处理子菜单
+                processedItem.children = processMenuChildren(
+                    processedItem.children,
+                );
+            }
+        } else {
+            // 如果没有children属性或不是数组，设置为null
+            processedItem.children = null;
+        }
+
+        return processedItem;
+    });
+}
+
+/**
  * 将menuList（Item[]）递归转换为menuItems（MenuItem[]）
  * 只保留类型为catalog（目录）和menu（菜单）的数据
  * @param menuList 菜单列表
  * @returns menuItems格式数组
  */
-export function convertMenuListToMenuItems(menuList: any[]): MenuItem[] {
-    return menuList
+export function convertMenuListToMenuItems(menuList: MenuItem[]): MenuItem[] {
+    // 首先处理children字段
+    const processedMenuList = processMenuChildren(menuList);
+
+    return processedMenuList
         .filter((item) => item.type === "catalog" || item.type === "menu")
         .map((item, idx) => {
             const children = item.children
@@ -15,10 +46,10 @@ export function convertMenuListToMenuItems(menuList: any[]): MenuItem[] {
                 : [];
             // 保证 key 唯一：优先 url，其次 id，否则用 type+name+idx
             const key =
-                item.url ||
+                item.path ||
                 (item.id !== undefined
                     ? String(item.id)
-                    : `${item.type}-${item.name}-${idx}`);
+                    : `${item.type}-${item.label}-${idx}`);
 
             return {
                 key,
@@ -46,7 +77,7 @@ export interface MenuItem {
     path?: string; // 路由地址
     code?: string; // 权限编码
     component?: string; // 组件路径
-    children?: MenuItem[]; // 子菜单
+    children?: MenuItem[] | null; // 子菜单
 }
 
 export const getLevelKeys = (items1: MenuItem[]) => {

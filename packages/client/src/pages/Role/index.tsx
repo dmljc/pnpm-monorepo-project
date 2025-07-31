@@ -108,7 +108,7 @@ const Role: FC = () => {
                     </TreeComponent>
                 </div>
                 <div className={ss.right}>
-                    <TreeTable showRowSelection={true} editable={true} />
+                    <TreeTable showRowSelection={true} />
                 </div>
 
                 <CreateRoleModal
