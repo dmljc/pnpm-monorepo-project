@@ -174,7 +174,7 @@ const TreeTable = <T extends Record<string, any>>({
             <Table<T>
                 rowKey="id"
                 columns={tableColumns}
-                dataSource={menuStore.orginMenuData as unknown as T[]}
+                dataSource={menuStore.orginData as unknown as T[]}
                 pagination={false}
                 rowSelection={
                     showRowSelection
