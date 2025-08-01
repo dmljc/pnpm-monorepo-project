@@ -16,6 +16,7 @@ export default createStyles(({ token }) => ({
     right: {
         flex: 1,
         height: "100%",
+        overflow: "scroll",
         paddingLeft: 16,
         borderLeft: "1px solid " + token.colorBorder,
     },

@@ -173,6 +173,8 @@ const TreeTable = <T extends Record<string, any>>({
 
             <Table<T>
                 rowKey="id"
+                tableLayout="fixed"
+                scroll={{ y: "calc(100vh - 230px)" }}
                 columns={tableColumns}
                 dataSource={menuStore.orginData as unknown as T[]}
                 pagination={false}

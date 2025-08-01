@@ -168,6 +168,23 @@ const User: FC = () => {
                     编辑
                 </Button>,
                 <Button
+                    key="freeze"
+                    color="primary"
+                    variant="link"
+                    className="btn-p0"
+                    icon={
+                        _record.status === 1 ? (
+                            <CloseCircleOutlined />
+                        ) : (
+                            <CheckCircleOutlined />
+                        )
+                    }
+                    disabled={_record.role === "root"}
+                    onClick={() => handleFreeze(_record)}
+                >
+                    {_record.status === 1 ? "停用" : "启用"}
+                </Button>,
+                <Button
                     key="delete"
                     color="danger"
                     variant="link"
@@ -184,23 +201,6 @@ const User: FC = () => {
                     }}
                 >
                     删除
-                </Button>,
-                <Button
-                    key="freeze"
-                    color="primary"
-                    variant="link"
-                    className="btn-p0"
-                    icon={
-                        _record.status === 1 ? (
-                            <CloseCircleOutlined />
-                        ) : (
-                            <CheckCircleOutlined />
-                        )
-                    }
-                    disabled={_record.role === "root"}
-                    onClick={() => handleFreeze(_record)}
-                >
-                    {_record.status === 1 ? "停用" : "启用"}
                 </Button>,
             ],
         },
