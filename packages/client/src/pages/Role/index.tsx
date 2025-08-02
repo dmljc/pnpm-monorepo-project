@@ -30,7 +30,7 @@ const Role: FC = () => {
         setRecord(roleList?.[0]);
     }, [roleList.length]);
 
-    const getRoleList = async () => {
+    const getRoleList = async (id?: number) => {
         try {
             const resp = await list({
                 current: 1,
@@ -43,6 +43,9 @@ const Role: FC = () => {
             }));
 
             setRoleList(data);
+            if (id) {
+                setRecord(data.find((item: UpdateRole) => item.id === id));
+            }
         } catch (error) {
             console.error("获取角色列表失败:", error);
             messageApi.error("获取角色列表失败");
@@ -51,8 +54,6 @@ const Role: FC = () => {
 
     // 处理树节点操作
     const handleItemAction = (action: string, item: any) => {
-        console.log("Action:", action, "Item:", item);
-
         switch (action) {
             case "edit":
                 setRecord(item);
@@ -177,9 +178,9 @@ const Role: FC = () => {
                     handleClose={() => {
                         setOpen(false);
                     }}
-                    handleOk={() => {
+                    handleOk={(id: number) => {
                         setOpen(false);
-                        getRoleList(); // 刷新数据
+                        getRoleList(id); // 刷新数据
                     }}
                 />
             </div>

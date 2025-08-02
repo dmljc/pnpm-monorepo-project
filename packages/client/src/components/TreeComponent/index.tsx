@@ -28,7 +28,6 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [searchTreeData, setSearchTreeData] = useState<TreeData[]>(treeData);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-    const [currentSelectedKey, setCurrentSelectedKey] = useState<React.Key | null>(null);
 
     const onExpand = (newExpandedKeys: React.Key[]) => {
         setExpandedKeys(newExpandedKeys);
@@ -37,10 +36,9 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
 
     useEffect(() => {
         setSearchTreeData(treeData);
-        // 设置默认选中第一条数据
-        if (treeData.length > 0) {
+        // 只在没有选中项时设置默认选中第一条数据
+        if (treeData.length > 0 && selectedKeys.length === 0) {
             setSelectedKeys([treeData[0].id]);
-            setCurrentSelectedKey(treeData[0].id);
         }
     }, [treeData]);
 
@@ -77,13 +75,13 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                     <IconRenderer icon={item.icon as string} />
                     <span className={ss.nodeTitle}>{item.name}</span>
                 </div>
-                {currentSelectedKey === item.id && (
+                {selectedKeys[0] === item.id && (
                     <Dropdown
                         menu={{ items: getMenuItems(item) }}
                         trigger={["click"]}
                     >
-                        <EllipsisOutlined 
-                            className={ss.actionIcon} 
+                        <EllipsisOutlined
+                            className={ss.actionIcon}
                             onClick={(e) => {
                                 e.stopPropagation();
                             }}
@@ -111,10 +109,10 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                 autoExpandParent={autoExpandParent}
                 treeData={searchTreeData as any}
                 onSelect={(keys, info) => {
+                    // 阻止取消选中
+                    if (keys.length === 0) return;
+                    
                     setSelectedKeys(keys);
-                    if (keys.length > 0) {
-                        setCurrentSelectedKey(keys[0]);
-                    }
                     onSelect?.(keys, info);
                 }}
                 selectedKeys={selectedKeys}

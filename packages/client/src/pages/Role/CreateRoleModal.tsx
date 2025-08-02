@@ -38,7 +38,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         ? "新增成功"
                         : "修改成功",
                 );
-                handleOk();
+                handleOk(record?.id);
             }
         } catch (error) {
             console.log(error);
