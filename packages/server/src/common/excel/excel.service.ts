@@ -7,7 +7,7 @@ type ExcelRowData = (string | number)[];
 export class ExcelService {
     async importExcel(file: Express.Multer.File): Promise<ExcelRowData[]> {
         const workbook = new Workbook();
-        await workbook.xlsx.load(file.buffer);
+        await workbook.xlsx.load(file.buffer as any);
         const worksheet = workbook.getWorksheet(1);
         const data = [];
 
@@ -100,6 +100,6 @@ export class ExcelService {
         });
 
         // 确保返回正确的Buffer
-        return (await workbook.xlsx.writeBuffer()) as Buffer;
+        return (await workbook.xlsx.writeBuffer()) as any;
     }
 }
