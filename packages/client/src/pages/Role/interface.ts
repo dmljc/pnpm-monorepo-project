@@ -1,5 +1,6 @@
 export interface CreateRole {
     name: string;
+    icon: string;
     code: string;
     status: number;
     remark: string;
@@ -7,6 +8,8 @@ export interface CreateRole {
 
 export interface UpdateRole extends CreateRole {
     id: number;
+    createTime?: string;
+    updateTime?: string;
 }
 
 export interface ModalProps {

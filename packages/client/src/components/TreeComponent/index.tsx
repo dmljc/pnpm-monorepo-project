@@ -15,17 +15,20 @@ interface TreeComponentProps {
     treeData: TreeData[];
     children?: React.ReactNode;
     onItemAction?: (action: string, item: TreeData) => void;
+    onSelect?: (selectedKeys: React.Key[], info: any) => void;
 }
 
 const TreeComponent: React.FC<TreeComponentProps> = ({
     treeData,
     children,
     onItemAction,
+    onSelect,
 }) => {
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState(true);
-
     const [searchTreeData, setSearchTreeData] = useState<TreeData[]>(treeData);
+    const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+    const [currentSelectedKey, setCurrentSelectedKey] = useState<React.Key | null>(null);
 
     const onExpand = (newExpandedKeys: React.Key[]) => {
         setExpandedKeys(newExpandedKeys);
@@ -34,6 +37,11 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
 
     useEffect(() => {
         setSearchTreeData(treeData);
+        // 设置默认选中第一条数据
+        if (treeData.length > 0) {
+            setSelectedKeys([treeData[0].id]);
+            setCurrentSelectedKey(treeData[0].id);
+        }
     }, [treeData]);
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,12 +77,19 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                     <IconRenderer icon={item.icon as string} />
                     <span className={ss.nodeTitle}>{item.name}</span>
                 </div>
-                <Dropdown
-                    menu={{ items: getMenuItems(item) }}
-                    trigger={["click"]}
-                >
-                    <EllipsisOutlined className={ss.actionIcon} />
-                </Dropdown>
+                {currentSelectedKey === item.id && (
+                    <Dropdown
+                        menu={{ items: getMenuItems(item) }}
+                        trigger={["click"]}
+                    >
+                        <EllipsisOutlined 
+                            className={ss.actionIcon} 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                        />
+                    </Dropdown>
+                )}
             </div>
         );
     };
@@ -95,6 +110,14 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                 expandedKeys={expandedKeys}
                 autoExpandParent={autoExpandParent}
                 treeData={searchTreeData as any}
+                onSelect={(keys, info) => {
+                    setSelectedKeys(keys);
+                    if (keys.length > 0) {
+                        setCurrentSelectedKey(keys[0]);
+                    }
+                    onSelect?.(keys, info);
+                }}
+                selectedKeys={selectedKeys}
                 blockNode
                 titleRender={titleRender}
                 fieldNames={{

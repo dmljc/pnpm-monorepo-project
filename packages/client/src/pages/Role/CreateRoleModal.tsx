@@ -55,7 +55,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
         } else {
             form.resetFields();
         }
-    }, [open, modalType]);
+    }, [open, modalType, record]);
 
     const onChangeStatus = (e: any) => {
         console.log(e.target.value);
