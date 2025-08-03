@@ -1,16 +1,27 @@
 import { FC, useEffect, useState } from "react";
-import { Form, Input, Radio, message, Modal } from "antd";
+import {
+    Form,
+    Input,
+    Radio,
+    message,
+    Drawer,
+    Row,
+    Col,
+    Button,
+    Space,
+} from "antd";
+import { IconComponent, TreeTable } from "@/components/index.tsx";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
-import IconComponent from "@/components/IconComponent";
+import { formatStringToNumberArray } from "./utils";
 import { create, update } from "./api";
 
 const { TextArea } = Input;
 const { Item } = Form;
 
 const layout = {
-    labelCol: { span: 5 },
-    wrapperCol: { span: 17 },
+    labelCol: { span: 4 },
+    wrapperCol: { span: 20 },
 };
 
 const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
@@ -23,6 +34,12 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
     const onOk = async () => {
         await form.validateFields();
         const values = form.getFieldsValue();
+
+        // 处理权限数据，将选中的菜单ID转换为逗号分隔的字符串
+        if (values.permission && Array.isArray(values.permission)) {
+            values.permission = values.permission.join(",");
+        }
+
         const params =
             modalType === ModalTypeEnum.CREATE
                 ? values
@@ -49,9 +66,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
 
     useEffect(() => {
         if (modalType === ModalTypeEnum.UPDATE) {
-            form.setFieldsValue({
-                ...record,
-            });
+            form.setFieldsValue({ ...record });
         } else {
             form.resetFields();
         }
@@ -61,19 +76,37 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
         console.log(e.target.value);
     };
 
+    const onChangeMenu = (selectedRowKeys: React.Key[]) => {
+        console.log(
+            `props-onChangeMenu-selectedRowKeys---》: ${selectedRowKeys}`,
+        );
+        // 将选中的键转换为字符串并设置为表单值
+        form.setFieldValue("permission", selectedRowKeys.join(","));
+    };
+
     return (
         <>
             {contextHolder}
-            <Modal
+            <Drawer
                 title={
                     modalType === ModalTypeEnum.CREATE ? "新增角色" : "修改角色"
                 }
                 open={open}
-                width={600}
-                onOk={onOk}
-                forceRender
-                onCancel={handleClose}
-                confirmLoading={confirmLoading}
+                width="70%"
+                onClose={handleClose}
+                placement="right"
+                extra={
+                    <Space>
+                        <Button onClick={handleClose}>取消</Button>
+                        <Button
+                            type="primary"
+                            onClick={onOk}
+                            disabled={confirmLoading}
+                        >
+                            {confirmLoading ? "提交中..." : "确定"}
+                        </Button>
+                    </Space>
+                }
             >
                 <Form
                     form={form}
@@ -83,62 +116,113 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         status: 1,
                     }}
                 >
-                    <Item
-                        label="名称"
-                        name="name"
-                        rules={[{ required: true, message: "请输入名称" }]}
-                    >
-                        <Input
-                            showCount
-                            allowClear
-                            maxLength={10}
-                            placeholder="请输入名称"
-                        />
-                    </Item>
-                    <Item
-                        label="图标"
-                        name="icon"
-                        rules={[{ required: true, message: "请选择图标" }]}
-                    >
-                        <IconComponent />
-                    </Item>
-                    <Item
-                        label="编码"
-                        name="code"
-                        rules={[{ required: true, message: "请输入编码" }]}
-                    >
-                        <Input
-                            showCount
-                            allowClear
-                            maxLength={10}
-                            placeholder="请输入编码"
-                        />
-                    </Item>
-                    <Item
-                        label="状态"
-                        name="status"
-                        rules={[{ required: true, message: "请选择状态" }]}
-                    >
-                        <Radio.Group onChange={onChangeStatus}>
-                            <Radio value={1}>启用</Radio>
-                            <Radio value={0}>停用</Radio>
-                        </Radio.Group>
-                    </Item>
-                    <Item
-                        label="备注"
-                        name="remark"
-                        rules={[{ required: false, message: "请输入备注" }]}
-                    >
-                        <TextArea
-                            showCount
-                            allowClear
-                            maxLength={100}
-                            autoSize={{ minRows: 4, maxRows: 6 }}
-                            placeholder="请输入备注"
-                        />
-                    </Item>
+                    <Row>
+                        <Col span={12}>
+                            <Item
+                                label="名称"
+                                name="name"
+                                rules={[
+                                    { required: true, message: "请输入名称" },
+                                ]}
+                            >
+                                <Input
+                                    showCount
+                                    allowClear
+                                    maxLength={10}
+                                    placeholder="请输入名称"
+                                />
+                            </Item>
+                        </Col>
+
+                        <Col span={12}>
+                            <Item
+                                label="图标"
+                                name="icon"
+                                rules={[
+                                    { required: true, message: "请选择图标" },
+                                ]}
+                            >
+                                <IconComponent />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Item
+                                label="编码"
+                                name="code"
+                                rules={[
+                                    { required: true, message: "请输入编码" },
+                                ]}
+                            >
+                                <Input
+                                    showCount
+                                    allowClear
+                                    maxLength={10}
+                                    placeholder="请输入编码"
+                                />
+                            </Item>
+                        </Col>
+                        <Col span={12}>
+                            <Item
+                                label="状态"
+                                name="status"
+                                rules={[
+                                    { required: true, message: "请选择状态" },
+                                ]}
+                            >
+                                <Radio.Group onChange={onChangeStatus}>
+                                    <Radio value={1}>启用</Radio>
+                                    <Radio value={0}>停用</Radio>
+                                </Radio.Group>
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={12}>
+                            <Item
+                                label="备注"
+                                name="remark"
+                                rules={[
+                                    { required: false, message: "请输入备注" },
+                                ]}
+                            >
+                                <TextArea
+                                    showCount
+                                    allowClear
+                                    maxLength={100}
+                                    autoSize={{ minRows: 4, maxRows: 6 }}
+                                    placeholder="请输入备注"
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={24}>
+                            <Item
+                                labelCol={{ span: 2 }}
+                                wrapperCol={{ span: 22 }}
+                                label="菜单权限"
+                                name="permission"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请选择菜单权限",
+                                    },
+                                ]}
+                            >
+                                <TreeTable
+                                    checkboxDisabled={false}
+                                    selectedRowKeys={formatStringToNumberArray(
+                                        record?.permission,
+                                    )}
+                                    onChange={onChangeMenu}
+                                />
+                            </Item>
+                        </Col>
+                    </Row>
                 </Form>
-            </Modal>
+            </Drawer>
         </>
     );
 };

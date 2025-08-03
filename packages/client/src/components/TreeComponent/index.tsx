@@ -111,7 +111,7 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                 onSelect={(keys, info) => {
                     // 阻止取消选中
                     if (keys.length === 0) return;
-                    
+
                     setSelectedKeys(keys);
                     onSelect?.(keys, info);
                 }}

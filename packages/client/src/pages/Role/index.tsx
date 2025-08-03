@@ -5,6 +5,7 @@ import { TreeTable, TreeComponent, IconRenderer } from "@/components/index.tsx";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
 import { ModalTypeEnum, formatTime } from "@/utils";
+import { formatStringToNumberArray } from "./utils";
 import { list, del } from "./api.ts";
 import useStyles from "./style";
 
@@ -134,7 +135,12 @@ const Role: FC = () => {
                     </Group>
 
                     {roleDesc === "permission" && (
-                        <TreeTable showRowSelection={true} />
+                        <TreeTable
+                            checkboxDisabled={true}
+                            selectedRowKeys={formatStringToNumberArray(
+                                record?.permission,
+                            )}
+                        />
                     )}
                     {roleDesc === "info" && (
                         <Form
@@ -159,6 +165,9 @@ const Role: FC = () => {
                             </Item>
                             <Item label="角色状态" required>
                                 {record?.status === 1 ? "启用" : "禁用"}
+                            </Item>
+                            <Item label="菜单权限" required>
+                                {record?.permission}
                             </Item>
                             <Item label="创建时间" required>
                                 {formatTime(record?.createTime)}

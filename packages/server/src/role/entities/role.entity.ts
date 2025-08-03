@@ -56,4 +56,11 @@ export class Role {
         name: "role_permission_relation",
     })
     permissions: Permission[];
+
+    @Column({
+        comment: "菜单权限",
+        nullable: true,
+        type: "text",
+    })
+    permission: number[];
 }

@@ -6,23 +6,26 @@ import IconRenderer from "../IconComponent/IconRenderer";
 import { typeColorMap, typeLabelMap } from "./constant";
 import type { DataType, UpdateMenu } from "./interface";
 import { useMenuStore } from "@/store";
-import { getAllMenuIds } from "@/layout/utils";
-import type {
-    TreeTableProps,
-    TreeTableColumn,
-    TableRowSelection,
-} from "./interface";
+import type { TreeTableColumn, TableRowSelection } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { del } from "./api";
 import CreateMenuModal from "./CreateMenu";
 
-const TreeTable = <T extends Record<string, any>>({
-    showRowSelection = false,
-    editable = false,
-}: TreeTableProps<T>) => {
+interface Props {
+    editable?: boolean;
+    checkboxDisabled?: boolean;
+    selectedRowKeys?: React.Key[] | undefined;
+    onChange?: (selectedRowKeys: React.Key[]) => void;
+}
+
+const TreeTable = <T extends Record<string, any>>(props: Props) => {
+    const {
+        editable = false,
+        checkboxDisabled = false,
+        selectedRowKeys = [],
+    } = props;
     const [messageApi, contextHolder] = message.useMessage();
     const menuStore = useMenuStore();
-    const [checkStrictly] = useState(false);
 
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
@@ -30,6 +33,17 @@ const TreeTable = <T extends Record<string, any>>({
     );
     const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
     const [form] = Form.useForm();
+    const [selectedRowKeyList, setSelectedRowKeyList] =
+        useState<React.Key[]>(selectedRowKeys);
+    const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>(
+        selectedRowKeys || [],
+    );
+
+    // 当 selectedRowKeys 属性变化时，更新内部状态
+    useEffect(() => {
+        setSelectedRowKeyList(selectedRowKeys || []);
+        setExpandedRowKeys(selectedRowKeys || []);
+    }, [selectedRowKeys]);
 
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
@@ -37,13 +51,11 @@ const TreeTable = <T extends Record<string, any>>({
             title: "标题",
             dataIndex: "label",
             key: "label",
-            width: "15%",
         },
         {
             title: "图标",
             dataIndex: "icon",
             key: "icon",
-            width: "10%",
             render: (icon) => {
                 return icon ? <IconRenderer icon={icon} /> : null;
             },
@@ -52,7 +64,6 @@ const TreeTable = <T extends Record<string, any>>({
             title: "类型",
             dataIndex: "type",
             key: "type",
-            width: "15%",
             render: (type) => {
                 return (
                     <Tag color={typeColorMap[type]}>{typeLabelMap[type]}</Tag>
@@ -63,19 +74,16 @@ const TreeTable = <T extends Record<string, any>>({
             title: "权限编码",
             dataIndex: "code",
             key: "code",
-            width: "15%",
         },
         {
             title: "路由地址",
             dataIndex: "path",
             key: "path",
-            width: "15%",
         },
         {
             title: "页面组件",
             dataIndex: "component",
             key: "component",
-            width: "15%",
         },
     ];
 
@@ -84,7 +92,6 @@ const TreeTable = <T extends Record<string, any>>({
             title: "操作",
             dataIndex: "ctrl",
             key: "ctrl",
-            width: "15%",
             render: (_: any, record: any) => {
                 return (
                     <Space>
@@ -115,39 +122,29 @@ const TreeTable = <T extends Record<string, any>>({
     ];
 
     // 构建表格列配置
-    const tableColumns: TableColumnsType<T> = [
-        ...columns,
-        ...actionColumns,
-        // ...(editable ? actionColumns : []),
-    ];
-
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-    useEffect(() => {
-        // 递归获取所有菜单项的id
-        const allIds = getAllMenuIds(menuStore.orginData);
-        console.log("所有菜单ID=====》:", allIds);
-        setSelectedRowKeys(allIds);
-    }, [menuStore.orginData]);
+    const tableColumns: TableColumnsType<T> = [...columns, ...actionColumns];
 
     const rowSelection: TableRowSelection<T> = {
-        selectedRowKeys,
-        getCheckboxProps: (record) => ({
-            disabled: true,
-            name: record.label,
+        selectedRowKeys: selectedRowKeyList,
+        getCheckboxProps: () => ({
+            disabled: checkboxDisabled,
+            // name: record.label,
         }),
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(
-                `selectedRowKeys: ${selectedRowKeys}`,
-                "selectedRows: ",
+                `onChange-: ${selectedRowKeys}`,
+                "selectedRows---》: ",
                 selectedRows,
             );
+            props.onChange?.(selectedRowKeys);
+            setSelectedRowKeyList(selectedRowKeys);
         },
         onSelect: (record, selected, selectedRows) => {
-            console.log(record, selected, selectedRows);
-        },
-        onSelectAll: (selected, selectedRows, changeRows) => {
-            console.log("------", selected, selectedRows, changeRows);
+            console.log(
+                `onSelect-record---》: ${record}`,
+                `onSelect-selected---》: ${selected}`,
+                `onSelect-selectedRows---》: ${selectedRows}`,
+            );
         },
     };
 
@@ -186,21 +183,26 @@ const TreeTable = <T extends Record<string, any>>({
                 </Button>
             )}
 
-            <Table<T>
+            <Table
                 rowKey="id"
                 tableLayout="fixed"
                 scroll={{ y: "calc(100vh - 230px)" }}
                 columns={tableColumns}
                 dataSource={menuStore.orginData as unknown as T[]}
                 pagination={false}
+                rowSelection={rowSelection}
                 expandable={{
-                    expandedRowKeys: selectedRowKeys,
+                    expandedRowKeys: expandedRowKeys,
+                    onExpand: (expanded, record) => {
+                        if (expanded) {
+                            setExpandedRowKeys((prev) => [...prev, record.id]);
+                        } else {
+                            setExpandedRowKeys((prev) =>
+                                prev.filter((key) => key !== record.id),
+                            );
+                        }
+                    },
                 }}
-                rowSelection={
-                    showRowSelection
-                        ? { ...rowSelection, checkStrictly }
-                        : undefined
-                }
             />
             <CreateMenuModal
                 open={open}

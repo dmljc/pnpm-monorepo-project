@@ -32,4 +32,7 @@ export class UpdateRoleDto {
     @IsOptional()
     @MaxLength(100)
     remark?: string;
+
+    @IsOptional()
+    permission?: number[];
 }

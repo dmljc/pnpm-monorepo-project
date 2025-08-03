@@ -23,4 +23,7 @@ export class CreateRoleDto {
     @IsOptional()
     @MaxLength(100)
     remark?: string;
+
+    @IsOptional()
+    permission?: number[];
 }

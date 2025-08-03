@@ -149,7 +149,6 @@ import "winston-daily-rotate-file";
         ExcelModule,
         ServerModule,
         MenuModule,
-        ConfigModule,
         SystemConfigModule,
     ],
     controllers: [AppController],

@@ -59,6 +59,7 @@ export class RoleService {
         role.code = createRoleDto.code;
         role.status = createRoleDto.status;
         role.remark = createRoleDto.remark;
+        role.permission = createRoleDto.permission;
         // ... 其他字段赋值 ...
         return await this.roleRepository.save(role);
     }

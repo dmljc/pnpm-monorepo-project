@@ -4,12 +4,14 @@ export interface CreateRole {
     code: string;
     status: number;
     remark: string;
+    permission?: number[];
 }
 
 export interface UpdateRole extends CreateRole {
     id: number;
     createTime?: string;
     updateTime?: string;
+    permission?: number[];
 }
 
 export interface ModalProps {
