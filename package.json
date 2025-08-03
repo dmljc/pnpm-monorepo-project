@@ -1,5 +1,9 @@
 {
     "name": "pnpm-monorepo-project",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
     "version": "1.0.0",
     "main": "index.js",
     "private": true,
@@ -49,6 +53,9 @@
             "path": "node_modules/cz-git"
         }
     },
+    "dependencies": {
+        "axios": "1.11.0"
+    },
     "devDependencies": {
         "@commitlint/cli": "^19.8.1",
         "@commitlint/config-conventional": "^19.8.1",
@@ -70,11 +77,8 @@
         "prettier": "^3.6.2",
         "stylelint": "^16.23.0",
         "stylelint-config-standard": "^39.0.0",
+        "typescript": "5.8.3",
         "typescript-eslint": "^8.38.0",
         "vitepress": "^1.6.3"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "description": ""
+    }
 }
