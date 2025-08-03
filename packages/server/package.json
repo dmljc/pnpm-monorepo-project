@@ -8,7 +8,7 @@
     "scripts": {
         "build": "nest build && cp .env* ./dist",
         "start": "nest start",
-        "start:dev": "nest start --watch",
+        "start:dev": "pnpm run clean:old-logs && nest start --watch",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
         "docs:generate": "compodoc -p tsconfig.json -s -o",
