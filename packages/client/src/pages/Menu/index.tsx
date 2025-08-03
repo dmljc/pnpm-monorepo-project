@@ -1,5 +1,5 @@
 import { FC } from "react";
-import type { DataType } from "./interface";
+import type { DataType } from "@/components/TreeTable/interface";
 import TreeTable from "@/components/TreeTable";
 
 const Menu: FC = () => {

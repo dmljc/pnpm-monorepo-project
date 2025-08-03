@@ -95,3 +95,26 @@ export const getLevelKeys = (items1: MenuItem[]) => {
     func(items1);
     return key;
 };
+
+/**
+ * 递归获取所有菜单项的id
+ * @param menuList 菜单列表
+ * @returns 所有id的数组
+ */
+export function getAllMenuIds(menuList: MenuItem[]): number[] {
+    const ids: number[] = [];
+
+    const traverse = (items: MenuItem[]) => {
+        items.forEach((item) => {
+            if (item.id !== undefined) {
+                ids.push(item.id);
+            }
+            if (item.children && item.children.length > 0) {
+                traverse(item.children);
+            }
+        });
+    };
+
+    traverse(menuList);
+    return ids;
+}

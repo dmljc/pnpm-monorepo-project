@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, message, Space, Table, Tag, Form } from "antd";
 import type { TableColumnsType } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import IconRenderer from "../IconComponent/IconRenderer";
 import { typeColorMap, typeLabelMap } from "./constant";
-import type { DataType, UpdateMenu } from "@/pages/Menu/interface";
+import type { DataType, UpdateMenu } from "./interface";
 import { useMenuStore } from "@/store";
+import { getAllMenuIds } from "@/layout/utils";
 import type {
     TreeTableProps,
     TreeTableColumn,
@@ -84,7 +85,7 @@ const TreeTable = <T extends Record<string, any>>({
             dataIndex: "ctrl",
             key: "ctrl",
             width: "15%",
-            render: (_: any, record: T) => {
+            render: (_: any, record: any) => {
                 return (
                     <Space>
                         {editable && (
@@ -120,7 +121,21 @@ const TreeTable = <T extends Record<string, any>>({
         // ...(editable ? actionColumns : []),
     ];
 
-    const rowSelection: TableRowSelection<DataType> = {
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+    useEffect(() => {
+        // 递归获取所有菜单项的id
+        const allIds = getAllMenuIds(menuStore.orginData);
+        console.log("所有菜单ID=====》:", allIds);
+        setSelectedRowKeys(allIds);
+    }, [menuStore.orginData]);
+
+    const rowSelection: TableRowSelection<T> = {
+        selectedRowKeys,
+        getCheckboxProps: (record) => ({
+            disabled: true,
+            name: record.label,
+        }),
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(
                 `selectedRowKeys: ${selectedRowKeys}`,
@@ -132,7 +147,7 @@ const TreeTable = <T extends Record<string, any>>({
             console.log(record, selected, selectedRows);
         },
         onSelectAll: (selected, selectedRows, changeRows) => {
-            console.log(selected, selectedRows, changeRows);
+            console.log("------", selected, selectedRows, changeRows);
         },
     };
 
@@ -178,6 +193,9 @@ const TreeTable = <T extends Record<string, any>>({
                 columns={tableColumns}
                 dataSource={menuStore.orginData as unknown as T[]}
                 pagination={false}
+                expandable={{
+                    expandedRowKeys: selectedRowKeys,
+                }}
                 rowSelection={
                     showRowSelection
                         ? { ...rowSelection, checkStrictly }
