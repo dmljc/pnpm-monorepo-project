@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, message, Space, Table, Tag, Form } from "antd";
 import type { TableColumnsType } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -13,17 +13,13 @@ import CreateMenuModal from "./CreateMenu";
 
 interface Props {
     editable?: boolean;
-    checkboxDisabled?: boolean;
+    checkable?: boolean;
     selectedRowKeys?: React.Key[] | undefined;
     onChange?: (selectedRowKeys: React.Key[]) => void;
 }
 
 const TreeTable = <T extends Record<string, any>>(props: Props) => {
-    const {
-        editable = false,
-        checkboxDisabled = false,
-        selectedRowKeys = [],
-    } = props;
+    const { editable = false, checkable = false, selectedRowKeys } = props;
     const [messageApi, contextHolder] = message.useMessage();
     const menuStore = useMenuStore();
 
@@ -33,16 +29,17 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     );
     const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
     const [form] = Form.useForm();
-    const [selectedRowKeyList, setSelectedRowKeyList] =
-        useState<React.Key[]>(selectedRowKeys);
-    const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>(
+    // 使用外部selectedRowKeys初始化，如果没有则使用空数组
+    const [selectedRowKeyList, setSelectedRowKeyList] = useState<React.Key[]>(
         selectedRowKeys || [],
     );
+    const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
-    // 当 selectedRowKeys 属性变化时，更新内部状态
+    // 当外部selectedRowKeys变化时，更新本地state
     useEffect(() => {
-        setSelectedRowKeyList(selectedRowKeys || []);
-        setExpandedRowKeys(selectedRowKeys || []);
+        if (selectedRowKeys) {
+            setSelectedRowKeyList(selectedRowKeys);
+        }
     }, [selectedRowKeys]);
 
     // 定义表格列配置
@@ -122,29 +119,23 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     ];
 
     // 构建表格列配置
-    const tableColumns: TableColumnsType<T> = [...columns, ...actionColumns];
+    const tableColumns: TableColumnsType<T> = [
+        ...columns,
+        ...(editable ? actionColumns : []),
+    ];
 
     const rowSelection: TableRowSelection<T> = {
         selectedRowKeys: selectedRowKeyList,
         getCheckboxProps: () => ({
-            disabled: checkboxDisabled,
-            // name: record.label,
+            disabled: !checkable,
         }),
-        onChange: (selectedRowKeys, selectedRows) => {
-            console.log(
-                `onChange-: ${selectedRowKeys}`,
-                "selectedRows---》: ",
-                selectedRows,
-            );
-            props.onChange?.(selectedRowKeys);
+        onChange: (selectedRowKeys) => {
             setSelectedRowKeyList(selectedRowKeys);
+            // 调用父组件的onChange回调
+            props.onChange?.(selectedRowKeys);
         },
-        onSelect: (record, selected, selectedRows) => {
-            console.log(
-                `onSelect-record---》: ${record}`,
-                `onSelect-selected---》: ${selected}`,
-                `onSelect-selectedRows---》: ${selectedRows}`,
-            );
+        onSelect: () => {
+            // 可选：调试用
         },
     };
 
@@ -195,7 +186,11 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                     expandedRowKeys: expandedRowKeys,
                     onExpand: (expanded, record) => {
                         if (expanded) {
-                            setExpandedRowKeys((prev) => [...prev, record.id]);
+                            setExpandedRowKeys((prev) =>
+                                prev.includes(record.id)
+                                    ? prev
+                                    : [...prev, record.id],
+                            );
                         } else {
                             setExpandedRowKeys((prev) =>
                                 prev.filter((key) => key !== record.id),

@@ -135,12 +135,7 @@ const Role: FC = () => {
                     </Group>
 
                     {roleDesc === "permission" && (
-                        <TreeTable
-                            checkboxDisabled={true}
-                            selectedRowKeys={formatStringToNumberArray(
-                                record?.permission,
-                            )}
-                        />
+                        <TreeTable checkable={false} />
                     )}
                     {roleDesc === "info" && (
                         <Form

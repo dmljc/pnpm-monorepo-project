@@ -13,7 +13,6 @@ import {
 import { IconComponent, TreeTable } from "@/components/index.tsx";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
-import { formatStringToNumberArray } from "./utils";
 import { create, update } from "./api";
 
 const { TextArea } = Input;
@@ -28,6 +27,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
     const [form] = Form.useForm<UpdateRole>();
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [selectedMenuKeys, setSelectedMenuKeys] = useState<React.Key[]>([]);
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -35,11 +35,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
         await form.validateFields();
         const values = form.getFieldsValue();
 
-        // 处理权限数据，将选中的菜单ID转换为逗号分隔的字符串
-        if (values.permission && Array.isArray(values.permission)) {
-            values.permission = values.permission.join(",");
-        }
-
+        // permission字段现在已经是字符串，不需要再转换
         const params =
             modalType === ModalTypeEnum.CREATE
                 ? values
@@ -67,10 +63,16 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
     useEffect(() => {
         if (modalType === ModalTypeEnum.UPDATE) {
             form.setFieldsValue({ ...record });
+            // 将权限字符串转换为数组
+            if (record.permission && typeof record.permission === 'string') {
+                const permissionArray = record.permission.split(",").map(Number);
+                setSelectedMenuKeys(permissionArray);
+            }
         } else {
             form.resetFields();
+            setSelectedMenuKeys([]);
         }
-    }, [open, modalType, record]);
+    }, [open, modalType, record, form]);
 
     const onChangeStatus = (e: any) => {
         console.log(e.target.value);
@@ -80,6 +82,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
         console.log(
             `props-onChangeMenu-selectedRowKeys---》: ${selectedRowKeys}`,
         );
+        setSelectedMenuKeys(selectedRowKeys);
         // 将选中的键转换为字符串并设置为表单值
         form.setFieldValue("permission", selectedRowKeys.join(","));
     };
@@ -212,10 +215,8 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                                 ]}
                             >
                                 <TreeTable
-                                    checkboxDisabled={false}
-                                    selectedRowKeys={formatStringToNumberArray(
-                                        record?.permission,
-                                    )}
+                                    checkable={true}
+                                    selectedRowKeys={selectedMenuKeys}
                                     onChange={onChangeMenu}
                                 />
                             </Item>
