@@ -23,10 +23,9 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     const [messageApi, contextHolder] = message.useMessage();
 
     // 监听type字段
-    const type = Form.useWatch
-        ? // eslint-disable-next-line react-hooks/rules-of-hooks
-          Form.useWatch("type", form)
-        : form.getFieldValue("type");
+    const type = Form.useWatch("type", form);
+    // 监听icon字段
+    const icon = Form.useWatch("icon", form);
 
     const onChangeMenuType = () => {
         Object.keys(form.getFieldsValue()).forEach((key) => {
@@ -65,14 +64,16 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     };
 
     useEffect(() => {
-        if (modalType === ModalTypeEnum.UPDATE) {
-            form.setFieldsValue({
-                ...record,
-            });
-        } else {
-            form.resetFields();
+        if (open) {
+            if (modalType === ModalTypeEnum.UPDATE) {
+                form.setFieldsValue({
+                    ...record,
+                });
+            } else {
+                form.resetFields();
+            }
         }
-    }, [open, modalType]);
+    }, [open, modalType, record]); // 添加record依赖，移除form依赖
 
     function onFinish(values: UpdateMenu): void {
         console.log(values);
@@ -153,7 +154,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                         ]}
                     >
                         <IconComponent
-                            value={form.getFieldValue("icon") as string}
+                            value={icon as string}
                             onChange={(value) => {
                                 form.setFieldsValue({ icon: value });
                             }}

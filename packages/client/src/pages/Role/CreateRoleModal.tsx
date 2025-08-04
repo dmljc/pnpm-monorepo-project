@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import {
     Form,
     Input,
@@ -61,31 +61,47 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
     };
 
     useEffect(() => {
-        if (modalType === ModalTypeEnum.UPDATE) {
-            form.setFieldsValue({ ...record });
-            // 将权限字符串转换为数组
-            if (record.permission && typeof record.permission === 'string') {
-                const permissionArray = record.permission.split(",").map(Number);
-                setSelectedMenuKeys(permissionArray);
+        if (open) {
+            if (modalType === ModalTypeEnum.UPDATE) {
+                form.setFieldsValue({ ...record });
+                // 将权限字符串转换为数组
+                if (
+                    record.permission &&
+                    typeof record.permission === "string"
+                ) {
+                    const permissionArray = record.permission
+                        .split(",")
+                        .map(Number);
+                    setSelectedMenuKeys(permissionArray);
+                }
+            } else {
+                form.resetFields();
+                setSelectedMenuKeys([]);
             }
-        } else {
-            form.resetFields();
-            setSelectedMenuKeys([]);
         }
-    }, [open, modalType, record, form]);
+    }, [open, modalType, record]); // 移除form依赖，避免循环
 
     const onChangeStatus = (e: any) => {
         console.log(e.target.value);
     };
 
-    const onChangeMenu = (selectedRowKeys: React.Key[]) => {
-        console.log(
-            `props-onChangeMenu-selectedRowKeys---》: ${selectedRowKeys}`,
-        );
-        setSelectedMenuKeys(selectedRowKeys);
-        // 将选中的键转换为字符串并设置为表单值
-        form.setFieldValue("permission", selectedRowKeys.join(","));
-    };
+    const onChangeMenu = useCallback(
+        (selectedRowKeys: React.Key[]) => {
+            // 避免频繁调用，只在值真正改变时更新
+            if (
+                JSON.stringify(selectedRowKeys) !==
+                JSON.stringify(selectedMenuKeys)
+            ) {
+                console.log(
+                    `props-onChangeMenu-selectedRowKeys---》: ${selectedRowKeys}`,
+                );
+                setSelectedMenuKeys(selectedRowKeys);
+                // 将选中的键转换为字符串并设置为表单值
+                form.setFieldValue("permission", selectedRowKeys.join(","));
+            }
+        },
+        [selectedMenuKeys],
+    );
 
     return (
         <>
@@ -113,7 +129,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
             >
                 <Form
                     form={form}
-                    name="createRole"
+                    name="createRoleForm"
                     {...layout}
                     initialValues={{
                         status: 1,

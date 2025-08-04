@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button, message, Space, Table, Tag, Form } from "antd";
 import type { TableColumnsType } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -37,10 +37,14 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
 
     // 当外部selectedRowKeys变化时，更新本地state
     useEffect(() => {
-        if (selectedRowKeys) {
+        if (
+            selectedRowKeys &&
+            JSON.stringify(selectedRowKeys) !==
+                JSON.stringify(selectedRowKeyList)
+        ) {
             setSelectedRowKeyList(selectedRowKeys);
         }
-    }, [selectedRowKeys]);
+    }, [selectedRowKeys, selectedRowKeyList]);
 
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
@@ -124,20 +128,48 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         ...(editable ? actionColumns : []),
     ];
 
-    const rowSelection: TableRowSelection<T> = {
-        selectedRowKeys: selectedRowKeyList,
-        getCheckboxProps: () => ({
-            disabled: !checkable,
+    // 使用useMemo优化rowSelection对象，避免每次渲染都重新创建
+    const rowSelection = useMemo(
+        (): TableRowSelection<T> => ({
+            selectedRowKeys: selectedRowKeyList,
+            getCheckboxProps: () => ({
+                disabled: !checkable,
+            }),
+            onChange: (selectedRowKeys) => {
+                setSelectedRowKeyList(selectedRowKeys);
+                // 只在值真正改变时才调用父组件的onChange
+                if (
+                    JSON.stringify(selectedRowKeys) !==
+                    JSON.stringify(props.selectedRowKeys)
+                ) {
+                    props.onChange?.(selectedRowKeys);
+                }
+            },
+            onSelect: () => {
+                // 可选：调试用
+            },
         }),
-        onChange: (selectedRowKeys) => {
-            setSelectedRowKeyList(selectedRowKeys);
-            // 调用父组件的onChange回调
-            props.onChange?.(selectedRowKeys);
-        },
-        onSelect: () => {
-            // 可选：调试用
-        },
-    };
+        [selectedRowKeyList, checkable, props.selectedRowKeys],
+    );
+
+    // 使用useMemo优化expandable对象
+    const expandableConfig = useMemo(
+        () => ({
+            expandedRowKeys: expandedRowKeys,
+            onExpand: (expanded: boolean, record: any) => {
+                if (expanded) {
+                    setExpandedRowKeys((prev) =>
+                        prev.includes(record.id) ? prev : [...prev, record.id],
+                    );
+                } else {
+                    setExpandedRowKeys((prev) =>
+                        prev.filter((key) => key !== record.id),
+                    );
+                }
+            },
+        }),
+        [expandedRowKeys],
+    );
 
     const handleCreate = () => {
         setOpen(true);
@@ -182,22 +214,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 dataSource={menuStore.orginData as unknown as T[]}
                 pagination={false}
                 rowSelection={rowSelection}
-                expandable={{
-                    expandedRowKeys: expandedRowKeys,
-                    onExpand: (expanded, record) => {
-                        if (expanded) {
-                            setExpandedRowKeys((prev) =>
-                                prev.includes(record.id)
-                                    ? prev
-                                    : [...prev, record.id],
-                            );
-                        } else {
-                            setExpandedRowKeys((prev) =>
-                                prev.filter((key) => key !== record.id),
-                            );
-                        }
-                    },
-                }}
+                expandable={expandableConfig}
             />
             <CreateMenuModal
                 open={open}
