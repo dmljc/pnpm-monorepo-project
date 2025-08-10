@@ -18,6 +18,37 @@ interface Props {
     onChange?: (selectedRowKeys: React.Key[]) => void;
 }
 
+// 递归查找菜单项的所有父级节点ID
+const findParentIds = (
+    menuList: any[],
+    targetIds: React.Key[],
+): React.Key[] => {
+    const parentIds = new Set<React.Key>();
+
+    const findParents = (items: any[], targetId: React.Key): boolean => {
+        for (const item of items) {
+            if (item.id === targetId) {
+                return true;
+            }
+            if (item.children && item.children.length > 0) {
+                if (findParents(item.children, targetId)) {
+                    if (item.id) {
+                        parentIds.add(item.id);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    targetIds.forEach((targetId) => {
+        findParents(menuList, targetId);
+    });
+
+    return Array.from(parentIds);
+};
+
 const TreeTable = <T extends Record<string, any>>(props: Props) => {
     const { editable = false, checkable = false, selectedRowKeys } = props;
     const [messageApi, contextHolder] = message.useMessage();
@@ -35,7 +66,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     );
     const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
-    // 当外部selectedRowKeys变化时，更新本地state
+    // 当外部selectedRowKeys变化时，更新本地state并展开相关父级节点
     useEffect(() => {
         if (
             selectedRowKeys &&
@@ -43,8 +74,21 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 JSON.stringify(selectedRowKeyList)
         ) {
             setSelectedRowKeyList(selectedRowKeys);
+            
+            // 根据选中的菜单项展开其父级节点
+            if (selectedRowKeys.length > 0 && menuStore.orginData.length > 0) {
+                const parentIds = findParentIds(
+                    menuStore.orginData,
+                    selectedRowKeys,
+                );
+                // 重置展开状态，只展开当前选中项的父级节点
+                setExpandedRowKeys(parentIds);
+            } else if (selectedRowKeys.length === 0) {
+                // 如果没有选中项，清空展开状态
+                setExpandedRowKeys([]);
+            }
         }
-    }, [selectedRowKeys, selectedRowKeyList]);
+    }, [selectedRowKeys, selectedRowKeyList, menuStore.orginData]);
 
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
@@ -162,13 +206,29 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                         prev.includes(record.id) ? prev : [...prev, record.id],
                     );
                 } else {
+                    // 检查是否是要展开的父级节点
+                    const isParentOfSelected = selectedRowKeyList.some(
+                        (selectedId) => {
+                            const parentIds = findParentIds(
+                                menuStore.orginData,
+                                [selectedId],
+                            );
+                            return parentIds.includes(record.id);
+                        },
+                    );
+
+                    // 如果是选中项的父级节点，不允许手动收起
+                    if (isParentOfSelected) {
+                        return;
+                    }
+
                     setExpandedRowKeys((prev) =>
                         prev.filter((key) => key !== record.id),
                     );
                 }
             },
         }),
-        [expandedRowKeys],
+        [expandedRowKeys, selectedRowKeyList, menuStore.orginData],
     );
 
     const handleCreate = () => {

@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import { PlusOutlined, SmileOutlined } from "@ant-design/icons";
 import { Button, Form, message, Modal, Radio, RadioChangeEvent } from "antd";
 import { TreeTable, TreeComponent, IconRenderer } from "@/components/index.tsx";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
 import { ModalTypeEnum, formatTime } from "@/utils";
-import { formatStringToNumberArray } from "./utils";
+
 import { list, del } from "./api.ts";
 import useStyles from "./style";
 
@@ -22,6 +22,8 @@ const Role: FC = () => {
     const [record, setRecord] = useState<UpdateRole>();
     const [messageApi, contextHolder] = message.useMessage();
     const [roleDesc, setRoleDesc] = useState<string>("permission");
+    // 添加状态来管理当前选中角色的菜单权限
+    const [selectedMenuKeys, setSelectedMenuKeys] = useState<React.Key[]>([]);
 
     useEffect(() => {
         getRoleList();
@@ -30,6 +32,19 @@ const Role: FC = () => {
     useEffect(() => {
         setRecord(roleList?.[0]);
     }, [roleList.length]);
+
+    // 当选中角色变化时，更新菜单权限选中状态
+    useEffect(() => {
+        if (record?.permission && typeof record.permission === "string") {
+            const permissionArray = record.permission
+                .split(",")
+                .map(Number)
+                .filter((id) => id > 0); // 过滤掉无效的ID
+            setSelectedMenuKeys(permissionArray);
+        } else {
+            setSelectedMenuKeys([]);
+        }
+    }, [record]);
 
     const getRoleList = async (id?: number) => {
         try {
@@ -103,6 +118,16 @@ const Role: FC = () => {
         setRecord(info.selectedNodes?.[0]);
     };
 
+    // 处理TreeTable选中项变化（只读模式，不需要实际更新权限）
+    const handleMenuSelectionChange = useCallback(
+        (selectedRowKeys: React.Key[]) => {
+            // 在角色列表页面，TreeTable是只读的，所以这里只是用于显示
+            // 不需要实际更新角色的权限
+            console.log("角色权限查看模式 - 选中的菜单项:", selectedRowKeys);
+        },
+        [],
+    );
+
     return (
         <>
             <div className={ss.root}>
@@ -135,7 +160,11 @@ const Role: FC = () => {
                     </Group>
 
                     {roleDesc === "permission" && (
-                        <TreeTable checkable={false} />
+                        <TreeTable
+                            checkable={false}
+                            selectedRowKeys={selectedMenuKeys}
+                            onChange={handleMenuSelectionChange}
+                        />
                     )}
                     {roleDesc === "info" && (
                         <Form

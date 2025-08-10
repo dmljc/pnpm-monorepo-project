@@ -73,6 +73,8 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         .split(",")
                         .map(Number);
                     setSelectedMenuKeys(permissionArray);
+                } else {
+                    setSelectedMenuKeys([]);
                 }
             } else {
                 form.resetFields();
