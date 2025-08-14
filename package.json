@@ -78,7 +78,7 @@
         "stylelint": "^16.23.1",
         "stylelint-config-standard": "^39.0.0",
         "typescript": "5.9.2",
-        "typescript-eslint": "^8.39.0",
+        "typescript-eslint": "^8.39.1",
         "vitepress": "^1.6.4"
     }
 }
