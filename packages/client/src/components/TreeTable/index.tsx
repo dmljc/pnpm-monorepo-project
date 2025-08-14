@@ -12,9 +12,15 @@ import { del } from "./api";
 import CreateMenuModal from "./CreateMenu";
 
 interface Props {
+    // 是否可编辑（新增、编辑、删除）
     editable?: boolean;
-    checkable?: boolean;
+    // 是否禁用勾选 checkbox
+    disabledCheck?: boolean;
+    // 是否可选择 checkbox
+    selecteable?: boolean;
+    // 选中的行 key 列表
     selectedRowKeys?: React.Key[] | undefined;
+    // 选择行变化回调
     onChange?: (selectedRowKeys: React.Key[]) => void;
 }
 
@@ -50,7 +56,12 @@ const findParentIds = (
 };
 
 const TreeTable = <T extends Record<string, any>>(props: Props) => {
-    const { editable = false, checkable = false, selectedRowKeys } = props;
+    const {
+        editable = false,
+        disabledCheck = false,
+        selecteable = false,
+        selectedRowKeys,
+    } = props;
     const [messageApi, contextHolder] = message.useMessage();
     const menuStore = useMenuStore();
 
@@ -74,7 +85,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 JSON.stringify(selectedRowKeyList)
         ) {
             setSelectedRowKeyList(selectedRowKeys);
-            
+
             // 根据选中的菜单项展开其父级节点
             if (selectedRowKeys.length > 0 && menuStore.orginData.length > 0) {
                 const parentIds = findParentIds(
@@ -177,7 +188,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         (): TableRowSelection<T> => ({
             selectedRowKeys: selectedRowKeyList,
             getCheckboxProps: () => ({
-                disabled: !checkable,
+                disabled: disabledCheck,
             }),
             onChange: (selectedRowKeys) => {
                 setSelectedRowKeyList(selectedRowKeys);
@@ -193,7 +204,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 // 可选：调试用
             },
         }),
-        [selectedRowKeyList, checkable, props.selectedRowKeys],
+        [selectedRowKeyList, disabledCheck, props.selectedRowKeys],
     );
 
     // 使用useMemo优化expandable对象
@@ -273,7 +284,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 columns={tableColumns}
                 dataSource={menuStore.orginData as unknown as T[]}
                 pagination={false}
-                rowSelection={rowSelection}
+                rowSelection={selecteable ? rowSelection : undefined}
                 expandable={expandableConfig}
             />
             <CreateMenuModal

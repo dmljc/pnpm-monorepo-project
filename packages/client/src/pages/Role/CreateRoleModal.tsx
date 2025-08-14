@@ -233,7 +233,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                                 ]}
                             >
                                 <TreeTable
-                                    checkable={true}
+                                    selecteable={true}
                                     selectedRowKeys={selectedMenuKeys}
                                     onChange={onChangeMenu}
                                 />

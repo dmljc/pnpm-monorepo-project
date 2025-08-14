@@ -161,7 +161,8 @@ const Role: FC = () => {
 
                     {roleDesc === "permission" && (
                         <TreeTable
-                            checkable={false}
+                            disabledCheck={true}
+                            selecteable={true}
                             selectedRowKeys={selectedMenuKeys}
                             onChange={handleMenuSelectionChange}
                         />
