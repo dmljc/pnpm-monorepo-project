@@ -11,7 +11,7 @@ const customTreeStyle = css`
     }
 
     .ant-tree-node-selected {
-        background-color: #e6f7ff;
+        background-color: var(--ant-color-primary-bg);
     }
 `;
 
@@ -41,7 +41,7 @@ const treeNodeStyle = css`
     transition: background-color 0.2s;
 
     &:hover {
-        background-color: #f5f5f5;
+        background-color: var(--ant-color-bg-text-hover);
     }
 `;
 
@@ -67,8 +67,8 @@ const actionIcon = css`
     flex-shrink: 0;
 
     &:hover {
-        color: #1890ff;
-        background-color: #e6f7ff;
+        color: var(--ant-color-primary);
+        background-color: var(--ant-color-primary-bg);
     }
 `;
 

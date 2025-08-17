@@ -3,15 +3,15 @@ import { css } from "@emotion/css";
 export const iconSelector = css`
     min-width: 120px;
     min-height: 40px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--ant-color-border);
     border-radius: 8px;
     display: flex;
     align-items: center;
     padding: 4px 12px;
     cursor: pointer;
-    background: #fff;
+    background: var(--ant-color-bg-container);
     &:hover {
-        border-color: #4096ff;
+        border-color: var(--ant-color-primary);
     }
 `;
 
@@ -43,18 +43,18 @@ export const iconItem = css`
         background 0.2s;
     &:hover,
     &.active {
-        border-color: #4096ff;
-        background: #e6f4ff;
+        border-color: var(--ant-color-primary);
+        background: var(--ant-color-primary-bg);
     }
     &.selected {
-        border-color: #1677ff;
-        background: #bae0ff;
+        border-color: var(--ant-color-primary);
+        background: var(--ant-color-primary-bg);
     }
 `;
 
 export const iconEmpty = css`
     text-align: center;
-    color: #aaa;
+    color: var(--ant-color-text-placeholder);
     padding: 32px 0;
 `;
 
@@ -72,7 +72,7 @@ export const iconPaginationPage = css`
 `;
 
 export const iconPlaceholder = css`
-    color: #aaa;
+    color: var(--ant-color-text-placeholder);
 `;
 
 // IconComponent 样式定义
@@ -97,7 +97,7 @@ export const iconItemStyle: React.CSSProperties = {
 
 export const iconNameStyle: React.CSSProperties = {
     fontSize: "10px",
-    color: "#666",
+    color: "var(--ant-color-text-secondary)",
     textAlign: "center",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -127,7 +127,7 @@ export const paginationContainerStyle: React.CSSProperties = {
     marginTop: 0,
     flexShrink: 0, // 防止分页组件被压缩
     padding: "8px", // 添加左右内边距
-    borderTop: "1px solid #f0f0f0", // 添加顶部分割线
+    borderTop: "1px solid var(--ant-color-border)", // 添加顶部分割线
 };
 
 export const paginationLeftStyle: React.CSSProperties = {
@@ -135,7 +135,7 @@ export const paginationLeftStyle: React.CSSProperties = {
     textAlign: "left", // 左对齐
     flexShrink: 0, // 防止被压缩
     fontSize: "12px", // 固定字体大小
-    color: "#666", // 设置颜色
+    color: "var(--ant-color-text-secondary)", // 设置颜色
 };
 
 export const paginationRightStyle: React.CSSProperties = {

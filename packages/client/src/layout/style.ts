@@ -1,6 +1,6 @@
 import { createStyles } from "antd-style";
 
-export default createStyles(({ css }) => ({
+export default createStyles(({ token, css }) => ({
     // 侧边栏
     side: {
         height: "100vh",
@@ -83,7 +83,7 @@ export default createStyles(({ css }) => ({
         &:hover {
             cursor: pointer;
             border-radius: 100%;
-            background: rgba(0, 0, 0, 0.04);
+            background: ${token.colorBgTextHover};
         }
     `,
     logout: {
@@ -99,7 +99,7 @@ export default createStyles(({ css }) => ({
         transition: "background 0.5s",
 
         "&:hover": {
-            background: "rgba(0, 0, 0, 0.05)",
+            background: token.colorBgTextHover,
         },
     },
     avatar: {
@@ -113,24 +113,24 @@ export default createStyles(({ css }) => ({
         overflow: "auto",
     },
     footer: {
-        width: "calc(100% - 250px)",
         position: "fixed",
         bottom: 0,
-        left: 250,
         right: 0,
+        height: "40px", // 固定高度
         transition:
             "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), left 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
 
-        backgroundColor: "#fff",
+        backgroundColor: token.colorBgContainer,
         padding: "10px 0",
         textAlign: "center",
-        color: "rgba(0, 0, 0, 0.45)",
+        color: token.colorTextSecondary,
         fontSize: 12,
 
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
+        borderTop: `1px solid ${token.colorBorder}`, // 添加顶部分割线
     },
 
     // container: {

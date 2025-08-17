@@ -208,13 +208,19 @@ const Layout: FC = () => {
                     // 单独处理个别组件
                     Layout: {
                         headerBg: theme === "light" ? "#fff" : "#141414",
+                        siderBg: theme === "light" ? "#fff" : "#141414",
+                    },
+                    Menu: {
+                        darkItemBg: "#141414",
+                        darkItemSelectedBg: "#1890ff",
+                        darkItemHoverBg: "#177ddc",
                     },
                 },
             }}
         >
             <AntdLayout>
                 <Sider
-                    theme="light"
+                    theme={theme === "light" ? "light" : "dark"}
                     width={collapsed ? 80 : 250}
                     collapsedWidth={80}
                     collapsible
@@ -251,6 +257,7 @@ const Layout: FC = () => {
                     {menuList.length > 0 && (
                         <Menu
                             mode="inline"
+                            theme={theme === "light" ? "light" : "dark"}
                             items={processedMenuList as MenuProps["items"]}
                             className={ss.menu}
                             openKeys={stateOpenKeys}
@@ -335,19 +342,19 @@ const Layout: FC = () => {
                         <span
                             style={{
                                 left: collapsed ? 80 : 250,
-                                width: `calc(100% - ${collapsed ? 80 : 250}px)`,
+                                width: `calc(100vw - ${collapsed ? 80 : 250}px)`,
                                 transition: footerAnimation
                                     ? "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), left 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
                                     : "none",
                                 position: "fixed",
                                 bottom: 0,
                                 right: 0,
-                                background: "#fff",
+                                height: "40px",
                                 textAlign: "center",
-                                color: "rgba(0,0,0,0.45)",
                                 fontSize: 12,
                                 padding: "10px 0",
                                 zIndex: 10,
+                                backgroundColor: theme === "light" ? "#fff" : "#141414",
                             }}
                         >
                             {systemConfig?.copyright}

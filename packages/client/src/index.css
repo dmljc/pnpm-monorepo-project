@@ -3,8 +3,6 @@
     line-height: 1.5;
     font-weight: 400;
     color-scheme: light dark;
-    color: rgb(255 255 255 / 87%);
-    background-color: #242424;
     font-synthesis: none;
     text-rendering: optimizelegibility;
     -webkit-font-smoothing: antialiased;
@@ -28,6 +26,34 @@ body {
 .ant-menu-inline,
 .ant-menu-vertical {
     border-inline-end: 0 !important;
+}
+
+/* 暗色模式下侧边栏样式 */
+[data-theme="dark"] .ant-layout-sider {
+    background-color: #141414 !important;
+}
+
+[data-theme="dark"] .ant-menu-dark {
+    background-color: #141414 !important;
+}
+
+[data-theme="dark"] .ant-menu-dark .ant-menu-item {
+    background-color: transparent !important;
+}
+
+[data-theme="dark"] .ant-menu-dark .ant-menu-item:hover {
+    background-color: #177ddc !important;
+}
+
+[data-theme="dark"] .ant-menu-dark .ant-menu-item-selected {
+    background-color: #1890ff !important;
+}
+
+/* 暗色模式下 footer 样式 */
+[data-theme="dark"] .ant-layout-footer {
+    background-color: #141414 !important;
+    color: rgb(255 255 255 / 45%) !important;
+    border-top: 1px solid #303030 !important;
 }
 
 .ant-image .ant-image-mask {

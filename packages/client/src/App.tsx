@@ -1,7 +1,7 @@
 import { notification } from "antd";
 import { useRoutes } from "react-router-dom";
 import routes from "./routers/index";
-import { useUserStore } from "./store";
+import { useUserStore, useSystemStore } from "./store";
 import { useEffect } from "react";
 
 const App = () => {
@@ -9,6 +9,7 @@ const App = () => {
     const [api, contextHolder] = notification.useNotification();
 
     const { userInfo, hasNotification, setHasNotification } = useUserStore();
+    const { theme } = useSystemStore();
 
     useEffect(() => {
         if (userInfo?.name && !hasNotification) {
@@ -27,7 +28,7 @@ const App = () => {
     return (
         <>
             {contextHolder}
-            <div className="App">{Outlet}</div>
+            <div className="App" data-theme={theme}>{Outlet}</div>
         </>
     );
 };

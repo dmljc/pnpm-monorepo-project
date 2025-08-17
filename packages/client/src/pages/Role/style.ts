@@ -2,7 +2,7 @@ import { createStyles } from "antd-style";
 
 export default createStyles(({ token }) => ({
     root: {
-        backgroundColor: "white",
+        backgroundColor: token.colorBgContainer,
         height: "calc(100vh - 174px)",
         display: "flex",
     },

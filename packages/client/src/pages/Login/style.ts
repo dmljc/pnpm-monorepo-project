@@ -2,7 +2,7 @@ import { createStyles } from "antd-style";
 
 export default createStyles(({ token }) => ({
     root: {
-        backgroundColor: "white",
+        backgroundColor: token.colorBgContainer,
         height: "100vh",
     },
 
@@ -74,8 +74,8 @@ export default createStyles(({ token }) => ({
         left: 0,
         right: 0,
         textAlign: "center",
+        color: token.colorTextSecondary,
         fontSize: 12,
-        color: "rgba(0, 0, 0, 0.45)",
         padding: "10px 0",
     },
 }));
