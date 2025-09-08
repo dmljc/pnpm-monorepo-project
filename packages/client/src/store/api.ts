@@ -12,9 +12,9 @@ export const authLogin = (data: any): Promise<any> => {
 
 /**
  * menuStore
- * 获取菜单列表
+ * 获取当前账号的菜单列表
  * @returns 菜单列表
  */
-export const menuListApi = (): Promise<any> => {
-    return request.get("/menu/list", {});
+export const menuListAuth = (): Promise<any> => {
+    return request.get("/menu/list/auth", {});
 };

@@ -13,6 +13,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
-        return { userId: payload.userId, username: payload.username };
+        // 登录时写入的 payload 结构为 { user: { id, username, ... } }
+        // 这里需要把 user 透传出来，框架会把该返回值赋给 req.user
+        if (payload && payload.user) {
+            return {
+                id: payload.user.id,
+                username: payload.user.username,
+                ...payload.user,
+            };
+        }
+        return payload;
     }
 }

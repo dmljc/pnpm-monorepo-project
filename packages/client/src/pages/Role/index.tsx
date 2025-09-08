@@ -5,6 +5,7 @@ import { TreeTable, TreeComponent, IconRenderer } from "@/components/index.tsx";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
 import { ModalTypeEnum, formatTime } from "@/utils";
+import { useMenuStore } from "@/store";
 
 import { list, del } from "./api.ts";
 import useStyles from "./style";
@@ -215,6 +216,7 @@ const Role: FC = () => {
                     handleOk={(id: number) => {
                         setOpen(false);
                         getRoleList(id); // 刷新数据
+                        useMenuStore.getState().getMenuList();
                     }}
                 />
             </div>

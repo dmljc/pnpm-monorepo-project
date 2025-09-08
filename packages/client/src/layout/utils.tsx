@@ -118,3 +118,26 @@ export function getAllMenuIds(menuList: MenuItem[]): number[] {
     traverse(menuList);
     return ids;
 }
+
+/**
+ * 收集所有 type === 'button' 的菜单项
+ * @param menuList 菜单列表
+ * @returns 按钮类型的菜单项数组
+ */
+export function collectButtonItems(menuList: MenuItem[]): MenuItem[] {
+    const result: MenuItem[] = [];
+    const stack: MenuItem[] = [...menuList];
+
+    while (stack.length) {
+        const current = stack.pop() as MenuItem;
+        if (current.type === "button") {
+            result.push(current);
+        }
+        const children = current.children;
+        if (children && children.length) {
+            stack.push(...children);
+        }
+    }
+
+    return result;
+}

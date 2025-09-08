@@ -3,9 +3,10 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import {
     processMenuChildren,
     convertMenuListToMenuItems,
+    collectButtonItems,
 } from "@/layout/utils";
 import type { MenuItem } from "@/layout/utils";
-import { menuListApi } from "./api";
+import { menuListAuth } from "./api";
 
 /**
  * 菜单状态类型
@@ -13,6 +14,7 @@ import { menuListApi } from "./api";
 type State = {
     orginData: MenuItem[]; // 原始菜单列表
     menuList: MenuItem[]; // 菜单列表（已转换）
+    buttonList: MenuItem[]; // 按钮列表
 };
 
 /**
@@ -23,6 +25,10 @@ type Action = {
      * 获取菜单列表
      */
     getMenuList: () => void;
+    /**
+     * 获取按钮列表
+     */
+    // getButtonList: () => void;
     /**
      * 设置原始菜单列表
      * @param orginData 原始菜单列表
@@ -51,8 +57,9 @@ export const useMenuStore = create<State & Action>()(
         (set, get) => ({
             orginData: [],
             menuList: [],
+            buttonList: [],
             getMenuList: async () => {
-                const res = await menuListApi();
+                const res = await menuListAuth();
                 if (res.success) {
                     // 处理原始数据，将空的children数组转换为null
                     const processedData = processMenuChildren(res.data);
@@ -61,8 +68,19 @@ export const useMenuStore = create<State & Action>()(
                         orginData: processedData,
                         menuList: convertMenuListToMenuItems(processedData),
                     });
+
+                    // 获取菜单数据后，同时更新按钮列表
+                    const buttonList = collectButtonItems(processedData);
+                    set({ buttonList });
                 }
             },
+            // getButtonList: () => {
+            //     const { orginData } = get();
+            //     const buttonList = collectButtonItems(orginData || []);
+
+            //     console.error("buttonList------>", buttonList);
+            //     set({ buttonList });
+            // },
             setMenuList: (menuList) => set({ menuList }),
             setOrginData: (orginData) => set({ orginData }),
             resetMenuList: () => {

@@ -16,6 +16,7 @@ import { ModalTypeEnum } from "@/utils";
 import CreateUserModal from "./CreateModal.tsx";
 import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
 import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
+import { AuthButton } from "@/components";
 
 const User: FC = () => {
     const actionRef = useRef<ActionType>(null);
@@ -352,20 +353,26 @@ const User: FC = () => {
                 dateFormatter="string"
                 headerTitle="高级表格"
                 toolBarRender={() => [
-                    <Button
-                        key="button"
+                    <AuthButton
+                        code="user:create"
+                        key="user:create"
+                        type="primary"
                         icon={<PlusOutlined />}
                         onClick={() => {
                             setModalType(ModalTypeEnum.CREATE);
                             setOpen(true);
                         }}
-                        type="primary"
                     >
                         新增
-                    </Button>,
-                    <Button icon={<DownloadOutlined />} onClick={handleExport}>
+                    </AuthButton>,
+                    <AuthButton
+                        code="user:export"
+                        key="user:export"
+                        icon={<DownloadOutlined />}
+                        onClick={handleExport}
+                    >
                         导出Excel
-                    </Button>,
+                    </AuthButton>,
                     <Upload
                         name="file"
                         accept=".xlsx,.xls"
@@ -375,9 +382,14 @@ const User: FC = () => {
                         }}
                         showUploadList={false}
                     >
-                        <Button icon={<UploadOutlined />} loading={loading}>
+                        <AuthButton
+                            code="user:import"
+                            key="user:import"
+                            icon={<UploadOutlined />}
+                            loading={loading}
+                        >
                             导入Excel
-                        </Button>
+                        </AuthButton>
                     </Upload>,
                 ]}
             />

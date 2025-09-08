@@ -94,9 +94,6 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                 JSON.stringify(selectedRowKeys) !==
                 JSON.stringify(selectedMenuKeys)
             ) {
-                console.log(
-                    `props-onChangeMenu-selectedRowKeys---》: ${selectedRowKeys}`,
-                );
                 setSelectedMenuKeys(selectedRowKeys);
                 // 将选中的键转换为字符串并设置为表单值
                 form.setFieldValue("permission", selectedRowKeys.join(","));

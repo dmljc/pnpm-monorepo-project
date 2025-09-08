@@ -8,7 +8,7 @@ import type { DataType, UpdateMenu } from "./interface";
 import { useMenuStore } from "@/store";
 import type { TreeTableColumn, TableRowSelection } from "./interface";
 import { ModalTypeEnum } from "@/utils";
-import { del } from "./api";
+import { del, list } from "./api";
 import CreateMenuModal from "./CreateMenu";
 
 interface Props {
@@ -76,6 +76,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         selectedRowKeys || [],
     );
     const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+    const [allTreeData, setAllTreeData] = useState([]);
 
     // 当外部selectedRowKeys变化时，更新本地state并展开相关父级节点
     useEffect(() => {
@@ -100,6 +101,16 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
             }
         }
     }, [selectedRowKeys, selectedRowKeyList, menuStore.orginData]);
+
+    useEffect(() => {
+        onFetchAllTreeData();
+    }, []);
+
+    // 获取所有菜单数据
+    const onFetchAllTreeData = async () => {
+        const resp = await list();
+        setAllTreeData(resp.data);
+    };
 
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
@@ -282,7 +293,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 tableLayout="fixed"
                 scroll={{ y: "calc(100vh - 230px)" }}
                 columns={tableColumns}
-                dataSource={menuStore.orginData as unknown as T[]}
+                dataSource={allTreeData}
                 pagination={false}
                 rowSelection={selecteable ? rowSelection : undefined}
                 expandable={expandableConfig}

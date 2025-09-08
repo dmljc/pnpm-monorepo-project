@@ -92,16 +92,23 @@ export class UserController {
 
             const user = await this.userService.findUserById(data.id);
 
+            // 与 login 保持一致：payload.user{id, username, user}
             const accessToken = this.jwtService.sign(
                 {
-                    id: user.id,
+                    user: {
+                        id: user.id,
+                        username: user.username,
+                        user,
+                    },
                 },
                 { expiresIn: "5m" },
             );
 
             const refreshTokenNew = this.jwtService.sign(
                 {
-                    id: user.id,
+                    user: {
+                        id: user.id,
+                    },
                 },
                 { expiresIn: "7d" },
             );
