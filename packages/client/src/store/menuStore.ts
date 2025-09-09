@@ -6,15 +6,21 @@ import {
     collectButtonItems,
 } from "@/layout/utils";
 import type { MenuItem } from "@/layout/utils";
-import { menuListAuth } from "./api";
+import { menuMeList, menuList } from "./api";
 
 /**
  * 菜单状态类型
  */
 type State = {
-    orginData: MenuItem[]; // 原始菜单列表
-    menuList: MenuItem[]; // 菜单列表（已转换）
-    buttonList: MenuItem[]; // 按钮列表
+    // 当前登录用户的原始菜单列表
+    menuMeOriginList: MenuItem[];
+    // 当前登录用户的菜单列表（已转换）
+    menuMeList: MenuItem[];
+    // 当前登录用户的按钮列表
+    menuMeButtonList: MenuItem[];
+
+    // 所有菜单列表
+    menuOriginList: MenuItem[];
 };
 
 /**
@@ -22,31 +28,44 @@ type State = {
  */
 type Action = {
     /**
-     * 获取菜单列表
+     * 获取当前登录用户的菜单列表
      */
-    getMenuList: () => void;
-    /**
-     * 获取按钮列表
-     */
-    // getButtonList: () => void;
+    getMenuMeList: () => void;
     /**
      * 设置原始菜单列表
-     * @param orginData 原始菜单列表
+     * @param menuMeOriginList 原始菜单列表
      */
-    setOrginData: (orginData: MenuItem[]) => void;
+    setMenuMeOriginList: (menuMeOriginList: MenuItem[]) => void;
     /**
      * 设置菜单列表
      * @param menuList 新的菜单列表
      */
-    setMenuList: (menuList: MenuItem[]) => void;
+    setMenuMeList: (menuMeList: MenuItem[]) => void;
     /**
      * 重置菜单列表
      */
-    resetMenuList: () => void;
+    resetMenuMeList: () => void;
     /**
      * 仅清除本地存储中的菜单列表
      */
-    removeMenuList: () => void;
+    removeMenuMeList: () => void;
+    /**
+     * 设置所有菜单列表
+     * @param menuOriginList 所有菜单列表
+     */
+    setMenuOriginList: (menuOriginList: MenuItem[]) => void;
+    /**
+     * 重置所有菜单列表
+     */
+    resetMenuOriginList: () => void;
+    /**
+     * 仅清除本地存储中的所有菜单列表
+     */
+    removeMenuOriginList: () => void;
+    /**
+     * 获取所有菜单列表
+     */
+    getMenuOriginList: () => void;
 };
 
 /**
@@ -55,40 +74,49 @@ type Action = {
 export const useMenuStore = create<State & Action>()(
     persist(
         (set, get) => ({
-            orginData: [],
-            menuList: [],
-            buttonList: [],
-            getMenuList: async () => {
-                const res = await menuListAuth();
+            menuMeOriginList: [],
+            menuMeList: [],
+            menuMeButtonList: [],
+            menuOriginList: [],
+            getMenuMeList: async () => {
+                const res = await menuMeList();
                 if (res.success) {
                     // 处理原始数据，将空的children数组转换为null
                     const processedData = processMenuChildren(res.data);
 
                     set({
-                        orginData: processedData,
-                        menuList: convertMenuListToMenuItems(processedData),
+                        menuMeOriginList: processedData,
+                        menuMeList: convertMenuListToMenuItems(processedData),
                     });
 
                     // 获取菜单数据后，同时更新按钮列表
-                    const buttonList = collectButtonItems(processedData);
-                    set({ buttonList });
+                    const menuMeButtonList = collectButtonItems(processedData);
+                    set({ menuMeButtonList });
                 }
             },
-            // getButtonList: () => {
-            //     const { orginData } = get();
-            //     const buttonList = collectButtonItems(orginData || []);
-
-            //     console.error("buttonList------>", buttonList);
-            //     set({ buttonList });
-            // },
-            setMenuList: (menuList) => set({ menuList }),
-            setOrginData: (orginData) => set({ orginData }),
-            resetMenuList: () => {
-                set({ menuList: [] });
-                get().removeMenuList();
+            setMenuMeList: (menuMeList) => set({ menuMeList }),
+            setMenuMeOriginList: (menuMeOriginList) =>
+                set({ menuMeOriginList }),
+            resetMenuMeList: () => {
+                set({ menuMeList: [] });
+                get().removeMenuMeList();
             },
-            removeMenuList: () => {
+            removeMenuMeList: () => {
                 localStorage.removeItem("menuStore");
+            },
+            setMenuOriginList: (menuOriginList) => set({ menuOriginList }),
+            resetMenuOriginList: () => {
+                set({ menuOriginList: [] });
+                get().removeMenuOriginList();
+            },
+            removeMenuOriginList: () => {
+                localStorage.removeItem("menuStore");
+            },
+            getMenuOriginList: async () => {
+                const res = await menuList();
+                if (res.success) {
+                    set({ menuOriginList: res.data });
+                }
             },
         }),
         {

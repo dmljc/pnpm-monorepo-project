@@ -15,6 +15,15 @@ export const authLogin = (data: any): Promise<any> => {
  * 获取当前账号的菜单列表
  * @returns 菜单列表
  */
-export const menuListAuth = (): Promise<any> => {
-    return request.get("/menu/list/auth", {});
+export const menuMeList = (): Promise<any> => {
+    return request.get("/menu/me/list");
+};
+
+/**
+ * menuStore
+ * 获取所有菜单列表
+ * @returns 菜单列表
+ */
+export const menuList = (): Promise<any> => {
+    return request.get("/menu/list");
 };

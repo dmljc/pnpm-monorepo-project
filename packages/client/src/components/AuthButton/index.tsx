@@ -7,7 +7,7 @@ type AuthButtonProps = {
 } & React.ComponentProps<typeof Button>;
 
 const AuthButton = ({ code, children, ...rest }: AuthButtonProps) => {
-    const buttonList = useMenuStore()?.buttonList;
+    const buttonList = useMenuStore()?.menuMeButtonList;
     const hasPermission = buttonList?.some((item) => item.code === code);
     if (!hasPermission) {
         return null; // 没有权限，不显示

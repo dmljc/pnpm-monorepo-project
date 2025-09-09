@@ -82,7 +82,8 @@ export const useUserStore = create<UserState & UserAction>()(
                         refreshToken,
                     });
                     useSystemStore.setState({ lang: "zh", theme: "light" });
-                    useMenuStore.getState().getMenuList();
+                    useMenuStore.getState().getMenuMeList();
+                    useMenuStore.getState().getMenuOriginList();
                     return true;
                 } else {
                     return false;
@@ -97,7 +98,7 @@ export const useUserStore = create<UserState & UserAction>()(
             logout: () => {
                 get().resetUserStore();
                 useSystemStore.getState().resetSystemStore();
-                useMenuStore.getState().resetMenuList();
+                useMenuStore.getState().resetMenuMeList();
                 localStorage.removeItem("pro-table-singe-demos");
             },
 

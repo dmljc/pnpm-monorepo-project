@@ -8,7 +8,7 @@ import type { DataType, UpdateMenu } from "./interface";
 import { useMenuStore } from "@/store";
 import type { TreeTableColumn, TableRowSelection } from "./interface";
 import { ModalTypeEnum } from "@/utils";
-import { del, list } from "./api";
+import { del } from "./api";
 import CreateMenuModal from "./CreateMenu";
 
 interface Props {
@@ -76,7 +76,6 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         selectedRowKeys || [],
     );
     const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
-    const [allTreeData, setAllTreeData] = useState([]);
 
     // 当外部selectedRowKeys变化时，更新本地state并展开相关父级节点
     useEffect(() => {
@@ -88,9 +87,12 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
             setSelectedRowKeyList(selectedRowKeys);
 
             // 根据选中的菜单项展开其父级节点
-            if (selectedRowKeys.length > 0 && menuStore.orginData.length > 0) {
+            if (
+                selectedRowKeys.length > 0 &&
+                menuStore.menuMeOriginList.length > 0
+            ) {
                 const parentIds = findParentIds(
-                    menuStore.orginData,
+                    menuStore.menuMeOriginList,
                     selectedRowKeys,
                 );
                 // 重置展开状态，只展开当前选中项的父级节点
@@ -100,17 +102,8 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 setExpandedRowKeys([]);
             }
         }
-    }, [selectedRowKeys, selectedRowKeyList, menuStore.orginData]);
+    }, [selectedRowKeys, selectedRowKeyList, menuStore.menuMeOriginList]);
 
-    useEffect(() => {
-        onFetchAllTreeData();
-    }, []);
-
-    // 获取所有菜单数据
-    const onFetchAllTreeData = async () => {
-        const resp = await list();
-        setAllTreeData(resp.data);
-    };
 
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
@@ -232,7 +225,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                     const isParentOfSelected = selectedRowKeyList.some(
                         (selectedId) => {
                             const parentIds = findParentIds(
-                                menuStore.orginData,
+                                menuStore.menuMeOriginList,
                                 [selectedId],
                             );
                             return parentIds.includes(record.id);
@@ -250,7 +243,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 }
             },
         }),
-        [expandedRowKeys, selectedRowKeyList, menuStore.orginData],
+        [expandedRowKeys, selectedRowKeyList, menuStore.menuMeOriginList],
     );
 
     const handleCreate = () => {
@@ -270,7 +263,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         const res = await del(record.id);
         if (res.success) {
             messageApi.success("删除成功");
-            menuStore.getMenuList();
+            menuStore.getMenuMeList();
         }
     };
 
@@ -293,7 +286,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 tableLayout="fixed"
                 scroll={{ y: "calc(100vh - 230px)" }}
                 columns={tableColumns}
-                dataSource={allTreeData}
+                dataSource={menuStore.menuOriginList}
                 pagination={false}
                 rowSelection={selecteable ? rowSelection : undefined}
                 expandable={expandableConfig}

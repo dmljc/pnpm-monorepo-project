@@ -53,7 +53,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                         ? "新增成功"
                         : "修改成功",
                 );
-                menuStore.getMenuList();
+                menuStore.getMenuMeList();
                 handleClose();
             }
         } catch (error) {
@@ -176,7 +176,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             <TreeSelect
                                 showSearch
                                 allowClear
-                                treeData={menuStore.menuList}
+                                treeData={menuStore.menuMeList}
                                 fieldNames={{
                                     value: "id",
                                 }}

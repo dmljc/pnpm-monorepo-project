@@ -216,7 +216,7 @@ const Role: FC = () => {
                     handleOk={(id: number) => {
                         setOpen(false);
                         getRoleList(id); // 刷新数据
-                        useMenuStore.getState().getMenuList();
+                        useMenuStore.getState().getMenuMeList();
                     }}
                 />
             </div>

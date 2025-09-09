@@ -46,7 +46,6 @@ export class MenuService {
     async findAllAsTree(): Promise<Menu[]> {
         // 通过 manager 获取 TreeRepository 实例
         const treeRepo = this.menuRepository.manager.getTreeRepository(Menu);
-        this.menuRepository.manager.getRepository(Menu).find({});
         return treeRepo.findTrees();
     }
 

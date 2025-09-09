@@ -24,9 +24,10 @@ export class MenuController {
         return this.menuService.create(createMenuDto);
     }
 
-    @Get("list/auth")
+    // 返回当前登录用户的菜单树（基于角色的 permission 字段解析）
+    @Get("me/list")
     @RequireLogin()
-    async findAll(@Request() req) {
+    async getMyMenuTree(@Request() req) {
         if (!req?.user?.id) {
             throw new HttpException("Unauthorized", 401);
         }
@@ -36,18 +37,8 @@ export class MenuController {
     // 返回全量菜单树（仅用于管理端配置等场景）
     @Get("list")
     @RequireLogin()
-    async findAllFull() {
+    async getAllMenuTree() {
         return await this.menuService.findAllAsTree();
-    }
-
-    // 返回当前登录用户的菜单树（基于角色的 permission 字段解析）
-    @Get("my-tree")
-    @RequireLogin()
-    async findMyTree(@Request() req) {
-        if (!req?.user?.id) {
-            throw new HttpException("Unauthorized", 401);
-        }
-        return this.menuService.findCurrentUserMenuTree(req.user.id);
     }
 
     @Get(":id")

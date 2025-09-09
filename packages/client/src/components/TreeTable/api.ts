@@ -1,10 +1,6 @@
 import { request } from "@/utils";
 import { CreateMenu, UpdateMenu } from "./interface.ts";
 
-export const list = (): Promise<any> => {
-    return request.get("/menu/list", {});
-};
-
 export const create = (data: CreateMenu): Promise<any> => {
     return request.post("/menu/create", data);
 };

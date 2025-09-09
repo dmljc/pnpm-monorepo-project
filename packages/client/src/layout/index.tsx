@@ -35,7 +35,7 @@ const Layout: FC = () => {
     const navigate = useNavigate();
 
     // 响应式获取菜单
-    const menuList = useMenuStore((state) => state.menuList);
+    const menuList = useMenuStore((state) => state.menuMeList);
     const levelKeys = getLevelKeys(menuList);
 
     // 自定义图标渲染函数
