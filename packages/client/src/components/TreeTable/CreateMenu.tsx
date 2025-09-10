@@ -1,5 +1,6 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Form, Input, Radio, message, Modal, TreeSelect } from "antd";
+import type { TreeSelectProps } from "antd";
 import { ModalProps, UpdateMenu } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
@@ -63,6 +64,19 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
         }
     };
 
+    // 将菜单列表转换为树形结构
+    const normalizedMenuTreeData = useMemo<TreeSelectProps["treeData"]>(() => {
+        const normalize = (list: any[]): any[] =>
+            (list || []).map((node: any) => {
+                const children = Array.isArray(node?.children)
+                    ? normalize(node.children)
+                    : undefined;
+                return { ...node, children };
+            });
+        return normalize(menuStore.menuMeList as any);
+    }, [menuStore.menuMeList]);
+
+    // 监听open变化
     useEffect(() => {
         if (open) {
             if (modalType === ModalTypeEnum.UPDATE) {
@@ -73,7 +87,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 form.resetFields();
             }
         }
-    }, [open, modalType, record]); // 添加record依赖，移除form依赖
+    }, [open, modalType, record]);
 
     function onFinish(values: UpdateMenu): void {
         console.log(values);
@@ -95,7 +109,6 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 <Form
                     {...layout}
                     form={form}
-                    name="createMenu"
                     initialValues={{
                         type: "catalog",
                     }}
@@ -176,7 +189,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             <TreeSelect
                                 showSearch
                                 allowClear
-                                treeData={menuStore.menuMeList}
+                                treeData={normalizedMenuTreeData}
                                 fieldNames={{
                                     value: "id",
                                 }}
