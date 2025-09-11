@@ -59,7 +59,7 @@ const Layout: FC = () => {
     }, [menuList]);
 
     // 根据当前路径和菜单数据计算默认的选中和展开状态
-    const getDefaultKeys = () => {
+    const getDefaultKeys = useMemo(() => {
         const currentPath = location.pathname;
         let selectedKey = "";
         let openKey = "";
@@ -111,7 +111,7 @@ const Layout: FC = () => {
         }
 
         return { selectedKey, openKey };
-    };
+    }, [location.pathname, menuList]);
 
     const [stateOpenKeys, setStateOpenKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -119,7 +119,7 @@ const Layout: FC = () => {
     // 当menuList变化时，更新选中和展开状态
     useEffect(() => {
         if (menuList.length > 0) {
-            const { selectedKey, openKey } = getDefaultKeys();
+            const { selectedKey, openKey } = getDefaultKeys;
             setSelectedKeys(selectedKey ? [selectedKey] : []);
             setStateOpenKeys(openKey ? [openKey] : []);
         }

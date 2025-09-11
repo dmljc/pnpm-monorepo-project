@@ -71,7 +71,12 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 const children = Array.isArray(node?.children)
                     ? normalize(node.children)
                     : undefined;
-                return { ...node, children };
+                return { 
+                    key: node.id,
+                    value: node.id,
+                    title: node.label,
+                    children 
+                };
             });
         return normalize(menuStore.menuMeList as any);
     }, [menuStore.menuMeList]);
@@ -190,11 +195,9 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 showSearch
                                 allowClear
                                 treeData={normalizedMenuTreeData}
-                                fieldNames={{
-                                    value: "id",
-                                }}
+                                treeDataSimpleMode={false}
                                 treeDefaultExpandAll
-                                treeNodeFilterProp="name"
+                                treeNodeFilterProp="label"
                                 placeholder="请选择上级菜单"
                             />
                         </Item>

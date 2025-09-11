@@ -123,7 +123,7 @@ export const createAxiosByinterceptors = (
     });
 
     /** @type {boolean} 是否正在刷新令牌标志 */
-    const refreshing = false;
+    let refreshing = false;
     /** @type {PendingTask[]} 待处理请求队列 */
     const queue: PendingTask[] = [];
 
@@ -198,11 +198,21 @@ export const createAxiosByinterceptors = (
                     AuthService.removeAuth();
                     return Promise.reject(error);
                 }
-                return handleUnauthorizedError(
-                    config,
-                    handleRefreshToken,
-                    queue,
-                );
+
+                refreshing = true;
+                try {
+                    const result = await handleUnauthorizedError(
+                        config,
+                        handleRefreshToken,
+                        queue,
+                    );
+                    return result;
+                } catch (err) {
+                    return Promise.reject(err);
+                } finally {
+                    refreshing = false;
+                    queue.length = 0;
+                }
             }
 
             if (status === 400) {
