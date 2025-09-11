@@ -72,11 +72,12 @@ import "winston-daily-rotate-file";
                 username: configService.get<string>("DB_USERNAME"),
                 password: configService.get<string>("DB_PASSWORD"),
                 database: configService.get<string>("DB_DATABASE"),
-                synchronize: configService.get<boolean>("DB_SYNCHRONIZE"),
-                logging: configService.get<boolean>("DB_LOGGING"),
+                synchronize:
+                    configService.get<boolean>("DB_SYNCHRONIZE") || false,
+                logging: configService.get<boolean>("DB_LOGGING") || false,
                 logger: new CustomTypeOrmLogger(logger),
                 entities: [join(__dirname, "**/*.entity{.ts,.js}")],
-                poolSize: configService.get<number>("DB_POOL_SIZE"),
+                poolSize: configService.get<number>("DB_POOL_SIZE") || 10,
             }),
             inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
         }),
@@ -87,13 +88,18 @@ import "winston-daily-rotate-file";
                 level: "debug",
                 transports: [
                     new winston.transports.DailyRotateFile({
-                        level: configService.get("WINSTON_LOG_LEVEL"),
-                        dirname: configService.get("WINSTON_LOG_DIRNAME"),
-                        filename: configService.get("WINSTON_LOG_FILENAME"),
-                        datePattern: configService.get(
-                            "WINSTON_LOG_DATE_PATTERN",
-                        ),
-                        maxSize: configService.get("WINSTON_LOG_MAX_SIZE"),
+                        level: configService.get("WINSTON_LOG_LEVEL") || "info",
+                        dirname:
+                            configService.get("WINSTON_LOG_DIRNAME") ||
+                            "daily.log",
+                        filename:
+                            configService.get("WINSTON_LOG_FILENAME") ||
+                            "%DATE%.log",
+                        datePattern:
+                            configService.get("WINSTON_LOG_DATE_PATTERN") ||
+                            "YYYY-MM-DD-HH:mm",
+                        maxSize:
+                            configService.get("WINSTON_LOG_MAX_SIZE") || "20m",
                     }),
                     new winston.transports.Console({
                         format: winston.format.combine(
@@ -111,9 +117,11 @@ import "winston-daily-rotate-file";
             inject: [ConfigService],
             global: true,
             useFactory: (configService: ConfigService) => ({
-                secret: configService.get<string>("JWT_SECRET"),
+                secret:
+                    configService.get<string>("JWT_SECRET") || "default-secret",
                 signOptions: {
-                    expiresIn: configService.get<string>("JWT_EXPIRES_IN"),
+                    expiresIn:
+                        configService.get<string>("JWT_EXPIRES_IN") || "1h",
                 },
             }),
         }),

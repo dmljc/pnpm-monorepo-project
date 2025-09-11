@@ -50,7 +50,7 @@ export class RequestLogInterceptor implements NestInterceptor {
 
         const { ip, method, path } = request;
 
-        const clientIp = requestIp.getClientIp(ip) || ip;
+        const clientIp = requestIp.getClientIp(request) || ip;
 
         // 异步获取IP地址信息，不阻塞主流程
         this.ipToCity(clientIp)
