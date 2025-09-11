@@ -33,11 +33,11 @@ const OSSUpload = (props: CoverUploadProps) => {
     const [previewImage, setPreviewImage] = useState("");
     const [uploading, setUploading] = useState(false);
 
-    const defaultFile = value
+    const defaultFile: UploadFile | null = value
         ? {
               uid: Math.random().toString(),
               name: `${new Date().toLocaleString()}.png`, // 使用时间戳作为文件名,
-              status: "done",
+              status: "done" as const,
               url: value,
           }
         : null;

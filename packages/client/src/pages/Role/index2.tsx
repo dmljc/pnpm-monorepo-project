@@ -4,7 +4,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { ModalTypeEnum } from "@/utils";
-import CreateRoleModal from "./CreateModal.tsx";
+import CreateRoleModal from "./CreateRoleModal.tsx";
 import type { UpdateRole, GithubIssueItem } from "./interface.ts";
 import { list, del } from "./api.ts";
 

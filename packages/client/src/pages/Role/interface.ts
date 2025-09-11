@@ -33,6 +33,7 @@ export interface ListParams {
 export type GithubIssueItem = {
     id: number;
     name: string;
+    icon: string;
     code: string;
     status: number;
     remark: string;
