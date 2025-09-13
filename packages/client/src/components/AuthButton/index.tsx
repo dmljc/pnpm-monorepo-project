@@ -1,19 +1,25 @@
 import { Button } from "antd";
-import { useMenuStore } from "@/store/menuStore";
+import { usePermission } from "@/utils";
 
+// 权限按钮Props
 type AuthButtonProps = {
     code: string;
     children: React.ReactNode;
 } & React.ComponentProps<typeof Button>;
 
-const AuthButton = ({ code, children, ...rest }: AuthButtonProps) => {
-    const buttonList = useMenuStore()?.menuMeButtonList;
-    const hasPermission = buttonList?.some((item) => item.code === code);
-    if (!hasPermission) {
-        return null; // 没有权限，不显示
-    }
+// 权限按钮
+// 根据code判断是否有权限
+// 如果有权限则显示按钮
+// 如果没有权限则禁用按钮
 
-    return <Button {...rest}>{children}</Button>;
+const AuthButton = ({ code, children, ...rest }: AuthButtonProps) => {
+    const hasPermission = usePermission(code);
+
+    return (
+        <Button disabled={!hasPermission} {...rest}>
+            {children}
+        </Button>
+    );
 };
 
 export default AuthButton;

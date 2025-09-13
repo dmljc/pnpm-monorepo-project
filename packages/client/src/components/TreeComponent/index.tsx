@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Input, Tree, Dropdown } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import IconRenderer from "../IconComponent/IconRenderer";
+import { usePermission } from "@/utils";
 import ss from "./style";
 
 interface TreeData {
@@ -51,16 +52,21 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
         setSearchTreeData(newTreeData);
     };
 
+    const editPermission = usePermission("role:update");
+    const deletePermission = usePermission("role:delete");
+
     // 为每个树节点添加操作菜单
     const getMenuItems = (item: TreeData) => [
         {
             key: "edit",
             label: "编辑",
+            disabled: !editPermission,
             onClick: () => onItemAction?.("edit", item),
         },
         {
             key: "delete",
             label: "删除",
+            disabled: !deletePermission,
             onClick: () => onItemAction?.("delete", item),
         },
     ];
@@ -77,7 +83,9 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                 </div>
                 {selectedKeys[0] === item.id && (
                     <Dropdown
-                        menu={{ items: getMenuItems(item) }}
+                        menu={{
+                            items: getMenuItems(item),
+                        }}
                         trigger={["click"]}
                     >
                         <EllipsisOutlined

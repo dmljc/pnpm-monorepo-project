@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from "react";
-import { Form, Upload, Input, Button, message } from "antd";
+import { Form, Upload, Input, message } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
 import { create } from "./api";
 import { useSystemStore } from "@/store/systemStore";
+import { AuthButton } from "@/components";
 import useStyles from "./style";
 
 const { Item } = Form;
@@ -151,13 +152,15 @@ const Config: FC = () => {
                     />
                 </Item>
                 <Item>
-                    <Button
-                        style={{ width: "100%" }}
+                    <AuthButton
+                        code="system_config:save"
+                        key="system_config:save"
                         type="primary"
+                        style={{ width: "100%" }}
                         onClick={handleSubmit}
                     >
                         保存
-                    </Button>
+                    </AuthButton>
                 </Item>
             </Form>
         </>

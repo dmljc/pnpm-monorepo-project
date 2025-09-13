@@ -1,5 +1,5 @@
 import { FC, useState, useRef } from "react";
-import { Button, message, Image, Upload } from "antd";
+import { message, Image, Upload } from "antd";
 import {
     PlusOutlined,
     DownloadOutlined,
@@ -27,6 +27,14 @@ const User: FC = () => {
     const [record, setRecord] = useState<UpdateUser>();
     const [messageApi, contextHolder] = message.useMessage();
     const [loading, setLoading] = useState(false);
+
+    const handleDelete = async (record: UpdateUser) => {
+        const resp = await del(record.id);
+        if (resp) {
+            actionRef.current?.reload();
+            messageApi.success("删除成功");
+        }
+    };
 
     const columns: ProColumns<GithubIssueItem>[] = [
         {
@@ -153,9 +161,10 @@ const User: FC = () => {
             valueType: "option",
             key: "option",
             width: 200,
-            render: (_text, _record, _, action) => [
-                <Button
-                    key="update"
+            render: (_text, _record) => [
+                <AuthButton
+                    code="user:update"
+                    key="user:update"
                     color="primary"
                     variant="link"
                     className="btn-p0"
@@ -167,9 +176,10 @@ const User: FC = () => {
                     }}
                 >
                     编辑
-                </Button>,
-                <Button
-                    key="freeze"
+                </AuthButton>,
+                <AuthButton
+                    code="user:disabled"
+                    key="user:disabled"
                     color="primary"
                     variant="link"
                     className="btn-p0"
@@ -180,29 +190,23 @@ const User: FC = () => {
                             <CheckCircleOutlined />
                         )
                     }
-                    disabled={_record.role === "root"}
+                    // disabled={_record.role === "root"}
                     onClick={() => handleFreeze(_record)}
                 >
                     {_record.status === 1 ? "停用" : "启用"}
-                </Button>,
-                <Button
-                    key="delete"
+                </AuthButton>,
+                <AuthButton
+                    code="user:delete"
+                    key="user:delete"
                     color="danger"
                     variant="link"
                     className="btn-p0"
                     icon={<DeleteOutlined />}
-                    // 为避免类型不匹配问题，将 _record.role 转换为数字类型再进行比较
-                    disabled={_record.role === "root"}
-                    onClick={async () => {
-                        const resp = await del(_record.id);
-                        if (resp) {
-                            action?.reload();
-                            messageApi.success("删除成功");
-                        }
-                    }}
+                    // disabled={_record.role === "root"}
+                    onClick={() => handleDelete(_record)}
                 >
                     删除
-                </Button>,
+                </AuthButton>,
             ],
         },
     ];

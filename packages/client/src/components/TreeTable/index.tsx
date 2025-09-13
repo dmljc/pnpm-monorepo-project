@@ -10,6 +10,7 @@ import type { TreeTableColumn, TableRowSelection } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { del } from "./api";
 import CreateMenuModal from "./CreateMenu";
+import { AuthButton } from "@/components";
 
 interface Props {
     // 是否可编辑（新增、编辑、删除）
@@ -104,7 +105,6 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         }
     }, [selectedRowKeys, selectedRowKeyList, menuStore.menuMeOriginList]);
 
-
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
         {
@@ -156,24 +156,36 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 return (
                     <Space>
                         {editable && (
-                            <Button
+                            // <Button
+                            //     type="link"
+                            //     className="btn-p0"
+                            //     icon={<EditOutlined />}
+                            //     onClick={() => handleUpdate(record)}
+                            // >
+                            //     编辑
+                            // </Button>
+                            <AuthButton
+                                code="menu:update"
+                                key="menu:update"
                                 type="link"
                                 className="btn-p0"
                                 icon={<EditOutlined />}
                                 onClick={() => handleUpdate(record)}
                             >
                                 编辑
-                            </Button>
+                            </AuthButton>
                         )}
                         {editable && (
-                            <Button
+                            <AuthButton
+                                code="menu:delete"
+                                key="menu:delete"
                                 type="link"
                                 className="btn-p0"
                                 icon={<DeleteOutlined />}
                                 onClick={() => handleDelete(record)}
                             >
                                 删除
-                            </Button>
+                            </AuthButton>
                         )}
                     </Space>
                 );
@@ -272,13 +284,15 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     return (
         <>
             {editable && (
-                <Button
+                <AuthButton
+                    code="menu:create"
+                    key="menu:create"
                     type="primary"
                     icon={<PlusOutlined />}
                     onClick={handleCreate}
                 >
                     新增
-                </Button>
+                </AuthButton>
             )}
 
             <Table

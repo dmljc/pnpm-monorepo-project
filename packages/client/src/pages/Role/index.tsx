@@ -1,11 +1,12 @@
 import { FC, useEffect, useState, useCallback } from "react";
-import { PlusOutlined, SmileOutlined } from "@ant-design/icons";
-import { Button, Form, message, Modal, Radio, RadioChangeEvent } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Form, message, Modal, Radio, RadioChangeEvent } from "antd";
 import { TreeTable, TreeComponent, IconRenderer } from "@/components/index.tsx";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
 import { ModalTypeEnum, formatTime } from "@/utils";
 import { useMenuStore } from "@/store";
+import { AuthButton } from "@/components";
 
 import { list, del } from "./api.ts";
 import useStyles from "./style";
@@ -49,20 +50,15 @@ const Role: FC = () => {
 
     const getRoleList = async (id?: number) => {
         try {
-            const resp = await list({
+            const { data } = await list({
                 current: 1,
                 pageSize: 10,
             });
 
-            const data = resp.data.map((item: any) => ({
-                icon: <SmileOutlined />,
-                ...item,
-            }));
-
             setRoleList(data);
-            if (id) {
-                setRecord(data.find((item: UpdateRole) => item.id === id));
-            }
+
+            if (!id) return;
+            setRecord(data.find((item: UpdateRole) => item.id === id));
         } catch (error) {
             console.error("获取角色列表失败:", error);
             messageApi.error("获取角色列表失败");
@@ -138,7 +134,9 @@ const Role: FC = () => {
                         onItemAction={handleItemAction}
                         onSelect={handleSelect}
                     >
-                        <Button
+                        <AuthButton
+                            code="role:create"
+                            key="role:create"
                             type="primary"
                             onClick={() => {
                                 setRecord(undefined);
@@ -147,7 +145,7 @@ const Role: FC = () => {
                             }}
                         >
                             <PlusOutlined />
-                        </Button>
+                        </AuthButton>
                     </TreeComponent>
                 </div>
                 <div className={ss.right}>
