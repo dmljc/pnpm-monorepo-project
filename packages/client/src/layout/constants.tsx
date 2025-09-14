@@ -7,13 +7,21 @@ import {
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
+// ==================== 用户菜单配置 ====================
+/**
+ * 获取用户下拉菜单项配置
+ * @param userInfo - 用户信息对象
+ * @param navigate - 路由导航函数
+ * @param onLogout - 退出登录回调函数
+ * @returns 用户菜单项数组
+ */
 export const getUserItems = (
     userInfo: any,
     navigate: any,
     onLogout: () => void,
 ): MenuProps["items"] => [
     {
-        key: "1",
+        key: "user-info",
         label: (
             <a>
                 <UserOutlined />
@@ -23,7 +31,7 @@ export const getUserItems = (
         ),
     },
     {
-        key: "2",
+        key: "profile",
         label: (
             <a onClick={() => navigate("/system/profile")}>
                 <IdcardOutlined />
@@ -32,7 +40,7 @@ export const getUserItems = (
         ),
     },
     {
-        key: "3",
+        key: "logout",
         label: (
             <a onClick={onLogout}>
                 <LogoutOutlined />
@@ -42,6 +50,11 @@ export const getUserItems = (
     },
 ];
 
+// ==================== 语言切换菜单配置 ====================
+/**
+ * 获取语言切换下拉菜单项配置
+ * @returns 语言菜单项数组
+ */
 export const getLangItems = (): MenuProps["items"] => [
     {
         key: "zh",

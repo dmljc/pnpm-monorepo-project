@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { notification } from "antd";
 import { useRoutes } from "react-router-dom";
 import routes from "./routers/index";
 import { useUserStore, useSystemStore } from "./store";
-import { useEffect } from "react";
 
 const App = () => {
     const Outlet = useRoutes(routes);
@@ -27,8 +27,10 @@ const App = () => {
 
     return (
         <>
+            <div className="App" data-theme={theme}>
+                {Outlet}
+            </div>
             {contextHolder}
-            <div className="App" data-theme={theme}>{Outlet}</div>
         </>
     );
 };

@@ -1,5 +1,8 @@
+// React 相关
 import { FC, useState, useEffect } from "react";
 import type { CSSProperties } from "react";
+
+// 第三方库
 import { useNavigate } from "react-router-dom";
 import { Divider, Space, Tabs, message } from "antd";
 import type { TabsProps } from "antd";
@@ -17,10 +20,16 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from "@ant-design/pro-components";
+
+// 工具/常量
+import useStyles from "./style";
+
+// Store
+import { useUserStore, useSystemStore } from "@/store";
+
+// API 调用
 import { emailCaptcha } from "./api";
 import { configDetail } from "@/pages/SystemConfig/api";
-import { useUserStore, useSystemStore } from "@/store";
-import useStyles from "./style";
 
 // 登录类型枚举
 enum LoginType {

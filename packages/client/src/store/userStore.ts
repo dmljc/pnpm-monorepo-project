@@ -1,9 +1,16 @@
+// 第三方库
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+
+// 类型定义
 import type { User } from "./interface";
-import { authLogin } from "./api";
+
+// Store
 import { useSystemStore } from "./systemStore";
 import { useMenuStore } from "./menuStore";
+
+// API 调用
+import { authLogin } from "./api";
 
 interface LogigParams {
     login: string;

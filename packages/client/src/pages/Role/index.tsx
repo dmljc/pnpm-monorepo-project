@@ -1,32 +1,42 @@
 import { FC, useEffect, useState, useCallback } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, message, Modal, Radio, RadioChangeEvent } from "antd";
-import { TreeTable, TreeComponent, IconRenderer } from "@/components/index.tsx";
+import {
+    TreeTable,
+    TreeComponent,
+    IconRenderer,
+    AuthButton,
+} from "@/components";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
 import { ModalTypeEnum, formatTime } from "@/utils";
-import { useMenuStore } from "@/store";
-import { AuthButton } from "@/components";
-
-import { list, del } from "./api.ts";
 import useStyles from "./style";
+import { useMenuStore } from "@/store";
+import { list, del } from "./api.ts";
 
 const { Item } = Form;
 const { Group, Button: RButton } = Radio;
 
 const Role: FC = () => {
+    // ==================== 状态管理 ====================
     const { styles: ss } = useStyles();
+
+    // 角色列表相关状态
     const [roleList, setRoleList] = useState<any[]>([]);
+    const [record, setRecord] = useState<UpdateRole>();
+
+    // 模态框相关状态
     const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
-    const [record, setRecord] = useState<UpdateRole>();
+
+    // UI 相关状态
     const [messageApi, contextHolder] = message.useMessage();
     const [roleDesc, setRoleDesc] = useState<string>("permission");
-    // 添加状态来管理当前选中角色的菜单权限
     const [selectedMenuKeys, setSelectedMenuKeys] = useState<React.Key[]>([]);
 
+    // ==================== 副作用钩子 ====================
     useEffect(() => {
         getRoleList();
     }, []);
@@ -48,6 +58,7 @@ const Role: FC = () => {
         }
     }, [record]);
 
+    // ==================== API 调用函数 ====================
     const getRoleList = async (id?: number) => {
         try {
             const { data } = await list({
@@ -65,54 +76,74 @@ const Role: FC = () => {
         }
     };
 
-    // 处理树节点操作
-    const handleItemAction = (action: string, item: any) => {
-        switch (action) {
-            case "edit":
-                setRecord(item);
-                setModalType(ModalTypeEnum.UPDATE);
-                setOpen(true);
-                break;
-            case "delete":
-                handleDelete(item);
-                break;
-            default:
-                break;
+    const handleDelete = async (item: any) => {
+        try {
+            const response = await del(item.id);
+            if (response.success) {
+                messageApi.success("删除成功");
+                getRoleList();
+            } else {
+                messageApi.error(response.message || "删除失败");
+            }
+        } catch (error) {
+            console.error("删除失败:", error);
+            messageApi.error("删除失败，请稍后重试");
         }
     };
 
-    // 删除角色
-    const handleDelete = (item: any) => {
+    // ==================== UI 事件处理函数 ====================
+    const handleCreateRole = () => {
+        setRecord(undefined);
+        setModalType(ModalTypeEnum.CREATE);
+        setOpen(true);
+    };
+
+    const handleEditRole = (item: any) => {
+        setRecord(item);
+        setModalType(ModalTypeEnum.UPDATE);
+        setOpen(true);
+    };
+
+    const handleDeleteConfirm = (item: any) => {
         Modal.confirm({
             title: "确认删除",
             content: `确定要删除角色"${item.name}"吗？此操作不可恢复。`,
             okText: "确认删除",
             cancelText: "取消",
             okType: "danger",
-            onOk: async () => {
-                try {
-                    const response = await del(item.id);
-                    if (response.success) {
-                        messageApi.success("删除成功");
-                        // 重新获取数据
-                        getRoleList();
-                    } else {
-                        messageApi.error(response.message || "删除失败");
-                    }
-                } catch (error) {
-                    console.error("删除失败:", error);
-                    messageApi.error("删除失败，请稍后重试");
-                }
-            },
+            onOk: () => handleDelete(item),
         });
     };
 
-    const onChange = (e: RadioChangeEvent) => {
+    const handleItemAction = (action: string, item: any) => {
+        switch (action) {
+            case "edit":
+                handleEditRole(item);
+                break;
+            case "delete":
+                handleDeleteConfirm(item);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleTabChange = (e: RadioChangeEvent) => {
         setRoleDesc(e.target.value);
     };
 
-    const handleSelect = (_selectedKeys: React.Key[], info: any) => {
+    const handleRoleSelect = (_selectedKeys: React.Key[], info: any) => {
         setRecord(info.selectedNodes?.[0]);
+    };
+
+    const handleModalClose = () => {
+        setOpen(false);
+    };
+
+    const handleModalSuccess = (id: number) => {
+        setOpen(false);
+        getRoleList(id);
+        useMenuStore.getState().getMenuMeList();
     };
 
     // 处理TreeTable选中项变化（只读模式，不需要实际更新权限）
@@ -132,17 +163,13 @@ const Role: FC = () => {
                     <TreeComponent
                         treeData={roleList}
                         onItemAction={handleItemAction}
-                        onSelect={handleSelect}
+                        onSelect={handleRoleSelect}
                     >
                         <AuthButton
                             code="role:create"
                             key="role:create"
                             type="primary"
-                            onClick={() => {
-                                setRecord(undefined);
-                                setModalType(ModalTypeEnum.CREATE);
-                                setOpen(true);
-                            }}
+                            onClick={handleCreateRole}
                         >
                             <PlusOutlined />
                         </AuthButton>
@@ -151,7 +178,7 @@ const Role: FC = () => {
                 <div className={ss.right}>
                     <Group
                         value={roleDesc}
-                        onChange={onChange}
+                        onChange={handleTabChange}
                         style={{ marginBottom: 16 }}
                     >
                         <RButton value="permission">角色权限</RButton>
@@ -208,14 +235,8 @@ const Role: FC = () => {
                     open={open}
                     modalType={modalType}
                     record={record as UpdateRole}
-                    handleClose={() => {
-                        setOpen(false);
-                    }}
-                    handleOk={(id: number) => {
-                        setOpen(false);
-                        getRoleList(id); // 刷新数据
-                        useMenuStore.getState().getMenuMeList();
-                    }}
+                    handleClose={handleModalClose}
+                    handleOk={handleModalSuccess}
                 />
             </div>
             {contextHolder}

@@ -1,7 +1,12 @@
-/* 弹框组件的三种状态：创建、更新、查看 */
-// export type ModalTypes = "CREATE" | "UPDATE" | "RETRIEVE";
+/**
+ * 模态框操作类型枚举
+ * 用于标识模态框的不同操作状态
+ */
 export enum ModalTypeEnum {
-    "CREATE" = "CREATE",
-    "UPDATE" = "UPDATE",
-    "RETRIEVE" = "RETRIEVE",
+    /** 创建/新增 */
+    CREATE = "CREATE",
+    /** 更新/编辑 */
+    UPDATE = "UPDATE",
+    /** 查看/只读 */
+    RETRIEVE = "RETRIEVE",
 }

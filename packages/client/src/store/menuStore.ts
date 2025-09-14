@@ -1,11 +1,18 @@
+// 第三方库
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+
+// 类型定义
+import type { MenuItem } from "@/layout/utils";
+
+// 工具/常量
 import {
     processMenuChildren,
     convertMenuListToMenuItems,
     collectButtonItems,
 } from "@/layout/utils";
-import type { MenuItem } from "@/layout/utils";
+
+// API 调用
 import { menuMeList, menuList } from "./api";
 
 /**

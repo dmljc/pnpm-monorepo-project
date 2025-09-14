@@ -1,6 +1,32 @@
 import React from "react";
 
 /**
+ * 菜单项类型定义
+ */
+export interface MenuItem {
+    /** 菜单唯一标识 */
+    id: number;
+    /** 菜单唯一标识 */
+    key: string;
+    /** 菜单名称 */
+    label: string;
+    /** 菜单类型（如目录、菜单、按钮等） */
+    type: string;
+    /** 父级菜单ID */
+    parentId?: number;
+    /** 菜单图标 */
+    icon?: React.ReactNode;
+    /** 路由地址 */
+    path?: string;
+    /** 权限编码 */
+    code?: string;
+    /** 组件路径 */
+    component?: string;
+    /** 子菜单 */
+    children?: MenuItem[] | null;
+}
+
+/**
  * 处理菜单数据，将空的children数组转换为null
  * @param menuList 菜单列表
  * @returns 处理后的菜单列表
@@ -65,35 +91,26 @@ export function convertMenuListToMenuItems(menuList: MenuItem[]): MenuItem[] {
 }
 
 /**
- * 菜单项类型定义
+ * 获取菜单项的层级映射
+ * @param items 菜单项列表
+ * @returns 键值对映射，key为菜单项key，value为层级
  */
-export interface MenuItem {
-    id: number; // 菜单唯一标识
-    key: string; // 菜单唯一标识
-    label: string; // 菜单名称
-    type: string; // 菜单类型（如目录、菜单、按钮等）
-    parentId?: number; // 父级菜单ID
-    icon?: React.ReactNode; // 菜单图标
-    path?: string; // 路由地址
-    code?: string; // 权限编码
-    component?: string; // 组件路径
-    children?: MenuItem[] | null; // 子菜单
-}
+export const getLevelKeys = (items: MenuItem[]): Record<string, number> => {
+    const levelMap: Record<string, number> = {};
 
-export const getLevelKeys = (items1: MenuItem[]) => {
-    const key: Record<string, number> = {};
-    const func = (items2: MenuItem[], level = 1) => {
-        items2.forEach((item) => {
+    const traverse = (menuItems: MenuItem[], level = 1) => {
+        menuItems.forEach((item) => {
             if (item.key) {
-                key[item.key] = level;
+                levelMap[item.key] = level;
             }
             if (item.children) {
-                func(item.children, level + 1);
+                traverse(item.children, level + 1);
             }
         });
     };
-    func(items1);
-    return key;
+
+    traverse(items);
+    return levelMap;
 };
 
 /**

@@ -1,16 +1,24 @@
+// 顺序标准化 - React → 第三方库 → 内部模块 → 相对路径
 import { useState, useEffect, useMemo } from "react";
-import { Button, message, Space, Table, Tag, Form } from "antd";
-import type { TableColumnsType } from "antd";
+
+import { message, Space, Table, Tag, Form } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import type { TableColumnsType } from "antd";
+
+import { AuthButton } from "@/components";
+import { useMenuStore } from "@/store";
+import { ModalTypeEnum } from "@/utils";
+
+import { del } from "./api";
 import IconRenderer from "../IconComponent/IconRenderer";
 import { typeColorMap, typeLabelMap } from "./constant";
-import type { DataType, UpdateMenu } from "./interface";
-import { useMenuStore } from "@/store";
-import type { TreeTableColumn, TableRowSelection } from "./interface";
-import { ModalTypeEnum } from "@/utils";
-import { del } from "./api";
 import CreateMenuModal from "./CreateMenu";
-import { AuthButton } from "@/components";
+import type {
+    DataType,
+    UpdateMenu,
+    TreeTableColumn,
+    TableRowSelection,
+} from "./interface";
 
 interface Props {
     // 是否可编辑（新增、编辑、删除）
@@ -156,14 +164,6 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                 return (
                     <Space>
                         {editable && (
-                            // <Button
-                            //     type="link"
-                            //     className="btn-p0"
-                            //     icon={<EditOutlined />}
-                            //     onClick={() => handleUpdate(record)}
-                            // >
-                            //     编辑
-                            // </Button>
                             <AuthButton
                                 code="menu:update"
                                 key="menu:update"

@@ -2,21 +2,23 @@ import { FC, useEffect, useState } from "react";
 import { Form, Upload, Input, message } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
-import { create } from "./api";
-import { useSystemStore } from "@/store/systemStore";
 import { AuthButton } from "@/components";
 import useStyles from "./style";
+import { useSystemStore } from "@/store/systemStore";
+import { create } from "./api";
 
 const { Item } = Form;
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const Config: FC = () => {
+    // ==================== 状态管理 ====================
     const [form] = Form.useForm<any>();
     const { styles: ss } = useStyles();
     const [messageApi, contextHolder] = message.useMessage();
     const { systemConfig, setSystemConfig } = useSystemStore();
 
+    // 文件上传相关状态
     const [fileList, setFileList] = useState<UploadFile[]>([
         {
             uid: "-1",
@@ -26,11 +28,19 @@ const Config: FC = () => {
         },
     ]);
 
-    const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    // ==================== 副作用钩子 ====================
+    useEffect(() => {
+        form.setFieldsValue(systemConfig);
+    }, [systemConfig]);
+
+    // ==================== 事件处理函数 ====================
+    const handleFileChange: UploadProps["onChange"] = ({
+        fileList: newFileList,
+    }) => {
         setFileList(newFileList);
     };
 
-    const onPreview = async (file: UploadFile) => {
+    const handleFilePreview = async (file: UploadFile) => {
         let src = file.url as string;
         if (!src) {
             src = await new Promise((resolve) => {
@@ -44,10 +54,6 @@ const Config: FC = () => {
         const imgWindow = window.open(src);
         imgWindow?.document.write(image.outerHTML);
     };
-
-    useEffect(() => {
-        form.setFieldsValue(systemConfig);
-    }, [systemConfig]);
 
     const handleSubmit = async () => {
         try {
@@ -74,7 +80,6 @@ const Config: FC = () => {
 
     return (
         <>
-            {contextHolder}
             <Form
                 form={form}
                 layout="vertical"
@@ -92,8 +97,8 @@ const Config: FC = () => {
                             action="ttp://localhost:3000/api/minio/upload"
                             listType="picture-card"
                             fileList={fileList}
-                            onChange={onChange}
-                            onPreview={onPreview}
+                            onChange={handleFileChange}
+                            onPreview={handleFilePreview}
                         >
                             {fileList.length < 1 && "+ Upload"}
                         </Upload>
@@ -163,6 +168,7 @@ const Config: FC = () => {
                     </AuthButton>
                 </Item>
             </Form>
+            {contextHolder}
         </>
     );
 };

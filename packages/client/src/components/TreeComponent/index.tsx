@@ -5,17 +5,26 @@ import IconRenderer from "../IconComponent/IconRenderer";
 import { usePermission } from "@/utils";
 import ss from "./style";
 
+// ==================== 类型定义 ====================
 interface TreeData {
+    /** 节点唯一标识 */
     id: string;
+    /** 节点显示名称 */
     name: string;
+    /** 节点图标 */
     icon?: React.ReactNode;
+    /** 子节点列表 */
     children?: TreeData[];
 }
 
 interface TreeComponentProps {
+    /** 树形数据源 */
     treeData: TreeData[];
+    /** 操作区域的子组件（通常是新增按钮） */
     children?: React.ReactNode;
+    /** 节点操作回调函数 */
     onItemAction?: (action: string, item: TreeData) => void;
+    /** 节点选择回调函数 */
     onSelect?: (selectedKeys: React.Key[], info: any) => void;
 }
 
@@ -25,16 +34,17 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
     onItemAction,
     onSelect,
 }) => {
+    // ==================== 状态管理 ====================
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState(true);
     const [searchTreeData, setSearchTreeData] = useState<TreeData[]>(treeData);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
 
-    const onExpand = (newExpandedKeys: React.Key[]) => {
-        setExpandedKeys(newExpandedKeys);
-        setAutoExpandParent(false);
-    };
+    // ==================== 权限管理 ====================
+    const editPermission = usePermission("role:update");
+    const deletePermission = usePermission("role:delete");
 
+    // ==================== 副作用钩子 ====================
     useEffect(() => {
         setSearchTreeData(treeData);
         // 只在没有选中项时设置默认选中第一条数据
@@ -43,19 +53,29 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
         }
     }, [treeData]);
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const newTreeData = treeData.filter((item) => {
-            return item.name.includes(value);
-        });
-
-        setSearchTreeData(newTreeData);
+    // ==================== 事件处理函数 ====================
+    const handleExpand = (newExpandedKeys: React.Key[]) => {
+        setExpandedKeys(newExpandedKeys);
+        setAutoExpandParent(false);
     };
 
-    const editPermission = usePermission("role:update");
-    const deletePermission = usePermission("role:delete");
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const filteredData = treeData.filter((item) => 
+            item.name.includes(value)
+        );
+        setSearchTreeData(filteredData);
+    };
 
-    // 为每个树节点添加操作菜单
+    const handleTreeSelect = (keys: React.Key[], info: any) => {
+        // 阻止取消选中
+        if (keys.length === 0) return;
+
+        setSelectedKeys(keys);
+        onSelect?.(keys, info);
+    };
+
+    // ==================== 渲染函数 ====================
     const getMenuItems = (item: TreeData) => [
         {
             key: "edit",
@@ -71,8 +91,7 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
         },
     ];
 
-    // 自定义标题渲染函数
-    const titleRender = (nodeData: any) => {
+    const renderNodeTitle = (nodeData: any) => {
         const item = nodeData as TreeData;
 
         return (
@@ -100,32 +119,27 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
         );
     };
 
+    // ==================== 主渲染 ====================
     return (
         <div className={ss.treeContainer}>
             <div className={ss.searchAreaStyle}>
                 <Input
                     allowClear
-                    onChange={onChange}
+                    onChange={handleSearchChange}
                     placeholder="请搜索角色名称"
                 />
                 <span>{children}</span>
             </div>
             <Tree
                 className={ss.customTreeStyle}
-                onExpand={onExpand}
+                onExpand={handleExpand}
                 expandedKeys={expandedKeys}
                 autoExpandParent={autoExpandParent}
                 treeData={searchTreeData as any}
-                onSelect={(keys, info) => {
-                    // 阻止取消选中
-                    if (keys.length === 0) return;
-
-                    setSelectedKeys(keys);
-                    onSelect?.(keys, info);
-                }}
+                onSelect={handleTreeSelect}
                 selectedKeys={selectedKeys}
                 blockNode
-                titleRender={titleRender}
+                titleRender={renderNodeTitle}
                 fieldNames={{
                     title: "name",
                     key: "id",

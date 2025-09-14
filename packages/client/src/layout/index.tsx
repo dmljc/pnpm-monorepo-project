@@ -1,4 +1,7 @@
+// React 相关
 import { useState, FC, useMemo, useEffect } from "react";
+
+// 第三方库
 import { Outlet, useNavigate } from "react-router-dom";
 import {
     Menu,
@@ -18,14 +21,22 @@ import {
     MoonOutlined,
     TranslationOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
-import { getLevelKeys } from "./utils";
-import useStyles from "./style";
-import { useUserStore, useSystemStore, useMenuStore } from "@/store";
-import { getUserItems, getLangItems } from "./constants";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
+
+// 类型定义
+import type { MenuProps } from "antd";
+
+// 内部组件
 import IconRenderer from "@/components/IconComponent/IconRenderer";
+
+// 工具/常量
+import { getLevelKeys } from "./utils";
+import useStyles from "./style";
+import { getUserItems, getLangItems } from "./constants";
+
+// Store
+import { useUserStore, useSystemStore, useMenuStore } from "@/store";
 
 const { Header, Sider, Content, Footer } = AntdLayout;
 
@@ -354,7 +365,8 @@ const Layout: FC = () => {
                                 fontSize: 12,
                                 padding: "10px 0",
                                 zIndex: 10,
-                                backgroundColor: theme === "light" ? "#fff" : "#141414",
+                                backgroundColor:
+                                    theme === "light" ? "#fff" : "#141414",
                             }}
                         >
                             {systemConfig?.copyright}

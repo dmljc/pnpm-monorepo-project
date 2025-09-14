@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
-import { info } from "./api";
 import { Divider, Col, Row, Descriptions, Spin, Table } from "antd";
 import type { TableProps } from "antd";
+import { info } from "./api";
 
 interface CpuInfo {
     cpuNum: number;
@@ -37,14 +37,75 @@ interface ServerInfoData {
     sys?: SysInfo;
 }
 
+// ==================== 表格列配置 ====================
+const createSysColumns = (): TableProps<SysInfo>["columns"] => [
+    {
+        title: "服务器名称",
+        dataIndex: "osName",
+        key: "osName",
+    },
+    {
+        title: "ip地址",
+        dataIndex: "computerIp",
+        key: "computerIp",
+    },
+    {
+        title: "操作系统",
+        dataIndex: "computerName",
+        key: "computerName",
+    },
+    {
+        title: "系统架构",
+        dataIndex: "osArch",
+        key: "osArch",
+    },
+];
+
+const createDiskColumns = (): TableProps<DistInfo>["columns"] => [
+    {
+        title: "盘符路径",
+        dataIndex: "dirName",
+        key: "dirName",
+    },
+    {
+        title: "文件系统",
+        dataIndex: "typeName",
+        key: "typeName",
+    },
+    {
+        title: "总大小",
+        dataIndex: "total",
+        key: "total",
+    },
+    {
+        title: "已用大小",
+        dataIndex: "used",
+        key: "used",
+    },
+    {
+        title: "可用大小",
+        dataIndex: "free",
+        key: "free",
+    },
+    {
+        title: "已用百分比",
+        dataIndex: "usage",
+        key: "usage",
+        render: (text) => <span>{text}%</span>,
+    },
+];
+
 const ServerInfo: FC = () => {
+    // ==================== 状态管理 ====================
     const [data, setData] = useState<ServerInfoData | null>(null);
     const [loading, setLoading] = useState(false);
 
+    // ==================== 副作用钩子 ====================
     useEffect(() => {
         getServerInfo();
     }, []);
 
+    // ==================== API 调用函数 ====================
     const getServerInfo = async () => {
         setLoading(true);
         try {
@@ -57,6 +118,7 @@ const ServerInfo: FC = () => {
         }
     };
 
+    // ==================== 渲染函数 ====================
     const renderCpuInfo = () => (
         <Descriptions title="CPU" bordered column={1}>
             <Descriptions.Item label="核心数">
@@ -73,6 +135,7 @@ const ServerInfo: FC = () => {
             </Descriptions.Item>
         </Descriptions>
     );
+
     const renderMemInfo = () => (
         <Descriptions title="内存" bordered column={1}>
             <Descriptions.Item label="总内存">
@@ -90,62 +153,9 @@ const ServerInfo: FC = () => {
         </Descriptions>
     );
 
-    const SysColumns: TableProps<SysInfo>["columns"] = [
-        {
-            title: "服务器名称",
-            dataIndex: "osName",
-            key: "osName",
-        },
-        {
-            title: "ip地址",
-            dataIndex: "computerIp",
-            key: "computerIp",
-        },
-        {
-            title: "操作系统",
-            dataIndex: "computerName",
-            key: "computerName",
-        },
-        {
-            title: "系统架构",
-            dataIndex: "osArch",
-            key: "osArch",
-        },
-    ];
-
-    const columns: TableProps<DistInfo>["columns"] = [
-        {
-            title: "盘符路径",
-            dataIndex: "dirName",
-            key: "dirName",
-        },
-        {
-            title: "文件系统",
-            dataIndex: "typeName",
-            key: "typeName",
-        },
-        {
-            title: "总大小",
-            dataIndex: "total",
-            key: "total",
-        },
-        {
-            title: "已用大小",
-            dataIndex: "used",
-            key: "used",
-        },
-        {
-            title: "可用大小",
-            dataIndex: "free",
-            key: "free",
-        },
-        {
-            title: "已用百分比",
-            dataIndex: "usage",
-            key: "usage",
-            render: (text) => <span>{text}%</span>,
-        },
-    ];
+    // ==================== 表格配置 ====================
+    const sysColumns = createSysColumns();
+    const diskColumns = createDiskColumns();
 
     return (
         <Spin spinning={loading}>
@@ -156,7 +166,7 @@ const ServerInfo: FC = () => {
             <Divider />
             <Table<SysInfo>
                 title={() => <h3>服务器信息</h3>}
-                columns={SysColumns}
+                columns={sysColumns}
                 dataSource={data?.sys ? [data.sys] : []}
                 pagination={false}
                 rowKey="computerIp"
@@ -164,7 +174,7 @@ const ServerInfo: FC = () => {
             <Divider />
             <Table<DistInfo>
                 title={() => <h3>磁盘信息</h3>}
-                columns={columns}
+                columns={diskColumns}
                 dataSource={data?.dist || []}
                 pagination={false}
                 rowKey="dirName"

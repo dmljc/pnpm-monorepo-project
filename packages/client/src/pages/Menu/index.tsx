@@ -1,9 +1,15 @@
 import { FC } from "react";
-import type { DataType } from "@/components/TreeTable/interface";
 import TreeTable from "@/components/TreeTable";
+import type { DataType } from "@/components/TreeTable/interface";
+import { usePermission } from "@/utils";
 
 const Menu: FC = () => {
-    return <TreeTable<DataType> editable={true} selecteable={true} />;
+    return (
+        <TreeTable<DataType>
+            editable={true}
+            selecteable={usePermission("menu:create")}
+        />
+    );
 };
 
 export default Menu;

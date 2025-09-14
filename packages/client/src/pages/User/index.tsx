@@ -1,4 +1,7 @@
+// React 相关
 import { FC, useState, useRef } from "react";
+
+// 第三方库
 import { message, Image, Upload } from "antd";
 import {
     PlusOutlined,
@@ -12,210 +15,226 @@ import {
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import dayjs from "dayjs";
-import { ModalTypeEnum } from "@/utils";
-import CreateUserModal from "./CreateModal.tsx";
-import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
-import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
+
+// 内部组件
 import { AuthButton } from "@/components";
+import CreateUserModal from "./CreateModal.tsx";
+
+// 类型定义
+import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
+
+// 工具/常量
+import { ModalTypeEnum } from "@/utils";
+
+// API 调用
+import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
+
+// ==================== 表格列配置 ====================
+const createColumns = (
+    handleEditUser: (record: UpdateUser) => void,
+    handleDelete: (record: UpdateUser) => void,
+    handleFreeze: (record: UpdateUser) => void,
+): ProColumns<GithubIssueItem>[] => [
+    {
+        title: "头像",
+        dataIndex: "avatar",
+        width: 120,
+        fixed: "left",
+        // @ts-expect-error 目前无法确定 `OSSUpload` 组件在接收 `value` 参数时的类型检查细节，直接传入字符串类型的 `text` 可能会触发类型错误，因此暂时使用此指令绕过类型检查。
+        render: (text: string | undefined) =>
+            text !== undefined && typeof text === "string" ? (
+                <div
+                    style={{
+                        position: "relative",
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+                    }}
+                >
+                    <Image
+                        width={60}
+                        height={60}
+                        style={{
+                            borderRadius: "100%",
+                            objectFit: "cover",
+                            border: "1px solid #ccc",
+                            padding: "4px",
+                            cursor: "pointer",
+                            transition: "transform 0.3s ease",
+                        }}
+                        src={text}
+                    />
+                </div>
+            ) : null,
+    },
+    {
+        title: "账号",
+        dataIndex: "username",
+        width: 120,
+        fixed: "left",
+        render: (text) => <a>{text}</a>,
+    },
+    {
+        title: "密码",
+        dataIndex: "password",
+        search: false,
+        width: 110,
+    },
+    {
+        title: "姓名",
+        dataIndex: "name",
+        width: 110,
+    },
+    {
+        title: "角色",
+        dataIndex: "role",
+        hideInSearch: true,
+        width: 100,
+    },
+    {
+        title: "手机号",
+        dataIndex: "phone",
+        width: 130,
+    },
+    {
+        title: "邮箱",
+        dataIndex: "email",
+        width: 180,
+    },
+    {
+        title: "状态",
+        dataIndex: "status",
+        search: false,
+        filters: true,
+        onFilter: true,
+        width: 100,
+        valueType: "select",
+        valueEnum: {
+            1: { text: "启用", status: "Success" },
+            0: { text: "停用", status: "Error" },
+        },
+    },
+    {
+        title: "创建时间",
+        dataIndex: "createTime",
+        valueType: "dateTime",
+        sorter: true,
+        hideInSearch: true,
+        width: 180,
+    },
+    {
+        title: "创建时间",
+        dataIndex: "createTime",
+        valueType: "dateRange",
+        hideInTable: true,
+        hideInSearch: true,
+        search: {
+            transform: (value) => {
+                return {
+                    startTime: value[0],
+                    endTime: value[1],
+                };
+            },
+        },
+    },
+    {
+        title: "更新时间",
+        dataIndex: "updateTime",
+        valueType: "dateTime",
+        sorter: true,
+        hideInSearch: true,
+        width: 180,
+    },
+    {
+        title: "备注",
+        dataIndex: "remark",
+        search: false,
+        ellipsis: true,
+        copyable: true,
+        width: 200,
+    },
+    {
+        title: "操作",
+        valueType: "option",
+        key: "option",
+        width: 200,
+        render: (_text, _record) => [
+            <AuthButton
+                code="user:update"
+                key="user:update"
+                color="primary"
+                variant="link"
+                className="btn-p0"
+                icon={<EditOutlined />}
+                onClick={() => handleEditUser(_record)}
+            >
+                编辑
+            </AuthButton>,
+            <AuthButton
+                code="user:disabled"
+                key="user:disabled"
+                color="primary"
+                variant="link"
+                className="btn-p0"
+                icon={
+                    _record.status === 1 ? (
+                        <CloseCircleOutlined />
+                    ) : (
+                        <CheckCircleOutlined />
+                    )
+                }
+                // disabled={_record.role === "root"}
+                onClick={() => handleFreeze(_record)}
+            >
+                {_record.status === 1 ? "停用" : "启用"}
+            </AuthButton>,
+            <AuthButton
+                code="user:delete"
+                key="user:delete"
+                color="danger"
+                variant="link"
+                className="btn-p0"
+                icon={<DeleteOutlined />}
+                // disabled={_record.role === "root"}
+                onClick={() => handleDelete(_record)}
+            >
+                删除
+            </AuthButton>,
+        ],
+    },
+];
 
 const User: FC = () => {
+    // ==================== 状态管理 ====================
+    // 表格相关状态
     const actionRef = useRef<ActionType>(null);
+
+    // 模态框相关状态
     const [open, setOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<ModalTypeEnum>(
         ModalTypeEnum.CREATE,
     );
     const [record, setRecord] = useState<UpdateUser>();
+
+    // UI 相关状态
     const [messageApi, contextHolder] = message.useMessage();
     const [loading, setLoading] = useState(false);
+
+    // ==================== API 调用函数 ====================
+    const addUser = async (params: CreateUser) => {
+        const resp = await create(params);
+        if (resp.success === true) {
+            actionRef.current?.reload();
+            messageApi.success("批量新增成功");
+        }
+    };
 
     const handleDelete = async (record: UpdateUser) => {
         const resp = await del(record.id);
         if (resp) {
             actionRef.current?.reload();
             messageApi.success("删除成功");
-        }
-    };
-
-    const columns: ProColumns<GithubIssueItem>[] = [
-        {
-            title: "头像",
-            dataIndex: "avatar",
-            width: 120,
-            fixed: "left",
-            // @ts-expect-error 目前无法确定 `OSSUpload` 组件在接收 `value` 参数时的类型检查细节，直接传入字符串类型的 `text` 可能会触发类型错误，因此暂时使用此指令绕过类型检查。
-            render: (text: string | undefined) =>
-                text !== undefined && typeof text === "string" ? (
-                    <div
-                        style={{
-                            position: "relative",
-                            width: "60px",
-                            height: "60px",
-                            borderRadius: "50%",
-                            overflow: "hidden",
-                        }}
-                    >
-                        <Image
-                            width={60}
-                            height={60}
-                            style={{
-                                borderRadius: "100%",
-                                objectFit: "cover",
-                                border: "1px solid #ccc",
-                                padding: "4px",
-                                cursor: "pointer",
-                                transition: "transform 0.3s ease",
-                            }}
-                            src={text}
-                        />
-                    </div>
-                ) : null,
-        },
-        {
-            title: "账号",
-            dataIndex: "username",
-            width: 120,
-            fixed: "left",
-            render: (text) => <a>{text}</a>,
-        },
-        {
-            title: "密码",
-            dataIndex: "password",
-            search: false,
-            width: 110,
-        },
-        {
-            title: "姓名",
-            dataIndex: "name",
-            width: 110,
-        },
-        {
-            title: "角色",
-            dataIndex: "role",
-            hideInSearch: true,
-            width: 100,
-        },
-        {
-            title: "手机号",
-            dataIndex: "phone",
-            width: 130,
-        },
-        {
-            title: "邮箱",
-            dataIndex: "email",
-            width: 180,
-        },
-        {
-            title: "状态",
-            dataIndex: "status",
-            search: false,
-            filters: true,
-            onFilter: true,
-            width: 100,
-            valueType: "select",
-            valueEnum: {
-                1: { text: "启用", status: "Success" },
-                0: { text: "停用", status: "Error" },
-            },
-        },
-        {
-            title: "创建时间",
-            dataIndex: "createTime",
-            valueType: "dateTime",
-            sorter: true,
-            hideInSearch: true,
-            width: 180,
-        },
-        {
-            title: "创建时间",
-            dataIndex: "createTime",
-            valueType: "dateRange",
-            hideInTable: true,
-            hideInSearch: true,
-            search: {
-                transform: (value) => {
-                    return {
-                        startTime: value[0],
-                        endTime: value[1],
-                    };
-                },
-            },
-        },
-        {
-            title: "更新时间",
-            dataIndex: "updateTime",
-            valueType: "dateTime",
-            sorter: true,
-            hideInSearch: true,
-            width: 180,
-        },
-        {
-            title: "备注",
-            dataIndex: "remark",
-            search: false,
-            ellipsis: true,
-            copyable: true,
-            width: 200,
-        },
-        {
-            title: "操作",
-            valueType: "option",
-            key: "option",
-            width: 200,
-            render: (_text, _record) => [
-                <AuthButton
-                    code="user:update"
-                    key="user:update"
-                    color="primary"
-                    variant="link"
-                    className="btn-p0"
-                    icon={<EditOutlined />}
-                    onClick={() => {
-                        setModalType(ModalTypeEnum.UPDATE);
-                        setRecord(_record);
-                        setOpen(true);
-                    }}
-                >
-                    编辑
-                </AuthButton>,
-                <AuthButton
-                    code="user:disabled"
-                    key="user:disabled"
-                    color="primary"
-                    variant="link"
-                    className="btn-p0"
-                    icon={
-                        _record.status === 1 ? (
-                            <CloseCircleOutlined />
-                        ) : (
-                            <CheckCircleOutlined />
-                        )
-                    }
-                    // disabled={_record.role === "root"}
-                    onClick={() => handleFreeze(_record)}
-                >
-                    {_record.status === 1 ? "停用" : "启用"}
-                </AuthButton>,
-                <AuthButton
-                    code="user:delete"
-                    key="user:delete"
-                    color="danger"
-                    variant="link"
-                    className="btn-p0"
-                    icon={<DeleteOutlined />}
-                    // disabled={_record.role === "root"}
-                    onClick={() => handleDelete(_record)}
-                >
-                    删除
-                </AuthButton>,
-            ],
-        },
-    ];
-
-    const addUser = async (params: CreateUser) => {
-        const resp = await create(params);
-        if (resp.success === true) {
-            actionRef.current?.reload();
-            messageApi.success("批量新增成功");
         }
     };
 
@@ -227,6 +246,7 @@ const User: FC = () => {
         }
     };
 
+    // ==================== 文件操作函数 ====================
     const handleImport = async (file: File) => {
         setLoading(true);
         try {
@@ -287,6 +307,30 @@ const User: FC = () => {
             );
         }
     };
+
+    // ==================== UI 事件处理函数 ====================
+    const handleCreateUser = () => {
+        setModalType(ModalTypeEnum.CREATE);
+        setOpen(true);
+    };
+
+    const handleEditUser = (record: UpdateUser) => {
+        setModalType(ModalTypeEnum.UPDATE);
+        setRecord(record);
+        setOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setOpen(false);
+    };
+
+    const handleModalSuccess = () => {
+        setOpen(false);
+        actionRef.current?.reload();
+    };
+
+    // ==================== 表格配置 ====================
+    const columns = createColumns(handleEditUser, handleDelete, handleFreeze);
 
     return (
         <>
@@ -362,10 +406,7 @@ const User: FC = () => {
                         key="user:create"
                         type="primary"
                         icon={<PlusOutlined />}
-                        onClick={() => {
-                            setModalType(ModalTypeEnum.CREATE);
-                            setOpen(true);
-                        }}
+                        onClick={handleCreateUser}
                     >
                         新增
                     </AuthButton>,
@@ -402,13 +443,8 @@ const User: FC = () => {
                 open={open}
                 modalType={modalType}
                 record={record!}
-                handleClose={() => {
-                    setOpen(false);
-                }}
-                handleOk={() => {
-                    setOpen(false);
-                    actionRef.current?.reload();
-                }}
+                handleClose={handleModalClose}
+                handleOk={handleModalSuccess}
             />
         </>
     );
