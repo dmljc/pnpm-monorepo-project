@@ -55,14 +55,16 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     };
 
     useEffect(() => {
-        if (modalType === ModalTypeEnum.UPDATE) {
-            form.setFieldsValue({
-                ...record,
-            });
-        } else {
-            form.resetFields();
+        if (open) {
+            if (modalType === ModalTypeEnum.UPDATE && record) {
+                form.setFieldsValue({
+                    ...record,
+                });
+            } else {
+                form.resetFields();
+            }
         }
-    }, [modalType]);
+    }, [modalType, record, open]);
 
     useEffect(() => {
         open && onFetchRoleOptions();

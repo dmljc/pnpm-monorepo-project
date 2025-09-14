@@ -326,7 +326,7 @@ const Layout: FC = () => {
                                 <div className={ss.avatarWrapper}>
                                     <img
                                         className={`${ss.headerIcon} ${ss.avatar}`}
-                                        src="https://himg.bdimg.com/sys/portraitn/item/public.1.64e3a983.rQ7LkkDCsOJkvisL0IYKUw"
+                                        src={userInfo?.avatar}
                                     />
                                 </div>
                             </Dropdown>
