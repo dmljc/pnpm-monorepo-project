@@ -42,7 +42,16 @@ const { Header, Sider, Content, Footer } = AntdLayout;
 
 const Layout: FC = () => {
     const { logout, userInfo } = useUserStore();
-    const { lang, setLang, theme, setTheme, systemConfig } = useSystemStore();
+    const {
+        lang,
+        setLang,
+        theme,
+        setTheme,
+        isFullscreen,
+        toggleFullscreen,
+        syncFullscreenState,
+        systemConfig,
+    } = useSystemStore();
     const navigate = useNavigate();
 
     // 响应式获取菜单
@@ -147,6 +156,50 @@ const Layout: FC = () => {
         }, 200); // 与动画时间一致
         return () => clearTimeout(timer);
     }, [collapsed]);
+
+    // ==================== 全屏状态监听 ====================
+    useEffect(() => {
+        // 监听浏览器全屏状态变化事件
+        const handleFullscreenChange = () => syncFullscreenState();
+
+        // 添加标准的全屏状态变化事件
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        // 兼容 Webkit内核浏览器（Chrome、Safari等）
+        document.addEventListener(
+            "webkitfullscreenchange",
+            handleFullscreenChange,
+        );
+        // 兼容 Mozilla Firefox 浏览器
+        document.addEventListener(
+            "mozfullscreenchange",
+            handleFullscreenChange,
+        );
+        // 兼容 Microsoft IE/Edge浏览器
+        document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+        // 初始化时同步一次状态
+        syncFullscreenState();
+
+        // 清理事件监听器
+        return () => {
+            document.removeEventListener(
+                "fullscreenchange",
+                handleFullscreenChange,
+            );
+            document.removeEventListener(
+                "webkitfullscreenchange",
+                handleFullscreenChange,
+            );
+            document.removeEventListener(
+                "mozfullscreenchange",
+                handleFullscreenChange,
+            );
+            document.removeEventListener(
+                "MSFullscreenChange",
+                handleFullscreenChange,
+            );
+        };
+    }, [syncFullscreenState]);
 
     const { styles: ss } = useStyles();
     const { defaultAlgorithm, darkAlgorithm } = antdTheme;
@@ -305,11 +358,19 @@ const Layout: FC = () => {
                                     <SunOutlined className={ss.headerIcon} />
                                 )}
                             </span>
-                            {theme === "light" ? (
-                                <ExpandOutlined className={ss.headerIcon} />
-                            ) : (
-                                <CompressOutlined className={ss.headerIcon} />
-                            )}
+                            <span
+                                className={ss.headerIconTheme}
+                                onClick={toggleFullscreen}
+                                title={isFullscreen ? "退出全屏" : "进入全屏"}
+                            >
+                                {isFullscreen ? (
+                                    <CompressOutlined
+                                        className={ss.headerIcon}
+                                    />
+                                ) : (
+                                    <ExpandOutlined className={ss.headerIcon} />
+                                )}
+                            </span>
                             <GithubOutlined className={ss.headerIcon} />
                             <Dropdown
                                 trigger={["click"]}
