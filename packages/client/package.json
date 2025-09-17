@@ -18,8 +18,12 @@
         "antd-img-crop": "^4.25.0",
         "antd-style": "^3.7.1",
         "dayjs": "^1.11.18",
+        "i18next": "^25.5.2",
+        "i18next-browser-languagedetector": "^8.2.0",
+        "i18next-http-backend": "^3.0.2",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
+        "react-i18next": "^15.7.3",
         "react-router-dom": "^7.9.1",
         "zustand": "^5.0.8"
     },
