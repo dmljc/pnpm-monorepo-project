@@ -61,8 +61,8 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const filteredData = treeData.filter((item) => 
-            item.name.includes(value)
+        const filteredData = treeData.filter((item) =>
+            item.name.includes(value),
         );
         setSearchTreeData(filteredData);
     };

@@ -71,11 +71,11 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 const children = Array.isArray(node?.children)
                     ? normalize(node.children)
                     : undefined;
-                return { 
+                return {
                     key: node.id,
                     value: node.id,
                     title: node.label,
-                    children 
+                    children,
                 };
             });
         return normalize(menuStore.menuMeList as any);
