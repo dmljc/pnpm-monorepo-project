@@ -6,6 +6,7 @@ import { AuthButton } from "@/components";
 import useStyles from "./style";
 import { useSystemStore } from "@/store/systemStore";
 import { create } from "./api";
+import { usePermission } from "@/utils/utils";
 
 const { Item } = Form;
 
@@ -17,6 +18,8 @@ const Config: FC = () => {
     const { styles: ss } = useStyles();
     const [messageApi, contextHolder] = message.useMessage();
     const { systemConfig, setSystemConfig } = useSystemStore();
+
+    const permission = usePermission("system_config:save");
 
     // 文件上传相关状态
     const [fileList, setFileList] = useState<UploadFile[]>([
@@ -96,6 +99,7 @@ const Config: FC = () => {
                         <Upload
                             action="ttp://localhost:3000/api/minio/upload"
                             listType="picture-card"
+                            disabled={!permission}
                             fileList={fileList}
                             onChange={handleFileChange}
                             onPreview={handleFilePreview}
@@ -114,6 +118,7 @@ const Config: FC = () => {
                         showCount
                         allowClear
                         maxLength={20}
+                        disabled={!permission}
                         placeholder="请输入系统名称"
                     />
                 </Item>
@@ -127,6 +132,7 @@ const Config: FC = () => {
                         showCount
                         allowClear
                         maxLength={30}
+                        disabled={!permission}
                         placeholder="请输入系统描述"
                     />
                 </Item>
@@ -140,6 +146,7 @@ const Config: FC = () => {
                         showCount
                         allowClear
                         maxLength={60}
+                        disabled={!permission}
                         placeholder="请输入版权说明"
                     />
                 </Item>
@@ -153,6 +160,7 @@ const Config: FC = () => {
                         showCount
                         allowClear
                         maxLength={30}
+                        disabled={!permission}
                         placeholder="请输入备案号"
                     />
                 </Item>
@@ -162,6 +170,7 @@ const Config: FC = () => {
                         key="system_config:save"
                         type="primary"
                         style={{ width: "100%" }}
+                        disabled={!permission}
                         onClick={handleSubmit}
                     >
                         保存

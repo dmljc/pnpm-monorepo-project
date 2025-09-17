@@ -15,7 +15,7 @@ const Role = lazy(() => import("@/pages/Role"));
 const Menu = lazy(() => import("@/pages/Menu"));
 const Config = lazy(() => import("@/pages/SystemConfig"));
 const Profile = lazy(() => import("@/pages/Profile"));
-const ServerInfo = lazy(() => import("@/pages/Server.info"));
+const ServerInfo = lazy(() => import("@/pages/ServerInfo"));
 
 // 全局
 const Login = lazy(() => import("@/pages/Login"));
