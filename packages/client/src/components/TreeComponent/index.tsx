@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input, Tree, Dropdown } from "antd";
+import { useTranslation } from "react-i18next";
 import { EllipsisOutlined } from "@ant-design/icons";
 import IconRenderer from "../IconComponent/IconRenderer";
 import { usePermission } from "@/utils";
@@ -34,6 +35,7 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
     onItemAction,
     onSelect,
 }) => {
+    const { t } = useTranslation();
     // ==================== 状态管理 ====================
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -79,13 +81,13 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
     const getMenuItems = (item: TreeData) => [
         {
             key: "edit",
-            label: "编辑",
+            label: t("role:actions.edit", { defaultValue: "编辑" }),
             disabled: !editPermission,
             onClick: () => onItemAction?.("edit", item),
         },
         {
             key: "delete",
-            label: "删除",
+            label: t("role:actions.delete", { defaultValue: "删除" }),
             disabled: !deletePermission,
             onClick: () => onItemAction?.("delete", item),
         },
@@ -126,7 +128,7 @@ const TreeComponent: React.FC<TreeComponentProps> = ({
                 <Input
                     allowClear
                     onChange={handleSearchChange}
-                    placeholder="请搜索角色名称"
+                    placeholder={t("role:searchPlaceholder")}
                 />
                 <span>{children}</span>
             </div>

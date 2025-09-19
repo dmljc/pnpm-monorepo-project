@@ -1,0 +1,76 @@
+{
+    "title": "Role Management",
+    "tabs": {
+        "permission": "Role Permissions",
+        "info": "Role Information"
+    },
+    "form": {
+        "name": {
+            "label": "Name",
+            "placeholder": "Please enter role name",
+            "required": "Please enter role name"
+        },
+        "code": {
+            "label": "Code",
+            "placeholder": "Please enter role code",
+            "required": "Please enter role code"
+        },
+        "icon": {
+            "label": "Icon",
+            "placeholder": "Please select icon"
+        },
+        "status": {
+            "label": "Status",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
+        "permission": {
+            "label": "Menu Permissions",
+            "placeholder": "Please select menu permissions"
+        },
+        "remark": {
+            "label": "Remark",
+            "placeholder": "Please enter remark"
+        }
+    },
+    "info": {
+        "name": "Name",
+        "id": "ID",
+        "icon": "Icon",
+        "iconName": "Icon Name",
+        "code": "Code",
+        "status": "Role Status",
+        "permission": "Menu Permissions",
+        "createTime": "Create Time",
+        "updateTime": "Update Time",
+        "remark": "Remark"
+    },
+    "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+    },
+    "actions": {
+        "add": "Add Role",
+        "edit": "Edit",
+        "delete": "Delete"
+    },
+    "modal": {
+        "title": {
+            "create": "Add Role",
+            "edit": "Edit Role"
+        },
+        "buttons": {
+            "cancel": "Cancel",
+            "confirm": "Confirm"
+        }
+    },
+    "messages": {
+        "createSuccess": "Role created successfully",
+        "updateSuccess": "Role updated successfully",
+        "deleteSuccess": "Role deleted successfully",
+        "deleteConfirm": "Are you sure to delete role \"{{name}}\"? This action cannot be undone.",
+        "getListFailed": "Failed to get role list",
+        "deleteFailed": "Delete failed, please try again later"
+    },
+    "searchPlaceholder": "Please search role name"
+}

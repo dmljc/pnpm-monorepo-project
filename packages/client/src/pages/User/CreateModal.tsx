@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Form, Input, message, Modal, Radio, Select } from "antd";
+import { useTranslation } from "react-i18next";
 import { OSSUpload } from "../../components/index";
 import { ModalProps, UpdateUser } from "./interface";
 import { ModalTypeEnum } from "@/utils";
@@ -20,6 +21,7 @@ const defaultAvatar =
 
 const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
+    const { t } = useTranslation();
 
     const [form] = Form.useForm<UpdateUser>();
     const [roleOptions, setRoleOptions] = useState([]);
@@ -42,8 +44,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
             if (resp.success === true) {
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
-                        ? "新增成功"
-                        : "修改成功",
+                        ? t("user:messages.createSuccess")
+                        : t("user:messages.updateSuccess"),
                 );
                 handleOk();
             }
@@ -99,7 +101,9 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
             {contextHolder}
             <Modal
                 title={
-                    modalType === ModalTypeEnum.CREATE ? "新增用户" : "修改用户"
+                    modalType === ModalTypeEnum.CREATE
+                        ? t("user:modal.title.create")
+                        : t("user:modal.title.edit")
                 }
                 open={open}
                 width={600}
@@ -118,9 +122,14 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                     }}
                 >
                     <Item
-                        label="角色"
+                        label={t("user:modal.form.role.label")}
                         name="role"
-                        rules={[{ required: true, message: "请选择角色" }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t("user:modal.form.role.required"),
+                            },
+                        ]}
                     >
                         <Select
                             allowClear
@@ -128,29 +137,45 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             optionFilterProp="label"
                             fieldNames={{ label: "name", value: "code" }}
                             options={roleOptions}
-                            placeholder="请选择角色"
+                            placeholder={t("user:modal.form.role.placeholder")}
                         />
                     </Item>
 
                     <Item
-                        label="账号"
+                        label={t("user:modal.form.username.label")}
                         name="username"
-                        rules={[{ required: true, message: "请输入账号" }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t("user:modal.form.username.required"),
+                            },
+                        ]}
                     >
                         <Input
                             showCount
                             allowClear
                             maxLength={10}
-                            placeholder="请输入账号"
+                            placeholder={t(
+                                "user:modal.form.username.placeholder",
+                            )}
                         />
                     </Item>
                     <Item
-                        label="密码"
+                        label={t("user:modal.form.password.label")}
                         name="password"
                         rules={[
-                            { required: true, message: "请输入密码" },
-                            { min: 6, message: "密码长度不能少于6位" },
-                            { max: 10, message: "密码长度不能超过10位" },
+                            {
+                                required: true,
+                                message: t("user:modal.form.password.required"),
+                            },
+                            {
+                                min: 6,
+                                message: t("user:modal.form.password.min"),
+                            },
+                            {
+                                max: 10,
+                                message: t("user:modal.form.password.max"),
+                            },
                         ]}
                     >
                         <Input
@@ -158,29 +183,39 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             allowClear
                             minLength={6}
                             maxLength={10}
-                            placeholder="请输入密码"
+                            placeholder={t(
+                                "user:modal.form.password.placeholder",
+                            )}
                         />
                     </Item>
                     <Item
-                        label="姓名"
+                        label={t("user:modal.form.name.label")}
                         name="name"
-                        rules={[{ required: true, message: "请输入姓名" }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t("user:modal.form.name.required"),
+                            },
+                        ]}
                     >
                         <Input
                             showCount
                             allowClear
                             maxLength={10}
-                            placeholder="请输入姓名"
+                            placeholder={t("user:modal.form.name.placeholder")}
                         />
                     </Item>
                     <Item
-                        label="手机号"
+                        label={t("user:modal.form.phone.label")}
                         name="phone"
                         rules={[
-                            { required: true, message: "请输入手机号" },
+                            {
+                                required: true,
+                                message: t("user:modal.form.phone.required"),
+                            },
                             {
                                 pattern: /^1\d{10}$/,
-                                message: "手机号格式异常",
+                                message: t("user:modal.form.phone.invalid"),
                             },
                         ]}
                     >
@@ -188,43 +223,74 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                             showCount
                             allowClear
                             maxLength={11}
-                            placeholder="请输入手机号"
+                            placeholder={t("user:modal.form.phone.placeholder")}
                         />
                     </Item>
                     <Item
-                        label="邮箱"
+                        label={t("user:modal.form.email.label")}
                         name="email"
-                        rules={[{ required: true, message: "请输入邮箱" }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t("user:modal.form.email.required"),
+                            },
+                        ]}
                     >
-                        <Input allowClear placeholder="请输入邮箱" />
+                        <Input
+                            allowClear
+                            placeholder={t("user:modal.form.email.placeholder")}
+                        />
                     </Item>
                     <Item
-                        label="状态"
+                        label={t("user:modal.form.status.label")}
                         name="status"
-                        rules={[{ required: true, message: "请选择用户状态" }]}
+                        rules={[
+                            {
+                                required: true,
+                                message: t("user:modal.form.status.required"),
+                            },
+                        ]}
                     >
                         <Radio.Group onChange={onChangeStatus}>
-                            <Radio value={1}>启用</Radio>
-                            <Radio value={0}>停用</Radio>
+                            <Radio value={1}>
+                                {t("user:modal.form.status.enabled")}
+                            </Radio>
+                            <Radio value={0}>
+                                {t("user:modal.form.status.disabled")}
+                            </Radio>
                         </Radio.Group>
                     </Item>
                     <Item
-                        label="备注"
+                        label={t("user:modal.form.remark.label")}
                         name="remark"
-                        rules={[{ required: false, message: "请输入备注" }]}
+                        rules={[
+                            {
+                                required: false,
+                                message: t(
+                                    "user:modal.form.remark.placeholder",
+                                ),
+                            },
+                        ]}
                     >
                         <TextArea
                             showCount
                             allowClear
                             maxLength={100}
                             autoSize={{ minRows: 4, maxRows: 6 }}
-                            placeholder="请输入备注"
+                            placeholder={t(
+                                "user:modal.form.remark.placeholder",
+                            )}
                         />
                     </Item>
                     <Item
-                        label="头像"
+                        label={t("user:modal.form.avatar.label")}
                         name="avatar"
-                        rules={[{ required: false, message: "请上传头像!" }]}
+                        rules={[
+                            {
+                                required: false,
+                                message: t("user:modal.form.avatar.required"),
+                            },
+                        ]}
                     >
                         <OSSUpload
                             value={record?.avatar}

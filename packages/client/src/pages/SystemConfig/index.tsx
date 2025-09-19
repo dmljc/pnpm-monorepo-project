@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { Form, Upload, Input, message } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
+import { useTranslation } from "react-i18next";
 import { AuthButton } from "@/components";
 import useStyles from "./style";
 import { useSystemStore } from "@/store/systemStore";
@@ -13,6 +14,7 @@ const { Item } = Form;
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const Config: FC = () => {
+    const { t } = useTranslation();
     // ==================== 状态管理 ====================
     const [form] = Form.useForm<any>();
     const { styles: ss } = useStyles();
@@ -74,7 +76,7 @@ const Config: FC = () => {
 
             if (res.success) {
                 setSystemConfig(res.data);
-                messageApi.success("保存成功");
+                messageApi.success(t("systemConfig:messages.saveSuccess"));
             }
         } catch (error) {
             console.error("表单验证失败:", error);
@@ -90,10 +92,15 @@ const Config: FC = () => {
                 className={ss.root}
             >
                 <Item
-                    label="系统图标"
+                    label={t("systemConfig:form.logo.label")}
                     name="logo"
-                    extra="用于登录页和导航栏的网站图标，建议使用 .svg 格式"
-                    rules={[{ required: false, message: "请上传网站图标" }]}
+                    extra={t("systemConfig:form.logo.extra")}
+                    rules={[
+                        {
+                            required: false,
+                            message: t("systemConfig:form.logo.required"),
+                        },
+                    ]}
                 >
                     <ImgCrop rotationSlider>
                         <Upload
@@ -104,64 +111,91 @@ const Config: FC = () => {
                             onChange={handleFileChange}
                             onPreview={handleFilePreview}
                         >
-                            {fileList.length < 1 && "+ Upload"}
+                            {fileList.length < 1 &&
+                                t("systemConfig:form.logo.upload")}
                         </Upload>
                     </ImgCrop>
                 </Item>
                 <Item
-                    label="系统名称"
+                    label={t("systemConfig:form.name.label")}
                     name="name"
-                    extra="显示在浏览器标题栏和登录界面的系统名称"
-                    rules={[{ required: true, message: "请输入网站名称" }]}
+                    extra={t("systemConfig:form.name.extra")}
+                    rules={[
+                        {
+                            required: true,
+                            message: t("systemConfig:form.name.required"),
+                        },
+                    ]}
                 >
                     <Input
                         showCount
                         allowClear
                         maxLength={20}
                         disabled={!permission}
-                        placeholder="请输入系统名称"
+                        placeholder={t("systemConfig:form.name.placeholder")}
                     />
                 </Item>
                 <Item
-                    label="系统描述"
+                    label={t("systemConfig:form.description.label")}
                     name="description"
-                    extra="用于 SEO 的网站元描述"
-                    rules={[{ required: true, message: "请输入网站描述" }]}
+                    extra={t("systemConfig:form.description.extra")}
+                    rules={[
+                        {
+                            required: true,
+                            message: t(
+                                "systemConfig:form.description.required",
+                            ),
+                        },
+                    ]}
                 >
                     <Input
                         showCount
                         allowClear
                         maxLength={30}
                         disabled={!permission}
-                        placeholder="请输入系统描述"
+                        placeholder={t(
+                            "systemConfig:form.description.placeholder",
+                        )}
                     />
                 </Item>
                 <Item
-                    label="版权说明"
+                    label={t("systemConfig:form.copyright.label")}
                     name="copyright"
-                    extra="显示在页面底部的版权声明文本"
-                    rules={[{ required: true, message: "请输入版权说明" }]}
+                    extra={t("systemConfig:form.copyright.extra")}
+                    rules={[
+                        {
+                            required: true,
+                            message: t("systemConfig:form.copyright.required"),
+                        },
+                    ]}
                 >
                     <Input
                         showCount
                         allowClear
                         maxLength={60}
                         disabled={!permission}
-                        placeholder="请输入版权说明"
+                        placeholder={t(
+                            "systemConfig:form.copyright.placeholder",
+                        )}
                     />
                 </Item>
                 <Item
-                    label="ICP 备案号"
+                    label={t("systemConfig:form.icp.label")}
                     name="icp"
-                    extra="工信部 ICP 备案编号（如：京ICP备12345678号）"
-                    rules={[{ required: true, message: "请输入备案号" }]}
+                    extra={t("systemConfig:form.icp.extra")}
+                    rules={[
+                        {
+                            required: true,
+                            message: t("systemConfig:form.icp.required"),
+                        },
+                    ]}
                 >
                     <Input
                         showCount
                         allowClear
                         maxLength={30}
                         disabled={!permission}
-                        placeholder="请输入备案号"
+                        placeholder={t("systemConfig:form.icp.placeholder")}
                     />
                 </Item>
                 <Item>
@@ -173,7 +207,7 @@ const Config: FC = () => {
                         disabled={!permission}
                         onClick={handleSubmit}
                     >
-                        保存
+                        {t("systemConfig:buttons.save")}
                     </AuthButton>
                 </Item>
             </Form>

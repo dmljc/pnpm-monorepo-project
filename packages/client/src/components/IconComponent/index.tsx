@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Select, Input, Spin, Pagination, Row, Col } from "antd";
+import { useTranslation } from "react-i18next";
 import { Icon } from "@iconify/react";
 import {
     iconCardStyle,
@@ -214,6 +215,7 @@ const IconSearch = React.memo<{
     onChange: (value: string) => void;
     onSearch: (query: string) => void;
 }>(({ value, onChange, onSearch }) => {
+    const { t } = useTranslation();
     const debouncedValue = useDebounce(value, CONSTANTS.DEBOUNCE_DELAY);
 
     useEffect(() => {
@@ -229,7 +231,9 @@ const IconSearch = React.memo<{
 
     return (
         <Input
-            placeholder="搜索图标名称"
+            placeholder={t("menu:form.icon.searchPlaceholder", {
+                defaultValue: "搜索图标名称",
+            })}
             value={value}
             onChange={handleChange}
             allowClear
@@ -371,13 +375,15 @@ const IconSelector: React.FC<{
         setSearch(value);
     }, []);
 
+    const { t } = useTranslation();
+
     return (
         <Select
             showSearch={false}
             value={value}
             onChange={onChange}
             style={{ ...selectStyle, ...style }}
-            placeholder="请选择图标"
+            placeholder={t("menu:form.icon.placeholder")}
             popupRender={() => (
                 <div style={dropdownContainerStyle}>
                     {showSearch && (
@@ -426,7 +432,13 @@ const IconSelector: React.FC<{
             filterOption={false}
             allowClear
             styles={popupStyle}
-            notFoundContent={loading ? <Spin size="small" /> : "暂无数据"}
+            notFoundContent={
+                loading ? (
+                    <Spin size="small" />
+                ) : (
+                    t("menu:messages.noData", { defaultValue: "暂无数据" })
+                )
+            }
         />
     );
 };

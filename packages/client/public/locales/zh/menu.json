@@ -1,0 +1,88 @@
+{
+    "title": "菜单管理",
+    "table": {
+        "columns": {
+            "name": "菜单名称",
+            "path": "路径",
+            "icon": "图标",
+            "type": "类型",
+            "code": "权限编码",
+            "component": "组件",
+            "sort": "排序",
+            "status": "状态",
+            "createTime": "创建时间",
+            "updateTime": "更新时间",
+            "remark": "备注",
+            "actions": "操作"
+        },
+        "status": {
+            "enabled": "启用",
+            "disabled": "禁用"
+        },
+        "actions": {
+            "add": "新增",
+            "edit": "编辑",
+            "delete": "删除"
+        }
+    },
+    "form": {
+        "type": {
+            "label": "菜单类型",
+            "required": "请选择菜单类型",
+            "options": {
+                "catalog": "目录",
+                "menu": "菜单",
+                "button": "按钮"
+            }
+        },
+        "name": {
+            "label": "菜单名称",
+            "placeholder": "请输入菜单名称",
+            "required": "请输入菜单名称"
+        },
+        "path": {
+            "label": "路由地址",
+            "placeholder": "请输入路由地址",
+            "required": "请输入路由地址"
+        },
+        "icon": {
+            "label": "菜单图标",
+            "placeholder": "请选择菜单图标"
+        },
+        "component": {
+            "label": "页面组件",
+            "placeholder": "请输入页面组件",
+            "required": "请输入页面组件"
+        },
+        "code": {
+            "label": "权限字符",
+            "placeholder": "请输入权限字符",
+            "required": "请输入权限字符"
+        },
+        "parent": {
+            "label": "上级菜单",
+            "placeholder": "请选择上级菜单",
+            "required": "请选择上级菜单"
+        },
+        "sort": {
+            "label": "排序",
+            "placeholder": "请输入排序号"
+        },
+        "status": {
+            "label": "状态",
+            "enabled": "启用",
+            "disabled": "禁用"
+        },
+        "remark": {
+            "label": "备注",
+            "placeholder": "请输入备注"
+        }
+    },
+    "messages": {
+        "createSuccess": "菜单创建成功",
+        "updateSuccess": "菜单更新成功",
+        "deleteSuccess": "菜单删除成功",
+        "deleteConfirm": "确定要删除该菜单吗？",
+        "getListFailed": "获取菜单列表失败"
+    }
+}

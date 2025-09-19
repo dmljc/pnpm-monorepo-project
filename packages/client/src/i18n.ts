@@ -14,7 +14,17 @@ i18n
     // 启动 i18n
     .init({
         fallbackLng: "zh", // 默认语言
-        ns: ["common"], // 命名空间
+        ns: [
+            "common",
+            "login",
+            "user",
+            "role",
+            "menu",
+            "systemConfig",
+            "profile",
+            "workplace",
+            "analysis",
+        ], // 命名空间
         defaultNS: "common", // 默认命名空间
         interpolation: {
             escapeValue: false, // 不转义HTML， 防止 XSS 攻击（React 已默认转义）

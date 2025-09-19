@@ -1,0 +1,42 @@
+{
+    "title": "System Configuration",
+    "form": {
+        "logo": {
+            "label": "System Icon",
+            "extra": "Website icon for login page and navigation bar, recommend using .svg format",
+            "required": "Please upload website icon",
+            "upload": "+ Upload"
+        },
+        "name": {
+            "label": "System Name",
+            "extra": "System name displayed in browser title bar and login interface",
+            "placeholder": "Please enter system name",
+            "required": "Please enter website name"
+        },
+        "description": {
+            "label": "System Description",
+            "extra": "Website meta description for SEO",
+            "placeholder": "Please enter system description",
+            "required": "Please enter website description"
+        },
+        "copyright": {
+            "label": "Copyright Notice",
+            "extra": "Copyright statement text displayed at the bottom of the page",
+            "placeholder": "Please enter copyright notice",
+            "required": "Please enter copyright notice"
+        },
+        "icp": {
+            "label": "ICP Registration Number",
+            "extra": "ICP registration number from Ministry of Industry and Information Technology (e.g., 京ICP备12345678号)",
+            "placeholder": "Please enter registration number",
+            "required": "Please enter registration number"
+        }
+    },
+    "buttons": {
+        "save": "Save"
+    },
+    "messages": {
+        "saveSuccess": "Saved successfully",
+        "saveFailed": "Save failed"
+    }
+}

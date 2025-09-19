@@ -1,6 +1,7 @@
 import { FC, useEffect, useState, useCallback } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, message, Modal, Radio, RadioChangeEvent } from "antd";
+import { useTranslation } from "react-i18next";
 import {
     TreeTable,
     TreeComponent,
@@ -18,6 +19,7 @@ const { Item } = Form;
 const { Group, Button: RButton } = Radio;
 
 const Role: FC = () => {
+    const { t } = useTranslation();
     // ==================== 状态管理 ====================
     const { styles: ss } = useStyles();
 
@@ -71,8 +73,8 @@ const Role: FC = () => {
             if (!id) return;
             setRecord(data.find((item: UpdateRole) => item.id === id));
         } catch (error) {
-            console.error("获取角色列表失败:", error);
-            messageApi.error("获取角色列表失败");
+            console.error("get roles failed:", error);
+            messageApi.error(t("role:messages.getListFailed"));
         }
     };
 
@@ -80,14 +82,16 @@ const Role: FC = () => {
         try {
             const response = await del(item.id);
             if (response.success) {
-                messageApi.success("删除成功");
+                messageApi.success(t("role:messages.deleteSuccess"));
                 getRoleList();
             } else {
-                messageApi.error(response.message || "删除失败");
+                messageApi.error(
+                    response.message || t("role:messages.deleteFailed"),
+                );
             }
         } catch (error) {
-            console.error("删除失败:", error);
-            messageApi.error("删除失败，请稍后重试");
+            console.error("delete failed:", error);
+            messageApi.error(t("role:messages.deleteFailed"));
         }
     };
 
@@ -106,10 +110,10 @@ const Role: FC = () => {
 
     const handleDeleteConfirm = (item: any) => {
         Modal.confirm({
-            title: "确认删除",
-            content: `确定要删除角色"${item.name}"吗？此操作不可恢复。`,
-            okText: "确认删除",
-            cancelText: "取消",
+            title: t("role:modal.title.edit"),
+            content: t("role:messages.deleteConfirm", { name: item.name }),
+            okText: t("role:actions.delete"),
+            cancelText: t("common:button.cancel", { defaultValue: "取消" }),
             okType: "danger",
             onOk: () => handleDelete(item),
         });
@@ -181,8 +185,10 @@ const Role: FC = () => {
                         onChange={handleTabChange}
                         style={{ marginBottom: 16 }}
                     >
-                        <RButton value="permission">角色权限</RButton>
-                        <RButton value="info">角色信息</RButton>
+                        <RButton value="permission">
+                            {t("role:tabs.permission")}
+                        </RButton>
+                        <RButton value="info">{t("role:tabs.info")}</RButton>
                     </Group>
 
                     {roleDesc === "permission" && (
@@ -199,34 +205,38 @@ const Role: FC = () => {
                             wrapperCol={{ span: 18 }}
                             layout="horizontal"
                         >
-                            <Item label="名称" required>
+                            <Item label={t("role:info.name")} required>
                                 {record?.name}
                             </Item>
-                            <Item label="ID" required>
+                            <Item label={t("role:info.id")} required>
                                 {record?.id}
                             </Item>
-                            <Item label="图标" required>
+                            <Item label={t("role:info.icon")} required>
                                 <IconRenderer icon={record?.icon} />
                             </Item>
-                            <Item label="图标名称" required>
+                            <Item label={t("role:info.iconName")} required>
                                 {record?.icon}
                             </Item>
-                            <Item label="编码" required>
+                            <Item label={t("role:info.code")} required>
                                 {record?.code}
                             </Item>
-                            <Item label="角色状态" required>
-                                {record?.status === 1 ? "启用" : "禁用"}
+                            <Item label={t("role:info.status")} required>
+                                {record?.status === 1
+                                    ? t("role:status.enabled")
+                                    : t("role:status.disabled")}
                             </Item>
-                            <Item label="菜单权限" required>
+                            <Item label={t("role:info.permission")} required>
                                 {record?.permission}
                             </Item>
-                            <Item label="创建时间" required>
+                            <Item label={t("role:info.createTime")} required>
                                 {formatTime(record?.createTime)}
                             </Item>
-                            <Item label="更新时间" required>
+                            <Item label={t("role:info.updateTime")} required>
                                 {formatTime(record?.updateTime)}
                             </Item>
-                            <Item label="备注">{record?.remark}</Item>
+                            <Item label={t("role:info.remark")}>
+                                {record?.remark}
+                            </Item>
                         </Form>
                     )}
                 </div>

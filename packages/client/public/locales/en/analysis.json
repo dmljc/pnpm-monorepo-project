@@ -1,0 +1,18 @@
+{
+    "title": "Data Analysis",
+    "overview": "Overview",
+    "charts": "Charts",
+    "reports": "Reports",
+    "filters": "Filters",
+    "dateRange": "Date Range",
+    "metrics": "Metrics",
+    "trends": "Trends",
+    "comparison": "Comparison",
+    "export": "Export",
+    "refresh": "Refresh",
+    "messages": {
+        "loading": "Loading...",
+        "noData": "No data available",
+        "loadFailed": "Load failed"
+    }
+}

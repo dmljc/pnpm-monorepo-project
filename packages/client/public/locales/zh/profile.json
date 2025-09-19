@@ -1,0 +1,25 @@
+{
+    "title": "个人资料",
+    "info": {
+        "role": "角色",
+        "username": "用户名",
+        "password": "密码",
+        "name": "姓名",
+        "phone": "手机号",
+        "status": "状态",
+        "remark": "备注"
+    },
+    "status": {
+        "enabled": "启用",
+        "disabled": "停用"
+    },
+    "actions": {
+        "edit": "编辑",
+        "save": "保存",
+        "cancel": "取消"
+    },
+    "messages": {
+        "updateSuccess": "更新成功",
+        "updateFailed": "更新失败"
+    }
+}

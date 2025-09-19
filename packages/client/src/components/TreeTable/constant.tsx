@@ -4,17 +4,24 @@ import {
     BorderOutlined,
 } from "@ant-design/icons";
 
-export const typeOptions = [
-    { label: "目录", value: "catalog", icon: <AppstoreOutlined /> },
-    { label: "菜单", value: "menu", icon: <MenuOutlined /> },
-    { label: "按钮", value: "button", icon: <BorderOutlined /> },
+// 使用函数以便在组件中通过 i18n 计算标签
+export const getTypeOptions = (t: (key: string) => string) => [
+    {
+        label: t("menu:form.type.options.catalog"),
+        value: "catalog",
+        icon: <AppstoreOutlined />,
+    },
+    {
+        label: t("menu:form.type.options.menu"),
+        value: "menu",
+        icon: <MenuOutlined />,
+    },
+    {
+        label: t("menu:form.type.options.button"),
+        value: "button",
+        icon: <BorderOutlined />,
+    },
 ];
-
-export const typeMap: Record<string, string> = {
-    catalog: "目录",
-    menu: "菜单",
-    button: "按钮",
-};
 
 export const typeColorMap: Record<string, string> = {
     catalog: "geekblue",

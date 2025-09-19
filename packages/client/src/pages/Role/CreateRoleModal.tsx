@@ -10,6 +10,7 @@ import {
     Button,
     Space,
 } from "antd";
+import { useTranslation } from "react-i18next";
 import { IconComponent, TreeTable } from "@/components/index.tsx";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
@@ -25,6 +26,7 @@ const layout = {
 
 const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
+    const { t } = useTranslation();
     const [form] = Form.useForm<UpdateRole>();
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [selectedMenuKeys, setSelectedMenuKeys] = useState<React.Key[]>([]);
@@ -48,8 +50,8 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
             if (resp.success === true) {
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
-                        ? "新增成功"
-                        : "修改成功",
+                        ? t("role:messages.createSuccess")
+                        : t("role:messages.updateSuccess"),
                 );
                 handleOk(record?.id);
             }
@@ -107,7 +109,9 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
             {contextHolder}
             <Drawer
                 title={
-                    modalType === ModalTypeEnum.CREATE ? "新增角色" : "修改角色"
+                    modalType === ModalTypeEnum.CREATE
+                        ? t("role:modal.title.create")
+                        : t("role:modal.title.edit")
                 }
                 open={open}
                 width="70%"
@@ -115,13 +119,17 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                 placement="right"
                 extra={
                     <Space>
-                        <Button onClick={handleClose}>取消</Button>
+                        <Button onClick={handleClose}>
+                            {t("role:modal.buttons.cancel")}
+                        </Button>
                         <Button
                             type="primary"
                             onClick={onOk}
                             disabled={confirmLoading}
                         >
-                            {confirmLoading ? "提交中..." : "确定"}
+                            {confirmLoading
+                                ? t("common:loading", { defaultValue: "..." })
+                                : t("role:modal.buttons.confirm")}
                         </Button>
                     </Space>
                 }
@@ -137,27 +145,37 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                     <Row>
                         <Col span={12}>
                             <Item
-                                label="名称"
+                                label={t("role:form.name.label")}
                                 name="name"
                                 rules={[
-                                    { required: true, message: "请输入名称" },
+                                    {
+                                        required: true,
+                                        message: t("role:form.name.required"),
+                                    },
                                 ]}
                             >
                                 <Input
                                     showCount
                                     allowClear
                                     maxLength={10}
-                                    placeholder="请输入名称"
+                                    placeholder={t(
+                                        "role:form.name.placeholder",
+                                    )}
                                 />
                             </Item>
                         </Col>
 
                         <Col span={12}>
                             <Item
-                                label="图标"
+                                label={t("role:form.icon.label")}
                                 name="icon"
                                 rules={[
-                                    { required: true, message: "请选择图标" },
+                                    {
+                                        required: true,
+                                        message: t(
+                                            "role:form.icon.placeholder",
+                                        ),
+                                    },
                                 ]}
                             >
                                 <IconComponent />
@@ -167,31 +185,43 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                     <Row>
                         <Col span={12}>
                             <Item
-                                label="编码"
+                                label={t("role:form.code.label")}
                                 name="code"
                                 rules={[
-                                    { required: true, message: "请输入编码" },
+                                    {
+                                        required: true,
+                                        message: t("role:form.code.required"),
+                                    },
                                 ]}
                             >
                                 <Input
                                     showCount
                                     allowClear
                                     maxLength={10}
-                                    placeholder="请输入编码"
+                                    placeholder={t(
+                                        "role:form.code.placeholder",
+                                    )}
                                 />
                             </Item>
                         </Col>
                         <Col span={12}>
                             <Item
-                                label="状态"
+                                label={t("role:form.status.label")}
                                 name="status"
                                 rules={[
-                                    { required: true, message: "请选择状态" },
+                                    {
+                                        required: true,
+                                        message: t("role:form.status.label"),
+                                    },
                                 ]}
                             >
                                 <Radio.Group onChange={onChangeStatus}>
-                                    <Radio value={1}>启用</Radio>
-                                    <Radio value={0}>停用</Radio>
+                                    <Radio value={1}>
+                                        {t("role:form.status.enabled")}
+                                    </Radio>
+                                    <Radio value={0}>
+                                        {t("role:form.status.disabled")}
+                                    </Radio>
                                 </Radio.Group>
                             </Item>
                         </Col>
@@ -199,10 +229,15 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                     <Row>
                         <Col span={12}>
                             <Item
-                                label="备注"
+                                label={t("role:form.remark.label")}
                                 name="remark"
                                 rules={[
-                                    { required: false, message: "请输入备注" },
+                                    {
+                                        required: false,
+                                        message: t(
+                                            "role:form.remark.placeholder",
+                                        ),
+                                    },
                                 ]}
                             >
                                 <TextArea
@@ -210,7 +245,9 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                                     allowClear
                                     maxLength={100}
                                     autoSize={{ minRows: 4, maxRows: 6 }}
-                                    placeholder="请输入备注"
+                                    placeholder={t(
+                                        "role:form.remark.placeholder",
+                                    )}
                                 />
                             </Item>
                         </Col>
@@ -220,12 +257,14 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                             <Item
                                 labelCol={{ span: 2 }}
                                 wrapperCol={{ span: 22 }}
-                                label="菜单权限"
+                                label={t("role:form.permission.label")}
                                 name="permission"
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请选择菜单权限",
+                                        message: t(
+                                            "role:form.permission.placeholder",
+                                        ),
                                     },
                                 ]}
                             >

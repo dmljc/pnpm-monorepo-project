@@ -1,0 +1,25 @@
+{
+    "title": "Profile",
+    "info": {
+        "role": "Role",
+        "username": "Username",
+        "password": "Password",
+        "name": "Name",
+        "phone": "Phone",
+        "status": "Status",
+        "remark": "Remark"
+    },
+    "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+    },
+    "actions": {
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel"
+    },
+    "messages": {
+        "updateSuccess": "Updated successfully",
+        "updateFailed": "Update failed"
+    }
+}

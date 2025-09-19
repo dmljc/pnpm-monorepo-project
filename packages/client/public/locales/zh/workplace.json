@@ -1,0 +1,13 @@
+{
+    "title": "工作台",
+    "welcome": "欢迎使用工作台",
+    "quickActions": "快速操作",
+    "recentActivities": "最近活动",
+    "statistics": "统计信息",
+    "notifications": "通知",
+    "tasks": "任务",
+    "projects": "项目",
+    "messages": {
+        "noData": "暂无数据"
+    }
+}

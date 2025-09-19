@@ -1,0 +1,76 @@
+{
+    "title": "角色管理",
+    "tabs": {
+        "permission": "角色权限",
+        "info": "角色信息"
+    },
+    "form": {
+        "name": {
+            "label": "名称",
+            "placeholder": "请输入角色名称",
+            "required": "请输入角色名称"
+        },
+        "code": {
+            "label": "编码",
+            "placeholder": "请输入角色编码",
+            "required": "请输入角色编码"
+        },
+        "icon": {
+            "label": "图标",
+            "placeholder": "请选择图标"
+        },
+        "status": {
+            "label": "状态",
+            "enabled": "启用",
+            "disabled": "禁用"
+        },
+        "permission": {
+            "label": "菜单权限",
+            "placeholder": "请选择菜单权限"
+        },
+        "remark": {
+            "label": "备注",
+            "placeholder": "请输入备注"
+        }
+    },
+    "info": {
+        "name": "名称",
+        "id": "ID",
+        "icon": "图标",
+        "iconName": "图标名称",
+        "code": "编码",
+        "status": "角色状态",
+        "permission": "菜单权限",
+        "createTime": "创建时间",
+        "updateTime": "更新时间",
+        "remark": "备注"
+    },
+    "status": {
+        "enabled": "启用",
+        "disabled": "禁用"
+    },
+    "actions": {
+        "add": "新增角色",
+        "edit": "编辑",
+        "delete": "删除"
+    },
+    "modal": {
+        "title": {
+            "create": "新增角色",
+            "edit": "编辑角色"
+        },
+        "buttons": {
+            "cancel": "取消",
+            "confirm": "确认"
+        }
+    },
+    "messages": {
+        "createSuccess": "角色创建成功",
+        "updateSuccess": "角色更新成功",
+        "deleteSuccess": "角色删除成功",
+        "deleteConfirm": "确定要删除角色\"{{name}}\"吗？此操作不可恢复。",
+        "getListFailed": "获取角色列表失败",
+        "deleteFailed": "删除失败，请稍后重试"
+    },
+    "searchPlaceholder": "请搜索角色名称"
+}

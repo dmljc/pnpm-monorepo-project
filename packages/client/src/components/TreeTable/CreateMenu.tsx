@@ -1,10 +1,11 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { Form, Input, Radio, message, Modal, TreeSelect } from "antd";
 import type { TreeSelectProps } from "antd";
+import { useTranslation } from "react-i18next";
 import { ModalProps, UpdateMenu } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
-import { typeOptions, typeMap } from "./constant";
+import { getTypeOptions } from "./constant";
 import { IconComponent } from "@/components";
 import { useMenuStore } from "@/store";
 
@@ -17,6 +18,7 @@ const layout = {
 
 const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
     const { modalType, open, record, handleClose } = props;
+    const { t } = useTranslation();
     const menuStore = useMenuStore();
     const [form] = Form.useForm<UpdateMenu>();
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -51,8 +53,8 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
             if (resp.success === true) {
                 messageApi.success(
                     modalType === ModalTypeEnum.CREATE
-                        ? "新增成功"
-                        : "修改成功",
+                        ? t("menu:messages.createSuccess")
+                        : t("menu:messages.updateSuccess"),
                 );
                 menuStore.getMenuMeList();
                 handleClose();
@@ -103,7 +105,9 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
             {contextHolder}
             <Modal
                 title={
-                    modalType === ModalTypeEnum.CREATE ? "新增菜单" : "编辑菜单"
+                    modalType === ModalTypeEnum.CREATE
+                        ? t("menu:actions.add")
+                        : t("menu:table.actions.edit")
                 }
                 open={open}
                 onOk={onOk}
@@ -121,11 +125,11 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                 >
                     <Item
                         name="type"
-                        label="菜单类型"
+                        label={t("menu:form.type.label")}
                         rules={[
                             {
                                 required: true,
-                                message: "请选择菜单类型",
+                                message: t("menu:form.type.required"),
                             },
                         ]}
                     >
@@ -134,7 +138,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                             buttonStyle="solid"
                             onChange={onChangeMenuType}
                         >
-                            {typeOptions.map((item) => (
+                            {getTypeOptions(t).map((item) => (
                                 <Radio.Button
                                     key={item.value}
                                     value={item.value}
@@ -147,27 +151,27 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                     {/* 下面根据type动态渲染 */}
                     <Item
                         name="label"
-                        label={`${typeMap[type as keyof typeof typeMap]}名称`}
+                        label={t("menu:form.name.label")}
                         rules={[
                             {
                                 required: true,
-                                message: "请输入菜单名称",
+                                message: t("menu:form.name.required"),
                             },
                         ]}
                     >
                         <Input
                             allowClear
                             maxLength={8}
-                            placeholder="请输入菜单名称"
+                            placeholder={t("menu:form.name.placeholder")}
                         />
                     </Item>
                     <Item
                         name="icon"
-                        label="菜单图标"
+                        label={t("menu:form.icon.label")}
                         rules={[
                             {
                                 required: true,
-                                message: "请选择菜单图标",
+                                message: t("menu:form.icon.placeholder"),
                             },
                         ]}
                     >
@@ -183,11 +187,11 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                     {["menu", "button"].includes(type) && (
                         <Item
                             name="parentId"
-                            label="上级菜单"
+                            label={t("menu:form.parent.label")}
                             rules={[
                                 {
                                     required: true,
-                                    message: "请选择上级菜单",
+                                    message: t("menu:form.parent.required"),
                                 },
                             ]}
                         >
@@ -198,61 +202,63 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
                                 treeDataSimpleMode={false}
                                 treeDefaultExpandAll
                                 treeNodeFilterProp="label"
-                                placeholder="请选择上级菜单"
+                                placeholder={t("menu:form.parent.placeholder")}
                             />
                         </Item>
                     )}
                     {type === "button" && (
                         <Item
                             name="code"
-                            label="权限字符"
+                            label={t("menu:form.code.label")}
                             rules={[
                                 {
                                     required: true,
-                                    message: "请输入权限字符",
+                                    message: t("menu:form.code.required"),
                                 },
                             ]}
                         >
                             <Input
                                 allowClear
                                 maxLength={30}
-                                placeholder="请输入权限字符"
+                                placeholder={t("menu:form.code.placeholder")}
                             />
                         </Item>
                     )}
                     {["catalog", "menu"].includes(type) && (
                         <Item
                             name="path"
-                            label="路由地址"
+                            label={t("menu:form.path.label")}
                             rules={[
                                 {
                                     required: true,
-                                    message: "请输入路由地址",
+                                    message: t("menu:form.path.required"),
                                 },
                             ]}
                         >
                             <Input
                                 allowClear
                                 maxLength={30}
-                                placeholder="请输入路由地址"
+                                placeholder={t("menu:form.path.placeholder")}
                             />
                         </Item>
                     )}
                     {type === "menu" && (
                         <Item
                             name="component"
-                            label="页面组件"
+                            label={t("menu:form.component.label")}
                             rules={[
                                 {
                                     required: true,
-                                    message: "请输入页面组件",
+                                    message: t("menu:form.component.required"),
                                 },
                             ]}
                         >
                             <Input
                                 allowClear
                                 maxLength={30}
-                                placeholder="请输入页面组件"
+                                placeholder={t(
+                                    "menu:form.component.placeholder",
+                                )}
                             />
                         </Item>
                     )}

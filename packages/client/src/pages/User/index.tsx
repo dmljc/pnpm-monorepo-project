@@ -15,6 +15,7 @@ import {
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 
 // 内部组件
 import { AuthButton } from "@/components";
@@ -31,12 +32,13 @@ import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
 
 // ==================== 表格列配置 ====================
 const createColumns = (
+    t: (key: string, options?: any) => string,
     handleEditUser: (record: UpdateUser) => void,
     handleDelete: (record: UpdateUser) => void,
     handleFreeze: (record: UpdateUser) => void,
 ): ProColumns<GithubIssueItem>[] => [
     {
-        title: "头像",
+        title: t("user:table.columns.avatar"),
         dataIndex: "avatar",
         width: 120,
         fixed: "left",
@@ -69,41 +71,41 @@ const createColumns = (
             ) : null,
     },
     {
-        title: "账号",
+        title: t("user:table.columns.username"),
         dataIndex: "username",
         width: 120,
         fixed: "left",
         render: (text) => <a>{text}</a>,
     },
     {
-        title: "密码",
+        title: t("user:table.columns.password"),
         dataIndex: "password",
         search: false,
         width: 110,
     },
     {
-        title: "姓名",
+        title: t("user:table.columns.name"),
         dataIndex: "name",
         width: 110,
     },
     {
-        title: "角色",
+        title: t("user:table.columns.role"),
         dataIndex: "role",
         hideInSearch: true,
         width: 100,
     },
     {
-        title: "手机号",
+        title: t("user:table.columns.phone"),
         dataIndex: "phone",
         width: 130,
     },
     {
-        title: "邮箱",
+        title: t("user:table.columns.email"),
         dataIndex: "email",
         width: 180,
     },
     {
-        title: "状态",
+        title: t("user:table.columns.status"),
         dataIndex: "status",
         search: false,
         filters: true,
@@ -111,12 +113,12 @@ const createColumns = (
         width: 100,
         valueType: "select",
         valueEnum: {
-            1: { text: "启用", status: "Success" },
-            0: { text: "停用", status: "Error" },
+            1: { text: t("user:table.status.enabled"), status: "Success" },
+            0: { text: t("user:table.status.disabled"), status: "Error" },
         },
     },
     {
-        title: "创建时间",
+        title: t("user:table.columns.createTime"),
         dataIndex: "createTime",
         valueType: "dateTime",
         sorter: true,
@@ -124,7 +126,7 @@ const createColumns = (
         width: 180,
     },
     {
-        title: "创建时间",
+        title: t("user:table.columns.createTime"),
         dataIndex: "createTime",
         valueType: "dateRange",
         hideInTable: true,
@@ -139,7 +141,7 @@ const createColumns = (
         },
     },
     {
-        title: "更新时间",
+        title: t("user:table.columns.updateTime"),
         dataIndex: "updateTime",
         valueType: "dateTime",
         sorter: true,
@@ -147,7 +149,7 @@ const createColumns = (
         width: 180,
     },
     {
-        title: "备注",
+        title: t("user:table.columns.remark"),
         dataIndex: "remark",
         search: false,
         ellipsis: true,
@@ -155,7 +157,7 @@ const createColumns = (
         width: 200,
     },
     {
-        title: "操作",
+        title: t("user:table.columns.actions"),
         valueType: "option",
         key: "option",
         width: 200,
@@ -169,7 +171,7 @@ const createColumns = (
                 icon={<EditOutlined />}
                 onClick={() => handleEditUser(_record)}
             >
-                编辑
+                {t("user:table.actions.edit")}
             </AuthButton>,
             <AuthButton
                 code="user:disabled"
@@ -187,7 +189,9 @@ const createColumns = (
                 // disabled={_record.role === "root"}
                 onClick={() => handleFreeze(_record)}
             >
-                {_record.status === 1 ? "停用" : "启用"}
+                {_record.status === 1
+                    ? t("user:table.actions.disable")
+                    : t("user:table.actions.enable")}
             </AuthButton>,
             <AuthButton
                 code="user:delete"
@@ -199,13 +203,14 @@ const createColumns = (
                 // disabled={_record.role === "root"}
                 onClick={() => handleDelete(_record)}
             >
-                删除
+                {t("user:table.actions.delete")}
             </AuthButton>,
         ],
     },
 ];
 
 const User: FC = () => {
+    const { t } = useTranslation();
     // ==================== 状态管理 ====================
     // 表格相关状态
     const actionRef = useRef<ActionType>(null);
@@ -226,7 +231,7 @@ const User: FC = () => {
         const resp = await create(params);
         if (resp.success === true) {
             actionRef.current?.reload();
-            messageApi.success("批量新增成功");
+            messageApi.success(t("user:messages.createSuccess"));
         }
     };
 
@@ -234,7 +239,7 @@ const User: FC = () => {
         const resp = await del(record.id);
         if (resp) {
             actionRef.current?.reload();
-            messageApi.success("删除成功");
+            messageApi.success(t("user:messages.deleteSuccess"));
         }
     };
 
@@ -242,7 +247,12 @@ const User: FC = () => {
         const resp = await freeze(record.id, record.status === 1 ? 0 : 1);
         if (resp) {
             actionRef.current?.reload();
-            messageApi.success("修改成功");
+            const enabled = record.status === 0;
+            messageApi.success(
+                enabled
+                    ? t("user:messages.enableSuccess")
+                    : t("user:messages.disableSuccess"),
+            );
         }
     };
 
@@ -259,18 +269,18 @@ const User: FC = () => {
             reader.onload = () => {
                 const result = JSON.parse(reader.result as string);
                 if (!result.success) {
-                    messageApi.error("导入失败");
+                    messageApi.error(t("user:messages.importFailed"));
                     return;
                 }
                 addUser(result.data);
             };
             reader.onerror = () => {
-                console.log("导入失败了");
+                console.log("import failed");
             };
             reader.readAsText(response);
         } catch (error) {
-            console.error("导入失败", error);
-            messageApi.error("导入失败");
+            console.error("import failed", error);
+            messageApi.error(t("user:messages.importFailed"));
         } finally {
             setLoading(false);
         }
@@ -298,13 +308,10 @@ const User: FC = () => {
                 window.URL.revokeObjectURL(url);
             }, 100);
 
-            messageApi.success("导出成功");
+            messageApi.success(t("user:messages.exportSuccess"));
         } catch (error) {
-            console.error("导出失败", error);
-            messageApi.error(
-                "导出失败: " +
-                    (error instanceof Error ? error.message : String(error)),
-            );
+            console.error("export failed", error);
+            messageApi.error(t("user:messages.exportFailed"));
         }
     };
 
@@ -330,7 +337,12 @@ const User: FC = () => {
     };
 
     // ==================== 表格配置 ====================
-    const columns = createColumns(handleEditUser, handleDelete, handleFreeze);
+    const columns = createColumns(
+        t,
+        handleEditUser,
+        handleDelete,
+        handleFreeze,
+    );
 
     return (
         <>
@@ -399,7 +411,7 @@ const User: FC = () => {
                     pageSize: 10,
                 }}
                 dateFormatter="string"
-                headerTitle="高级表格"
+                headerTitle={t("user:title")}
                 toolBarRender={() => [
                     <AuthButton
                         code="user:create"
@@ -408,7 +420,7 @@ const User: FC = () => {
                         icon={<PlusOutlined />}
                         onClick={handleCreateUser}
                     >
-                        新增
+                        {t("user:toolbar.add")}
                     </AuthButton>,
                     <AuthButton
                         code="user:export"
@@ -416,7 +428,7 @@ const User: FC = () => {
                         icon={<DownloadOutlined />}
                         onClick={handleExport}
                     >
-                        导出Excel
+                        {t("user:toolbar.export")}
                     </AuthButton>,
                     <Upload
                         name="file"
@@ -433,7 +445,7 @@ const User: FC = () => {
                             icon={<UploadOutlined />}
                             loading={loading}
                         >
-                            导入Excel
+                            {t("user:toolbar.import")}
                         </AuthButton>
                     </Upload>,
                 ]}

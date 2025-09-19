@@ -1,21 +1,37 @@
 import { FC } from "react";
 import { useUserStore } from "@/store";
+import { useTranslation } from "react-i18next";
 
 const Profile: FC = () => {
     const userInfo = useUserStore().userInfo;
+    const { t } = useTranslation();
 
     return (
         <>
-            <h1>Profile:用户信息，取自 system store</h1>
+            <h1>{t("profile:title")}</h1>
             {userInfo && (
                 <>
-                    <p>role: {userInfo.role}</p>
-                    <p>username: {userInfo.username}</p>
-                    <p>password: {userInfo.password}</p>
-                    <p>name: {userInfo.name}</p>
-                    <p>phone: {userInfo.phone}</p>
-                    <p>status: {userInfo.status}</p>
-                    <p>remark: {userInfo.remark}</p>
+                    <p>
+                        {t("profile:info.role")}: {userInfo.role}
+                    </p>
+                    <p>
+                        {t("profile:info.username")}: {userInfo.username}
+                    </p>
+                    <p>
+                        {t("profile:info.password")}: {userInfo.password}
+                    </p>
+                    <p>
+                        {t("profile:info.name")}: {userInfo.name}
+                    </p>
+                    <p>
+                        {t("profile:info.phone")}: {userInfo.phone}
+                    </p>
+                    <p>
+                        {t("profile:info.status")}: {userInfo.status}
+                    </p>
+                    <p>
+                        {t("profile:info.remark")}: {userInfo.remark}
+                    </p>
                 </>
             )}
         </>

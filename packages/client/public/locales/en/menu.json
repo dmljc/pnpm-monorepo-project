@@ -1,0 +1,88 @@
+{
+    "title": "Menu Management",
+    "table": {
+        "columns": {
+            "name": "Menu Name",
+            "path": "Path",
+            "icon": "Icon",
+            "type": "Type",
+            "code": "Permission Code",
+            "component": "Component",
+            "sort": "Sort",
+            "status": "Status",
+            "createTime": "Create Time",
+            "updateTime": "Update Time",
+            "remark": "Remark",
+            "actions": "Actions"
+        },
+        "status": {
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
+        "actions": {
+            "add": "Add",
+            "edit": "Edit",
+            "delete": "Delete"
+        }
+    },
+    "form": {
+        "type": {
+            "label": "Menu Type",
+            "required": "Please select menu type",
+            "options": {
+                "catalog": "Directory",
+                "menu": "Menu",
+                "button": "Button"
+            }
+        },
+        "name": {
+            "label": "Menu Name",
+            "placeholder": "Please enter menu name",
+            "required": "Please enter menu name"
+        },
+        "path": {
+            "label": "Route Address",
+            "placeholder": "Please enter route address",
+            "required": "Please enter route address"
+        },
+        "icon": {
+            "label": "Menu Icon",
+            "placeholder": "Please select menu icon"
+        },
+        "component": {
+            "label": "Page Component",
+            "placeholder": "Please enter page component",
+            "required": "Please enter page component"
+        },
+        "code": {
+            "label": "Permission Code",
+            "placeholder": "Please enter permission code",
+            "required": "Please enter permission code"
+        },
+        "parent": {
+            "label": "Parent Menu",
+            "placeholder": "Please select parent menu",
+            "required": "Please select parent menu"
+        },
+        "sort": {
+            "label": "Sort",
+            "placeholder": "Please enter sort number"
+        },
+        "status": {
+            "label": "Status",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
+        "remark": {
+            "label": "Remark",
+            "placeholder": "Please enter remark"
+        }
+    },
+    "messages": {
+        "createSuccess": "Menu created successfully",
+        "updateSuccess": "Menu updated successfully",
+        "deleteSuccess": "Menu deleted successfully",
+        "deleteConfirm": "Are you sure to delete this menu?",
+        "getListFailed": "Failed to get menu list"
+    }
+}

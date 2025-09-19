@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { message, Space, Table, Tag, Form } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
+import { useTranslation } from "react-i18next";
 
 import { AuthButton } from "@/components";
 import { useMenuStore } from "@/store";
@@ -72,6 +73,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         selectedRowKeys,
     } = props;
     const [messageApi, contextHolder] = message.useMessage();
+    const { t } = useTranslation();
     const menuStore = useMenuStore();
 
     const [open, setOpen] = useState(false);
@@ -116,12 +118,12 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     // 定义表格列配置
     const columns: TreeTableColumn[] = [
         {
-            title: "标题",
+            title: t("menu:table.columns.name"),
             dataIndex: "label",
             key: "label",
         },
         {
-            title: "图标",
+            title: t("menu:table.columns.icon"),
             dataIndex: "icon",
             key: "icon",
             render: (icon) => {
@@ -129,7 +131,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
             },
         },
         {
-            title: "类型",
+            title: t("menu:table.columns.type"),
             dataIndex: "type",
             key: "type",
             render: (type) => {
@@ -139,17 +141,17 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
             },
         },
         {
-            title: "权限编码",
+            title: t("menu:table.columns.code"),
             dataIndex: "code",
             key: "code",
         },
         {
-            title: "路由地址",
+            title: t("menu:table.columns.path"),
             dataIndex: "path",
             key: "path",
         },
         {
-            title: "页面组件",
+            title: t("menu:table.columns.component"),
             dataIndex: "component",
             key: "component",
         },
@@ -157,7 +159,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
 
     const actionColumns: TableColumnsType<T> = [
         {
-            title: "操作",
+            title: t("menu:table.columns.actions"),
             dataIndex: "ctrl",
             key: "ctrl",
             render: (_: any, record: any) => {
@@ -172,7 +174,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                                 icon={<EditOutlined />}
                                 onClick={() => handleUpdate(record)}
                             >
-                                编辑
+                                {t("menu:table.actions.edit")}
                             </AuthButton>
                         )}
                         {editable && (
@@ -184,7 +186,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                                 icon={<DeleteOutlined />}
                                 onClick={() => handleDelete(record)}
                             >
-                                删除
+                                {t("menu:table.actions.delete")}
                             </AuthButton>
                         )}
                     </Space>
@@ -274,7 +276,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     const handleDelete = async (record: DataType) => {
         const res = await del(record.id);
         if (res.success) {
-            messageApi.success("删除成功");
+            messageApi.success(t("menu:messages.deleteSuccess"));
             menuStore.getMenuMeList();
         }
     };
@@ -291,7 +293,7 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                     icon={<PlusOutlined />}
                     onClick={handleCreate}
                 >
-                    新增
+                    {t("menu:table.actions.add")}
                 </AuthButton>
             )}
 

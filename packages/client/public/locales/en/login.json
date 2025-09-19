@@ -1,0 +1,43 @@
+{
+    "title": "Login",
+    "tabs": {
+        "account": "Account Login",
+        "email": "Email Login"
+    },
+    "form": {
+        "username": {
+            "label": "Username",
+            "placeholder": "Username: zfcstring",
+            "required": "Please enter username!"
+        },
+        "password": {
+            "label": "Password",
+            "placeholder": "Password: 999999",
+            "required": "Please enter password!"
+        },
+        "email": {
+            "label": "Email",
+            "placeholder": "Email",
+            "required": "Please enter email!",
+            "invalid": "Please enter a valid email format!"
+        },
+        "captcha": {
+            "label": "Verification Code",
+            "placeholder": "Please enter verification code",
+            "required": "Please enter verification code!",
+            "invalid": "Verification code must be 6 digits",
+            "getCode": "Get Code",
+            "countdown": "{{count}} Get Code"
+        },
+        "autoLogin": "Auto Login",
+        "forgetPassword": "Forgot Password"
+    },
+    "otherLogin": "Other Login Methods",
+    "messages": {
+        "loginSuccess": "Login successful",
+        "loginFailed": "Login failed",
+        "githubLoginFailed": "Github login failed",
+        "googleLoginFailed": "Google login failed",
+        "captchaSent": "Your verification code is: {{code}}, valid for 5 minutes"
+    }
+}

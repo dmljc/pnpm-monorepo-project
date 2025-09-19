@@ -20,6 +20,7 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from "@ant-design/pro-components";
+import { useTranslation } from "react-i18next";
 
 // 工具/常量
 import useStyles from "./style";
@@ -53,19 +54,22 @@ export interface LoginUser {
     captcha: string;
 }
 
-// 登录表单配置
-const LOGIN_TABS: TabsProps["items"] = [
+// 登录表单配置（使用函数以便读取 i18n）
+const getLoginTabs = (
+    t: (key: string, options?: any) => string,
+): TabsProps["items"] => [
     {
         key: LoginType.ACCOUNT,
-        label: "账号密码登录",
+        label: t("login:tabs.account"),
     },
     {
         key: LoginType.EMAIL,
-        label: "邮箱登录",
+        label: t("login:tabs.email"),
     },
 ];
 
 const Login: FC = () => {
+    const { t } = useTranslation();
     const [loginType, setLoginType] = useState<LoginType>(LoginType.ACCOUNT);
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
@@ -100,7 +104,7 @@ const Login: FC = () => {
         if (resp === true) {
             navigate("/");
         } else {
-            messageApi.error("登录失败");
+            messageApi.error(t("login:messages.loginFailed"));
         }
     };
 
@@ -110,7 +114,7 @@ const Login: FC = () => {
             window.location.href =
                 "http://localhost:3000/api/auth/github/login";
         } catch {
-            messageApi.error("Github 登录失败");
+            messageApi.error(t("login:messages.githubLoginFailed"));
         }
     };
     // 处理Google登录
@@ -119,7 +123,7 @@ const Login: FC = () => {
             window.location.href =
                 "http://localhost:3000/api/auth/google/login";
         } catch {
-            messageApi.error("Google 登录失败");
+            messageApi.error(t("login:messages.googleLoginFailed"));
         }
     };
 
@@ -128,7 +132,9 @@ const Login: FC = () => {
         const res = await emailCaptcha({
             address: "1593025641@qq.com",
         });
-        messageApi.success(`您的验证码是：${res?.data}，有效期为 5 分钟`);
+        messageApi.success(
+            t("login:messages.captchaSent", { code: res?.data }),
+        );
     };
 
     // 渲染账号密码登录表单
@@ -140,11 +146,11 @@ const Login: FC = () => {
                     size: "large",
                     prefix: <UserOutlined className={ss.username} />,
                 }}
-                placeholder={"用户名: zfcstring"}
+                placeholder={t("login:form.username.placeholder")}
                 rules={[
                     {
                         required: true,
-                        message: "请输入用户名!",
+                        message: t("login:form.username.required"),
                     },
                 ]}
             />
@@ -154,11 +160,11 @@ const Login: FC = () => {
                     size: "large",
                     prefix: <LockOutlined className={ss.password} />,
                 }}
-                placeholder={"密码: 999999"}
+                placeholder={t("login:form.password.placeholder")}
                 rules={[
                     {
                         required: true,
-                        message: "请输入密码！",
+                        message: t("login:form.password.required"),
                     },
                 ]}
             />
@@ -174,16 +180,16 @@ const Login: FC = () => {
                     prefix: <MobileOutlined className={ss.email} />,
                 }}
                 name="email"
-                placeholder={"邮箱"}
+                placeholder={t("login:form.email.placeholder")}
                 rules={[
                     {
                         required: true,
-                        message: "请输入邮箱！",
+                        message: t("login:form.email.required"),
                     },
                     {
                         pattern:
                             /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                        message: "请输入正确的邮箱格式！",
+                        message: t("login:form.email.invalid"),
                     },
                 ]}
             />
@@ -193,16 +199,21 @@ const Login: FC = () => {
                     prefix: <LockOutlined className={ss.captcha} />,
                 }}
                 captchaProps={{ size: "large" }}
-                placeholder={"请输入验证码"}
+                placeholder={t("login:form.captcha.placeholder")}
                 captchaTextRender={(timing, count) => {
-                    return timing ? `${count} ${"获取验证码"}` : "获取验证码";
+                    return timing
+                        ? t("login:form.captcha.countdown", { count })
+                        : t("login:form.captcha.getCode");
                 }}
                 name="captcha"
                 rules={[
-                    { required: true, message: "请输入验证码！" },
+                    {
+                        required: true,
+                        message: t("login:form.captcha.required"),
+                    },
                     {
                         pattern: /^\d{6}$/,
-                        message: "验证码必须是6位数字",
+                        message: t("login:form.captcha.invalid"),
                     },
                 ]}
                 onGetCaptcha={sendEmailCaptcha}
@@ -214,7 +225,7 @@ const Login: FC = () => {
     const renderOtherLoginMethods = () => (
         <div className={ss.actions}>
             <Divider plain>
-                <span className={ss.others}>其他登录方式</span>
+                <span className={ss.others}>{t("login:otherLogin")}</span>
             </Divider>
             <Space align="center" size={24}>
                 <div className={ss.alipay}>
@@ -261,7 +272,7 @@ const Login: FC = () => {
             >
                 <Tabs
                     centered
-                    items={LOGIN_TABS}
+                    items={getLoginTabs(t)}
                     activeKey={loginType}
                     onChange={(activeKey) =>
                         setLoginType(activeKey as LoginType)
@@ -272,9 +283,11 @@ const Login: FC = () => {
                     : renderEmailLogin()}
                 <div className={ss.checkbox}>
                     <ProFormCheckbox noStyle name="autoLogin">
-                        自动登录
+                        {t("login:form.autoLogin")}
                     </ProFormCheckbox>
-                    <a className={ss.forget}>忘记密码</a>
+                    <a className={ss.forget}>
+                        {t("login:form.forgetPassword")}
+                    </a>
                 </div>
                 {contextHolder}
             </LoginFormPage>

@@ -1,0 +1,101 @@
+{
+    "title": "User Management",
+    "table": {
+        "columns": {
+            "avatar": "Avatar",
+            "username": "Username",
+            "password": "Password",
+            "name": "Name",
+            "role": "Role",
+            "phone": "Phone",
+            "email": "Email",
+            "status": "Status",
+            "createTime": "Create Time",
+            "updateTime": "Update Time",
+            "remark": "Remark",
+            "actions": "Actions"
+        },
+        "status": {
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
+        "actions": {
+            "edit": "Edit",
+            "enable": "Enable",
+            "disable": "Disable",
+            "delete": "Delete"
+        }
+    },
+    "toolbar": {
+        "add": "Add",
+        "export": "Export Excel",
+        "import": "Import Excel"
+    },
+    "modal": {
+        "title": {
+            "create": "Add User",
+            "edit": "Edit User"
+        },
+        "form": {
+            "username": {
+                "label": "Username",
+                "placeholder": "Please enter username",
+                "required": "Please enter username"
+            },
+            "password": {
+                "label": "Password",
+                "placeholder": "Please enter password",
+                "required": "Please enter password"
+            },
+            "name": {
+                "label": "Name",
+                "placeholder": "Please enter name",
+                "required": "Please enter name"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "Please enter phone number",
+                "required": "Please enter phone number",
+                "invalid": "Please enter a valid phone number"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Please enter email",
+                "required": "Please enter email",
+                "invalid": "Please enter a valid email format"
+            },
+            "role": {
+                "label": "Role",
+                "placeholder": "Please select role",
+                "required": "Please select role"
+            },
+            "status": {
+                "label": "Status",
+                "enabled": "Enabled",
+                "disabled": "Disabled"
+            },
+            "remark": {
+                "label": "Remark",
+                "placeholder": "Please enter remark"
+            }
+        },
+        "buttons": {
+            "cancel": "Cancel",
+            "confirm": "Confirm"
+        }
+    },
+    "messages": {
+        "createSuccess": "User created successfully",
+        "updateSuccess": "User updated successfully",
+        "deleteSuccess": "User deleted successfully",
+        "enableSuccess": "User enabled successfully",
+        "disableSuccess": "User disabled successfully",
+        "exportSuccess": "Export successful",
+        "importSuccess": "Import successful",
+        "importFailed": "Import failed",
+        "exportFailed": "Export failed",
+        "deleteConfirm": "Are you sure to delete this user?",
+        "disableConfirm": "Are you sure to disable this user?",
+        "enableConfirm": "Are you sure to enable this user?"
+    }
+}

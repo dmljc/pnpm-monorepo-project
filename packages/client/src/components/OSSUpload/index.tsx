@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Upload, Image, message } from "antd";
+import { useTranslation } from "react-i18next";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { upload } from "./api";
@@ -28,6 +29,7 @@ const defaultAvatar =
 
 const OSSUpload = (props: CoverUploadProps) => {
     const { value = defaultAvatar, maxCount = 1, pattern = "editable" } = props;
+    const { t } = useTranslation();
 
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
@@ -75,7 +77,9 @@ const OSSUpload = (props: CoverUploadProps) => {
             return url; // 返回文件访问地址
         } catch (error) {
             console.error("Upload failed:", error);
-            message.error("上传失败，请重试");
+            message.error(
+                t("common:uploadFailed", { defaultValue: "上传失败，请重试" }),
+            );
             props.onError?.(error as Error);
             return null;
         } finally {
@@ -93,7 +97,9 @@ const OSSUpload = (props: CoverUploadProps) => {
     const uploadButton = (
         <button style={{ border: 0, background: "none" }} type="button">
             <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
+            <div style={{ marginTop: 8 }}>
+                {t("common:upload", { defaultValue: "+ Upload" })}
+            </div>
         </button>
     );
 

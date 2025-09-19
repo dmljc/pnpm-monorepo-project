@@ -1,0 +1,13 @@
+{
+    "title": "Workplace",
+    "welcome": "Welcome to Workplace",
+    "quickActions": "Quick Actions",
+    "recentActivities": "Recent Activities",
+    "statistics": "Statistics",
+    "notifications": "Notifications",
+    "tasks": "Tasks",
+    "projects": "Projects",
+    "messages": {
+        "noData": "No data available"
+    }
+}

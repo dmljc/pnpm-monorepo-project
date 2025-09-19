@@ -1,0 +1,101 @@
+{
+    "title": "用户管理",
+    "table": {
+        "columns": {
+            "avatar": "头像",
+            "username": "账号",
+            "password": "密码",
+            "name": "姓名",
+            "role": "角色",
+            "phone": "手机号",
+            "email": "邮箱",
+            "status": "状态",
+            "createTime": "创建时间",
+            "updateTime": "更新时间",
+            "remark": "备注",
+            "actions": "操作"
+        },
+        "status": {
+            "enabled": "启用",
+            "disabled": "停用"
+        },
+        "actions": {
+            "edit": "编辑",
+            "enable": "启用",
+            "disable": "停用",
+            "delete": "删除"
+        }
+    },
+    "toolbar": {
+        "add": "新增",
+        "export": "导出Excel",
+        "import": "导入Excel"
+    },
+    "modal": {
+        "title": {
+            "create": "新增用户",
+            "edit": "编辑用户"
+        },
+        "form": {
+            "username": {
+                "label": "用户名",
+                "placeholder": "请输入用户名",
+                "required": "请输入用户名"
+            },
+            "password": {
+                "label": "密码",
+                "placeholder": "请输入密码",
+                "required": "请输入密码"
+            },
+            "name": {
+                "label": "姓名",
+                "placeholder": "请输入姓名",
+                "required": "请输入姓名"
+            },
+            "phone": {
+                "label": "手机号",
+                "placeholder": "请输入手机号",
+                "required": "请输入手机号",
+                "invalid": "请输入正确的手机号格式"
+            },
+            "email": {
+                "label": "邮箱",
+                "placeholder": "请输入邮箱",
+                "required": "请输入邮箱",
+                "invalid": "请输入正确的邮箱格式"
+            },
+            "role": {
+                "label": "角色",
+                "placeholder": "请选择角色",
+                "required": "请选择角色"
+            },
+            "status": {
+                "label": "状态",
+                "enabled": "启用",
+                "disabled": "停用"
+            },
+            "remark": {
+                "label": "备注",
+                "placeholder": "请输入备注"
+            }
+        },
+        "buttons": {
+            "cancel": "取消",
+            "confirm": "确认"
+        }
+    },
+    "messages": {
+        "createSuccess": "新增成功",
+        "updateSuccess": "更新成功",
+        "deleteSuccess": "删除成功",
+        "enableSuccess": "启用成功",
+        "disableSuccess": "停用成功",
+        "exportSuccess": "导出成功",
+        "importSuccess": "导入成功",
+        "importFailed": "导入失败",
+        "exportFailed": "导出失败",
+        "deleteConfirm": "确定要删除该用户吗？",
+        "disableConfirm": "确定要停用该用户吗？",
+        "enableConfirm": "确定要启用该用户吗？"
+    }
+}

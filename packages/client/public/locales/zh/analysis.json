@@ -1,0 +1,18 @@
+{
+    "title": "数据分析",
+    "overview": "概览",
+    "charts": "图表",
+    "reports": "报告",
+    "filters": "筛选器",
+    "dateRange": "日期范围",
+    "metrics": "指标",
+    "trends": "趋势",
+    "comparison": "对比",
+    "export": "导出",
+    "refresh": "刷新",
+    "messages": {
+        "loading": "加载中...",
+        "noData": "暂无数据",
+        "loadFailed": "加载失败"
+    }
+}

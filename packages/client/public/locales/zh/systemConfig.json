@@ -1,0 +1,42 @@
+{
+    "title": "系统配置",
+    "form": {
+        "logo": {
+            "label": "系统图标",
+            "extra": "用于登录页和导航栏的网站图标，建议使用 .svg 格式",
+            "required": "请上传网站图标",
+            "upload": "+ Upload"
+        },
+        "name": {
+            "label": "系统名称",
+            "extra": "显示在浏览器标题栏和登录界面的系统名称",
+            "placeholder": "请输入系统名称",
+            "required": "请输入网站名称"
+        },
+        "description": {
+            "label": "系统描述",
+            "extra": "用于 SEO 的网站元描述",
+            "placeholder": "请输入系统描述",
+            "required": "请输入网站描述"
+        },
+        "copyright": {
+            "label": "版权说明",
+            "extra": "显示在页面底部的版权声明文本",
+            "placeholder": "请输入版权说明",
+            "required": "请输入版权说明"
+        },
+        "icp": {
+            "label": "ICP 备案号",
+            "extra": "工信部 ICP 备案编号（如：京ICP备12345678号）",
+            "placeholder": "请输入备案号",
+            "required": "请输入备案号"
+        }
+    },
+    "buttons": {
+        "save": "保存"
+    },
+    "messages": {
+        "saveSuccess": "保存成功",
+        "saveFailed": "保存失败"
+    }
+}
