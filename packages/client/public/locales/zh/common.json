@@ -1,5 +1,9 @@
 {
     "welcome": "欢迎使用我的应用",
     "button.submit": "提交",
-    "form.username": "用户名"
+    "form.username": "用户名",
+    "userMenu": {
+        "userInfo": "用户信息",
+        "logout": "退出登录"
+    }
 }

@@ -13,12 +13,14 @@ import type { MenuProps } from "antd";
  * @param userInfo - 用户信息对象
  * @param navigate - 路由导航函数
  * @param onLogout - 退出登录回调函数
+ * @param t - 翻译函数
  * @returns 用户菜单项数组
  */
 export const getUserItems = (
     userInfo: any,
     navigate: any,
     onLogout: () => void,
+    t: (key: string) => string,
 ): MenuProps["items"] => [
     {
         key: "user-info",
@@ -35,7 +37,7 @@ export const getUserItems = (
         label: (
             <a onClick={() => navigate("/system/profile")}>
                 <IdcardOutlined />
-                &nbsp;用户信息
+                &nbsp;{t("common:userMenu.userInfo")}
             </a>
         ),
     },
@@ -44,7 +46,7 @@ export const getUserItems = (
         label: (
             <a onClick={onLogout}>
                 <LogoutOutlined />
-                &nbsp;退出登录
+                &nbsp;{t("common:userMenu.logout")}
             </a>
         ),
     },

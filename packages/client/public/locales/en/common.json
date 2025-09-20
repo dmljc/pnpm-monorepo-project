@@ -1,5 +1,9 @@
 {
     "welcome": "Welcome to My App",
     "button.submit": "Submit",
-    "form.username": "Username"
+    "form.username": "Username",
+    "userMenu": {
+        "userInfo": "User Info",
+        "logout": "Logout"
+    }
 }

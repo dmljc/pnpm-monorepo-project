@@ -45,7 +45,7 @@ const Layout: FC = () => {
         systemConfig,
     } = useSystemStore();
     const navigate = useNavigate();
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
 
     // 响应式获取菜单
     const menuList = useMenuStore((state) => state.menuMeList);
@@ -233,7 +233,7 @@ const Layout: FC = () => {
         navigate("/login");
     };
 
-    const userItems = getUserItems(userInfo, navigate, onLogout);
+    const userItems = getUserItems(userInfo, navigate, onLogout, t);
     const langItems = getLangItems();
 
     // 菜单展开事件
