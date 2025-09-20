@@ -1,5 +1,6 @@
 {
     "title": "登录",
+    "subtitle": "欢迎回来，请登录您的账户",
     "tabs": {
         "account": "账号密码登录",
         "email": "邮箱登录"
@@ -7,17 +8,17 @@
     "form": {
         "username": {
             "label": "用户名",
-            "placeholder": "用户名: zfcstring",
+            "placeholder": "请输入用户名",
             "required": "请输入用户名!"
         },
         "password": {
             "label": "密码",
-            "placeholder": "密码: 999999",
+            "placeholder": "请输入密码",
             "required": "请输入密码！"
         },
         "email": {
             "label": "邮箱",
-            "placeholder": "邮箱",
+            "placeholder": "请输入邮箱地址",
             "required": "请输入邮箱！",
             "invalid": "请输入正确的邮箱格式！"
         },
@@ -27,17 +28,36 @@
             "required": "请输入验证码！",
             "invalid": "验证码必须是6位数字",
             "getCode": "获取验证码",
-            "countdown": "{{count}} 获取验证码"
+            "countdown": "{{count}}秒后重新获取"
         },
         "autoLogin": "自动登录",
-        "forgetPassword": "忘记密码"
+        "forgetPassword": "忘记密码",
+        "loginButton": "登录"
     },
     "otherLogin": "其他登录方式",
+    "socialLogin": {
+        "github": "使用 GitHub 登录",
+        "google": "使用 Google 登录",
+        "wechat": "使用微信登录"
+    },
     "messages": {
         "loginSuccess": "登录成功",
-        "loginFailed": "登录失败",
-        "githubLoginFailed": "Github 登录失败",
+        "loginFailed": "登录失败，请检查用户名和密码",
+        "githubLoginFailed": "GitHub 登录失败",
         "googleLoginFailed": "Google 登录失败",
-        "captchaSent": "您的验证码是：{{code}}，有效期为 5 分钟"
+        "wechatLoginFailed": "微信登录失败",
+        "wechatLoginComingSoon": "微信登录功能开发中...",
+        "captchaSent": "验证码已发送到您的邮箱，有效期为 5 分钟",
+        "captchaSendFailed": "验证码发送失败，请稍后重试",
+        "networkError": "网络错误，请检查网络连接",
+        "serverError": "服务器错误，请稍后重试"
+    },
+    "validation": {
+        "usernameRequired": "用户名不能为空",
+        "passwordRequired": "密码不能为空",
+        "emailRequired": "邮箱不能为空",
+        "emailInvalid": "请输入有效的邮箱地址",
+        "captchaRequired": "验证码不能为空",
+        "captchaInvalid": "验证码格式不正确"
     }
 }

@@ -1,5 +1,6 @@
 {
     "title": "Login",
+    "subtitle": "Welcome back, please login to your account",
     "tabs": {
         "account": "Account Login",
         "email": "Email Login"
@@ -7,17 +8,17 @@
     "form": {
         "username": {
             "label": "Username",
-            "placeholder": "Username: zfcstring",
+            "placeholder": "Please enter username",
             "required": "Please enter username!"
         },
         "password": {
             "label": "Password",
-            "placeholder": "Password: 999999",
+            "placeholder": "Please enter password",
             "required": "Please enter password!"
         },
         "email": {
             "label": "Email",
-            "placeholder": "Email",
+            "placeholder": "Please enter email address",
             "required": "Please enter email!",
             "invalid": "Please enter a valid email format!"
         },
@@ -27,17 +28,36 @@
             "required": "Please enter verification code!",
             "invalid": "Verification code must be 6 digits",
             "getCode": "Get Code",
-            "countdown": "{{count}} Get Code"
+            "countdown": "Resend in {{count}}s"
         },
-        "autoLogin": "Auto Login",
-        "forgetPassword": "Forgot Password"
+        "autoLogin": "Remember Me",
+        "forgetPassword": "Forgot Password",
+        "loginButton": "Login"
     },
     "otherLogin": "Other Login Methods",
+    "socialLogin": {
+        "github": "Login with GitHub",
+        "google": "Login with Google",
+        "wechat": "Login with WeChat"
+    },
     "messages": {
         "loginSuccess": "Login successful",
-        "loginFailed": "Login failed",
-        "githubLoginFailed": "Github login failed",
+        "loginFailed": "Login failed, please check username and password",
+        "githubLoginFailed": "GitHub login failed",
         "googleLoginFailed": "Google login failed",
-        "captchaSent": "Your verification code is: {{code}}, valid for 5 minutes"
+        "wechatLoginFailed": "WeChat login failed",
+        "wechatLoginComingSoon": "WeChat login feature is under development...",
+        "captchaSent": "Verification code has been sent to your email, valid for 5 minutes",
+        "captchaSendFailed": "Failed to send verification code, please try again later",
+        "networkError": "Network error, please check your connection",
+        "serverError": "Server error, please try again later"
+    },
+    "validation": {
+        "usernameRequired": "Username is required",
+        "passwordRequired": "Password is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "captchaRequired": "Verification code is required",
+        "captchaInvalid": "Invalid verification code format"
     }
 }

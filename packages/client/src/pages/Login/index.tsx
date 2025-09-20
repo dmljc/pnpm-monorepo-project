@@ -25,6 +25,9 @@ import { useTranslation } from "react-i18next";
 // 工具/常量
 import useStyles from "./style";
 
+// 组件
+import LoginControls from "./components/LoginControls";
+
 // Store
 import { useUserStore, useSystemStore } from "@/store";
 
@@ -74,10 +77,13 @@ const Login: FC = () => {
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
-    const { systemConfig, setSystemConfig } = useSystemStore();
+    const { systemConfig, setSystemConfig, theme } = useSystemStore();
 
     useEffect(() => {
         getSystemConfig();
+        // 初始化主题
+        const { theme } = useSystemStore.getState();
+        document.documentElement.setAttribute("data-theme", theme);
     }, []);
 
     const getSystemConfig = async () => {
@@ -89,22 +95,27 @@ const Login: FC = () => {
 
     // 处理登录提交
     const handleLoginSubmit = async (values: LoginUser) => {
-        const params = {
-            login:
-                loginType === LoginType.ACCOUNT
-                    ? values.username
-                    : values.email,
-            code:
-                loginType === LoginType.ACCOUNT
-                    ? values.password
-                    : values.captcha,
-        };
+        try {
+            const params = {
+                login:
+                    loginType === LoginType.ACCOUNT
+                        ? values.username
+                        : values.email,
+                code:
+                    loginType === LoginType.ACCOUNT
+                        ? values.password
+                        : values.captcha,
+            };
 
-        const resp = await useUserStore.getState().login(params);
-        if (resp === true) {
-            navigate("/");
-        } else {
-            messageApi.error(t("login:messages.loginFailed"));
+            const resp = await useUserStore.getState().login(params);
+            if (resp === true) {
+                messageApi.success(t("login:messages.loginSuccess"));
+                navigate("/");
+            } else {
+                messageApi.error(t("login:messages.loginFailed"));
+            }
+        } catch {
+            messageApi.error(t("login:messages.networkError"));
         }
     };
 
@@ -117,6 +128,7 @@ const Login: FC = () => {
             messageApi.error(t("login:messages.githubLoginFailed"));
         }
     };
+
     // 处理Google登录
     const handleGoogleLogin = async () => {
         try {
@@ -127,14 +139,30 @@ const Login: FC = () => {
         }
     };
 
+    // 处理微信登录
+    const handleWechatLogin = async () => {
+        try {
+            // 微信登录逻辑
+            messageApi.info(t("login:messages.wechatLoginComingSoon"));
+        } catch {
+            messageApi.error(t("login:messages.wechatLoginFailed"));
+        }
+    };
+
     // 获取验证码
     const sendEmailCaptcha = async () => {
-        const res = await emailCaptcha({
-            address: "1593025641@qq.com",
-        });
-        messageApi.success(
-            t("login:messages.captchaSent", { code: res?.data }),
-        );
+        try {
+            const res = await emailCaptcha({
+                address: "1593025641@qq.com",
+            });
+            if (res?.success) {
+                messageApi.success(t("login:messages.captchaSent"));
+            } else {
+                messageApi.error(t("login:messages.captchaSendFailed"));
+            }
+        } catch {
+            messageApi.error(t("login:messages.captchaSendFailed"));
+        }
     };
 
     // 渲染账号密码登录表单
@@ -242,6 +270,7 @@ const Login: FC = () => {
                 </div>
                 <div className={ss.weibo}>
                     <WechatOutlined
+                        onClick={handleWechatLogin}
                         style={{ ...ICON_STYLES, color: "#1890ff" }}
                     />
                 </div>
@@ -257,13 +286,23 @@ const Login: FC = () => {
 
     return (
         <div className={ss.root}>
+            {/* 背景覆盖层 */}
+            <div className={ss.backgroundOverlay} />
+
+            {/* 右上角控制栏 */}
+            <LoginControls />
+
             <LoginFormPage
                 initialValues={{
                     username: "zfcstring",
                     password: "999999",
                     email: "1593025641@qq.com",
                 }}
-                backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
+                backgroundImageUrl={
+                    theme === "dark"
+                        ? "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
+                        : "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
+                }
                 logo={systemConfig.logo}
                 title={systemConfig.name}
                 onFinish={handleLoginSubmit}
