@@ -83,7 +83,9 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
                             title={t("common:controls.language.switch")}
                         >
                             <div className={styles["language-icon"]}>
-                                <span className={styles["language-text"]}>A</span>
+                                <span className={styles["language-text"]}>
+                                    A
+                                </span>
                                 <span className={styles["language-sub-text"]}>
                                     {lang === "zh" ? "文" : "EN"}
                                 </span>

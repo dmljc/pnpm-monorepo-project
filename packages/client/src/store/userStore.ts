@@ -88,8 +88,7 @@ export const useUserStore = create<UserState & UserAction>()(
                         accessToken,
                         refreshToken,
                     });
-                    // 只设置语言，保持当前主题状态
-                    useSystemStore.setState({ lang: "zh" });
+                    // 保持当前语言和主题状态，不进行重置
                     useMenuStore.getState().getMenuMeList();
                     useMenuStore.getState().getMenuOriginList();
                     return true;

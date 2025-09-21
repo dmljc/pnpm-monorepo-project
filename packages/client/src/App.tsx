@@ -19,8 +19,8 @@ const App = () => {
 
     const { defaultAlgorithm, darkAlgorithm } = antdTheme;
 
-    const { theme } = useSystemStore();
-    const { i18n } = useTranslation();
+    const { theme, lang } = useSystemStore();
+    const { i18n, t } = useTranslation();
 
     // 根据当前语言选择Ant Design的语言包
     const getAntdLocale = () => {
@@ -32,21 +32,27 @@ const App = () => {
     useEffect(() => {
         if (userInfo?.name && !hasNotification) {
             api.success({
-                message: "登录成功",
+                message: t("common:notifications.loginSuccess"),
                 description: (
                     <span style={{ display: "flex", alignItems: "center" }}>
-                        欢迎回来: {userInfo.name}
+                        {t("common:notifications.welcomeBack")}: {userInfo.name}
                     </span>
                 ),
             });
             setHasNotification(true);
         }
-    }, [userInfo?.name, hasNotification]);
+    }, [userInfo?.name, hasNotification, t]);
 
     // 同步主题状态到HTML的data-theme属性
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", theme);
     }, [theme]);
+
+    // 同步语言状态到HTML的data-lang属性和i18n
+    useEffect(() => {
+        document.documentElement.setAttribute("data-lang", lang);
+        i18n.changeLanguage(lang);
+    }, [lang, i18n]);
 
     return (
         <ConfigProvider

@@ -292,6 +292,9 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
                     type="primary"
                     icon={<PlusOutlined />}
                     onClick={handleCreate}
+                    style={{
+                        marginBottom: 16,
+                    }}
                 >
                     {t("menu:table.actions.add")}
                 </AuthButton>

@@ -1,6 +1,34 @@
 import React from "react";
 
 /**
+ * 菜单标签到国际化键的映射
+ * 将后端返回的菜单标签映射到国际化配置中的键
+ */
+export const menuLabelToI18nKey: Record<string, string> = {
+    仪表盘: "menu.dashboard",
+    分析页: "menu.analytics",
+    工作台: "menu.workbench",
+    系统管理: "menu.systemManagement",
+    用户管理: "menu.userManagement",
+    角色管理: "menu.roleManagement",
+    菜单管理: "menu.menuManagement",
+    系统配置: "menu.systemConfig",
+    服务器信息: "menu.serverInfo",
+    个人资料: "menu.profile",
+    // 英文标签映射
+    Dashboard: "menu.dashboard",
+    Analytics: "menu.analytics",
+    Workbench: "menu.workbench",
+    "System Management": "menu.systemManagement",
+    "User Management": "menu.userManagement",
+    "Role Management": "menu.roleManagement",
+    "Menu Management": "menu.menuManagement",
+    "System Config": "menu.systemConfig",
+    "Server Information": "menu.serverInfo",
+    Profile: "menu.profile",
+};
+
+/**
  * 菜单项类型定义
  */
 export interface MenuItem {
@@ -86,6 +114,48 @@ export function convertMenuListToMenuItems(menuList: MenuItem[]): MenuItem[] {
                 path: item.path,
                 ...(children.length >= 1 ? { children } : {}),
                 // 不要 parentId、id、component、code 等无关字段
+            };
+        });
+}
+
+/**
+ * 将菜单列表转换为支持国际化的菜单项
+ * @param menuList 菜单列表
+ * @param t 翻译函数
+ * @returns 支持国际化的菜单项数组
+ */
+export function convertMenuListToI18nMenuItems(
+    menuList: MenuItem[],
+    t: (key: string) => string,
+): MenuItem[] {
+    // 首先处理children字段
+    const processedMenuList = processMenuChildren(menuList);
+
+    return processedMenuList
+        .filter((item) => item.type === "catalog" || item.type === "menu")
+        .map((item, idx) => {
+            const children = item.children
+                ? convertMenuListToI18nMenuItems(item.children, t)
+                : [];
+            // 保证 key 唯一：优先 url，其次 id，否则用 type+name+idx
+            const key =
+                item.path ||
+                (item.id !== undefined
+                    ? String(item.id)
+                    : `${item.type}-${item.label}-${idx}`);
+
+            // 获取国际化标签，如果映射不存在则使用原始标签
+            const i18nKey = menuLabelToI18nKey[item.label];
+            const label = i18nKey ? t(i18nKey) : item.label;
+
+            return {
+                key,
+                icon: item.icon,
+                id: item.id,
+                label,
+                type: item.type,
+                path: item.path,
+                ...(children.length >= 1 ? { children } : {}),
             };
         });
 }

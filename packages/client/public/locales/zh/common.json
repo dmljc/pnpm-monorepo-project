@@ -1,6 +1,4 @@
 {
-    "welcome": "欢迎使用我的应用",
-    "button.submit": "提交",
     "form.username": "用户名",
     "userMenu": {
         "userInfo": "用户信息",
@@ -17,5 +15,21 @@
             "switchToDark": "切换到暗色模式",
             "switchToLight": "切换到亮色模式"
         }
+    },
+    "menu": {
+        "dashboard": "仪表盘",
+        "analytics": "分析页",
+        "workbench": "工作台",
+        "systemManagement": "系统管理",
+        "userManagement": "用户管理",
+        "roleManagement": "角色管理",
+        "menuManagement": "菜单管理",
+        "systemConfig": "系统配置",
+        "serverInfo": "服务器信息",
+        "profile": "个人资料"
+    },
+    "notifications": {
+        "loginSuccess": "登录成功",
+        "welcomeBack": "欢迎回来"
     }
 }

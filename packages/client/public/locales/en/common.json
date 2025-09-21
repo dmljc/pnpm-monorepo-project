@@ -1,6 +1,4 @@
 {
-    "welcome": "Welcome to My App",
-    "button.submit": "Submit",
     "form.username": "Username",
     "userMenu": {
         "userInfo": "User Info",
@@ -17,5 +15,21 @@
             "switchToDark": "Switch to Dark Mode",
             "switchToLight": "Switch to Light Mode"
         }
+    },
+    "menu": {
+        "dashboard": "Dashboard",
+        "analytics": "Analytics",
+        "workbench": "Workbench",
+        "systemManagement": "System Management",
+        "userManagement": "User Management",
+        "roleManagement": "Role Management",
+        "menuManagement": "Menu Management",
+        "systemConfig": "System Config",
+        "serverInfo": "Server Information",
+        "profile": "Profile"
+    },
+    "notifications": {
+        "loginSuccess": "Login Successful",
+        "welcomeBack": "Welcome back"
     }
 }

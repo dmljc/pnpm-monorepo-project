@@ -23,7 +23,7 @@ import type { MenuProps } from "antd";
 import IconRenderer from "@/components/IconComponent/IconRenderer";
 
 // 工具/常量
-import { getLevelKeys } from "./utils";
+import { getLevelKeys, convertMenuListToI18nMenuItems } from "./utils";
 import useStyles from "./style";
 import { getUserItems, getLangItems } from "./constants";
 
@@ -57,8 +57,12 @@ const Layout: FC = () => {
         return <IconRenderer icon={icon} />;
     };
 
-    // 处理菜单项，添加自定义图标渲染
+    // 处理菜单项，添加自定义图标渲染和国际化支持
     const processedMenuList = useMemo(() => {
+        // 首先使用国际化函数处理菜单标签
+        const i18nMenuList = convertMenuListToI18nMenuItems(menuList, t);
+
+        // 然后添加自定义图标渲染
         const processMenuItems = (items: any[]): any[] => {
             return items.map((item) => ({
                 ...item,
@@ -68,8 +72,8 @@ const Layout: FC = () => {
                     : undefined,
             }));
         };
-        return processMenuItems(menuList);
-    }, [menuList]);
+        return processMenuItems(i18nMenuList);
+    }, [menuList, t]);
 
     // 根据当前路径和菜单数据计算默认的选中和展开状态
     const getDefaultKeys = useMemo(() => {
@@ -261,6 +265,7 @@ const Layout: FC = () => {
     // 语言切换事件
     const onClickLang: MenuProps["onClick"] = ({ key }) => {
         setLang(key);
+        i18n.changeLanguage(key);
     };
 
     return (
