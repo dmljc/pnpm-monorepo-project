@@ -295,11 +295,6 @@ const Login: FC = () => {
                     password: "999999",
                     email: "1593025641@qq.com",
                 }}
-                // backgroundImageUrl={
-                //     theme === "dark"
-                //         ? "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
-                //         : "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
-                // }
                 logo={systemConfig.logo}
                 title={systemConfig.name}
                 onFinish={handleLoginSubmit}

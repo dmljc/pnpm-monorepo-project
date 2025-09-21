@@ -88,3 +88,45 @@ body {
 .ant-menu-title-content {
     margin-inline-start: 4px !important;
 }
+
+/* LoginFormPage 主题背景样式 */
+.ant-pro-form-login-page {
+    /* 亮色主题背景 - 使用渐变效果 */
+    background: linear-gradient(
+        135deg,
+        var(--ant-color-primary, #1890ff) 0%,
+        var(--ant-color-bg-container, #fff) 50%,
+        var(--ant-color-fill-quaternary, #f0f2f5) 100%
+    ) !important;
+    transition: background 0.3s ease;
+}
+
+/* 暗色主题下的 LoginFormPage 背景 */
+[data-theme="dark"] .ant-pro-form-login-page {
+    background: linear-gradient(
+        135deg,
+        #1f1f1f 0%,
+        var(--ant-color-bg-container, #141414) 50%,
+        #0f0f0f 100%
+    ) !important;
+}
+
+/* 登录表单容器样式优化 */
+.ant-pro-form-login-page-container {
+    background: rgb(
+        var(--ant-color-bg-container-rgb, 255, 255, 255),
+        0.95
+    ) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 10%);
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .ant-pro-form-login-page-container {
+    background: rgb(
+        var(--ant-color-bg-container-rgb, 20, 20, 20),
+        0.95
+    ) !important;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 30%);
+}

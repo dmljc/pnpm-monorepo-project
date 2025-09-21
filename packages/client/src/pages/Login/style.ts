@@ -2,8 +2,25 @@ import { createStyles } from "antd-style";
 
 export default createStyles(({ token }) => ({
     root: {
-        backgroundColor: token.colorBgContainer,
         height: "100vh",
+        // 使用渐变背景，支持主题切换
+        background: `
+            linear-gradient(135deg, 
+                ${token.colorPrimary} 0%, 
+                ${token.colorBgContainer} 50%, 
+                ${token.colorPrimaryBg} 100%
+            )
+        `,
+        // 暗色模式下的特殊背景
+        "[data-theme='dark'] &": {
+            background: `
+                linear-gradient(135deg, 
+                    #1f1f1f 0%, 
+                    #141414 50%, 
+                    #0f0f0f 100%
+                )
+            `,
+        },
     },
 
     actions: {
