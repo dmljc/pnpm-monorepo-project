@@ -8,6 +8,7 @@ import IconRenderer from "./IconComponent/IconRenderer";
 import TreeComponent from "./TreeComponent";
 import TreeTable from "./TreeTable";
 import AuthButton from "./AuthButton";
+import LoginControls from "./LoginControls";
 
 export {
     AuthComponent,
@@ -20,4 +21,5 @@ export {
     TreeComponent,
     TreeTable,
     AuthButton,
+    LoginControls,
 };

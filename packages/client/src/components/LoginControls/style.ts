@@ -14,28 +14,28 @@ export default createStyles(({ token }) => ({
     controlsContainer: {
         display: "flex",
         alignItems: "center",
-        gap: 4,
-        padding: "6px 8px",
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
-        borderRadius: "8px",
-        border: "1px solid rgba(0, 0, 0, 0.08)",
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-        backdropFilter: "blur(12px)",
+        gap: 8,
+        padding: "4px",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        borderRadius: "50px",
+        border: "1px solid rgba(0, 0, 0, 0.06)",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+        backdropFilter: "blur(10px)",
 
         "&:hover": {
-            backgroundColor: "rgba(255, 255, 255, 0.98)",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.12)",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
         },
 
         // 暗色模式
         "[data-theme='dark'] &": {
-            backgroundColor: "rgba(30, 30, 30, 0.8)",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
 
             "&:hover": {
-                backgroundColor: "rgba(40, 40, 40, 0.9)",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
             },
         },
     },
@@ -44,19 +44,28 @@ export default createStyles(({ token }) => ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: "40px !important",
-        height: "40px !important",
-        borderRadius: "6px",
+        width: "36px !important",
+        height: "36px !important",
+        borderRadius: "50%",
         border: "none",
         backgroundColor: "transparent",
-        color: "rgba(0, 0, 0, 0.6)",
+        color: "rgba(0, 0, 0, 0.65)",
         padding: 0,
+        transition: "all 0.2s ease",
 
         "&:hover": {
-            backgroundColor: "rgba(0, 0, 0, 0.04)",
+            backgroundColor: "rgba(0, 0, 0, 0.06)",
             color: token.colorPrimary,
-            width: "40px !important",
-            height: "40px !important",
+            transform: "scale(1.05)",
+        },
+
+        "[data-theme='dark'] &": {
+            color: "rgba(255, 255, 255, 0.85)",
+
+            "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                color: token.colorPrimary,
+            },
         },
     },
 
@@ -67,7 +76,7 @@ export default createStyles(({ token }) => ({
         justifyContent: "center",
         width: "100%",
         height: "100%",
-        gap: 1,
+        gap: 0,
     },
 
     languageText: {
@@ -78,11 +87,12 @@ export default createStyles(({ token }) => ({
     },
 
     languageSubText: {
-        fontSize: 9,
+        fontSize: 8,
         fontWeight: 500,
         lineHeight: 1,
         color: "inherit",
-        opacity: 0.7,
+        opacity: 0.8,
+        marginTop: 1,
     },
 
     menuItem: {

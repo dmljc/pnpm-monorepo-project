@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 import useStyles from "./style";
 
 // 组件
-import LoginControls from "./components/LoginControls";
+import { LoginControls } from "@/components";
 
 // Store
 import { useUserStore, useSystemStore } from "@/store";
@@ -77,7 +77,7 @@ const Login: FC = () => {
     const { styles: ss } = useStyles();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
-    const { systemConfig, setSystemConfig, theme } = useSystemStore();
+    const { systemConfig, setSystemConfig } = useSystemStore();
 
     useEffect(() => {
         getSystemConfig();
@@ -286,9 +286,6 @@ const Login: FC = () => {
 
     return (
         <div className={ss.root}>
-            {/* 背景覆盖层 */}
-            <div className={ss.backgroundOverlay} />
-
             {/* 右上角控制栏 */}
             <LoginControls />
 
@@ -298,11 +295,11 @@ const Login: FC = () => {
                     password: "999999",
                     email: "1593025641@qq.com",
                 }}
-                backgroundImageUrl={
-                    theme === "dark"
-                        ? "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
-                        : "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
-                }
+                // backgroundImageUrl={
+                //     theme === "dark"
+                //         ? "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
+                //         : "https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
+                // }
                 logo={systemConfig.logo}
                 title={systemConfig.name}
                 onFinish={handleLoginSubmit}
