@@ -43,6 +43,11 @@ const App = () => {
         }
     }, [userInfo?.name, hasNotification]);
 
+    // 同步主题状态到HTML的data-theme属性
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", theme);
+    }, [theme]);
+
     return (
         <ConfigProvider
             locale={getAntdLocale()}

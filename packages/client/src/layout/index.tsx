@@ -328,9 +328,16 @@ const Layout: FC = () => {
                     <span className={ss.headerRight}>
                         <span
                             className={ss.headerIconTheme}
-                            onClick={() =>
-                                setTheme(theme === "light" ? "dark" : "light")
-                            }
+                            onClick={() => {
+                                const newTheme =
+                                    theme === "light" ? "dark" : "light";
+                                setTheme(newTheme);
+                                // 同步更新HTML的data-theme属性
+                                document.documentElement.setAttribute(
+                                    "data-theme",
+                                    newTheme,
+                                );
+                            }}
                         >
                             {theme === "light" ? (
                                 <MoonOutlined className={ss.headerIcon} />
