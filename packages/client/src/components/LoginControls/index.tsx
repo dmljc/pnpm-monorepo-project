@@ -37,7 +37,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
         {
             key: "zh",
             label: (
-                <div className={styles.menuItem}>
+                <div className={styles["menu-item"]}>
                     <GlobalOutlined />
                     {t("common:controls.language.simplifiedChinese")}
                 </div>
@@ -46,7 +46,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
         {
             key: "en",
             label: (
-                <div className={styles.menuItem}>
+                <div className={styles["menu-item"]}>
                     <TranslationOutlined />
                     {t("common:controls.language.english")}
                 </div>
@@ -61,10 +61,13 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
     };
 
     return (
-        <div className={`${styles.loginControls} ${className || ""}`}>
-            <div className={styles.controlsContainer}>
+        <div className={`${styles["login-controls"]} ${className || ""}`}>
+            <div className={styles["controls-container"]}>
                 {/* 语言切换下拉菜单 */}
-                <Tooltip title={t("common:controls.language.title")} placement="bottom">
+                <Tooltip
+                    title={t("common:controls.language.title")}
+                    placement="bottom"
+                >
                     <Dropdown
                         menu={{
                             items: languageItems,
@@ -76,12 +79,12 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
                     >
                         <Button
                             type="text"
-                            className={styles.controlButton}
+                            className={styles["control-button"]}
                             title={t("common:controls.language.switch")}
                         >
-                            <div className={styles.languageIcon}>
-                                <span className={styles.languageText}>A</span>
-                                <span className={styles.languageSubText}>
+                            <div className={styles["language-icon"]}>
+                                <span className={styles["language-text"]}>A</span>
+                                <span className={styles["language-sub-text"]}>
                                     {lang === "zh" ? "文" : "EN"}
                                 </span>
                             </div>
@@ -92,8 +95,8 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
                 {/* 主题切换按钮 */}
                 <Tooltip
                     title={
-                        theme === "light" 
-                            ? t("common:controls.theme.switchToDark") 
+                        theme === "light"
+                            ? t("common:controls.theme.switchToDark")
                             : t("common:controls.theme.switchToLight")
                     }
                     placement="bottom"
@@ -108,7 +111,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
                             )
                         }
                         onClick={handleThemeToggle}
-                        className={styles.controlButton}
+                        className={styles["control-button"]}
                     />
                 </Tooltip>
             </div>

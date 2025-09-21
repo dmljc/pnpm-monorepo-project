@@ -109,6 +109,27 @@ body {
         var(--ant-color-bg-container, #141414) 50%,
         #0f0f0f 100%
     ) !important;
+    position: relative;
+}
+
+/* 暗色模式下为LoginFormPage添加装饰性光效 */
+[data-theme="dark"] .ant-pro-form-login-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgb(24 144 255 / 8%) 0%,
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 70% 80%,
+            rgb(24 144 255 / 5%) 0%,
+            transparent 40%
+        );
+    pointer-events: none;
+    z-index: 1;
 }
 
 /* 登录表单容器样式优化 */
@@ -128,5 +149,47 @@ body {
         var(--ant-color-bg-container-rgb, 20, 20, 20),
         0.95
     ) !important;
-    box-shadow: 0 8px 32px rgb(0 0 0 / 30%);
+    box-shadow:
+        0 8px 32px rgb(0 0 0 / 30%),
+        0 2px 8px rgb(0 0 0 / 20%),
+        inset 0 1px 0 rgb(255 255 255 / 5%);
+    border: 1px solid rgb(255 255 255 / 8%);
+    position: relative;
+    z-index: 2;
+}
+
+/* 暗色模式下表单容器的内部光效 */
+[data-theme="dark"] .ant-pro-form-login-page-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, rgb(24 144 255 / 3%) 0%, transparent 50%),
+        linear-gradient(-135deg, rgb(24 144 255 / 2%) 0%, transparent 50%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 暗色模式下LoginControls的优化 */
+[data-theme="dark"] .ant-pro-form-login-page .login-controls {
+    z-index: 10;
+}
+
+[data-theme="dark"] .ant-pro-form-login-page .controls-container {
+    background: rgb(20 20 20 / 80%) !important;
+    border: 1px solid rgb(255 255 255 / 10%) !important;
+    box-shadow:
+        0 4px 16px rgb(0 0 0 / 30%),
+        inset 0 1px 0 rgb(255 255 255 / 5%) !important;
+}
+
+[data-theme="dark"] .ant-pro-form-login-page .control-button {
+    color: rgb(255 255 255 / 85%) !important;
+}
+
+[data-theme="dark"] .ant-pro-form-login-page .control-button:hover {
+    background-color: rgb(255 255 255 / 10%) !important;
+    color: #69c0ff !important;
+    transform: scale(1.05);
 }

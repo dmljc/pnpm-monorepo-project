@@ -3,6 +3,8 @@ import { createStyles } from "antd-style";
 export default createStyles(({ token }) => ({
     root: {
         height: "100vh",
+        position: "relative",
+        overflow: "hidden",
         // 使用渐变背景，支持主题切换
         background: `
             linear-gradient(135deg, 
@@ -11,15 +13,41 @@ export default createStyles(({ token }) => ({
                 ${token.colorPrimaryBg} 100%
             )
         `,
-        // 暗色模式下的特殊背景
+        // 暗色模式下的特殊背景 - 增强层次感
         "[data-theme='dark'] &": {
             background: `
-                linear-gradient(135deg, 
-                    #1f1f1f 0%, 
-                    #141414 50%, 
-                    #0f0f0f 100%
-                )
+                radial-gradient(ellipse at top, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%),
+                linear-gradient(135deg, #1f1f1f 0%, #141414 50%, #0d0d0d 100%)
             `,
+            "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: `
+                    radial-gradient(circle at 20% 80%, rgba(24, 144, 255, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(24, 144, 255, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(24, 144, 255, 0.03) 0%, transparent 50%)
+                `,
+                pointerEvents: "none",
+                zIndex: 1,
+            },
+            "&::after": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: `
+                    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%),
+                    linear-gradient(-45deg, transparent 30%, rgba(255, 255, 255, 0.01) 50%, transparent 70%)
+                `,
+                pointerEvents: "none",
+                zIndex: 1,
+            },
         },
     },
 
@@ -94,5 +122,13 @@ export default createStyles(({ token }) => ({
         color: token.colorTextSecondary,
         fontSize: 12,
         padding: "10px 0",
+        zIndex: 5,
+        // 暗色模式下的版权信息样式
+        "[data-theme='dark'] &": {
+            color: "rgba(255, 255, 255, 0.6)",
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
+            background: "linear-gradient(transparent, rgba(0, 0, 0, 0.2))",
+            backdropFilter: "blur(4px)",
+        },
     },
 }));

@@ -1,7 +1,7 @@
 import { createStyles } from "antd-style";
 
 export default createStyles(({ token }) => ({
-    loginControls: {
+    "login-controls": {
         position: "absolute",
         top: 24,
         right: 24,
@@ -11,7 +11,7 @@ export default createStyles(({ token }) => ({
         justifyContent: "flex-end",
     },
 
-    controlsContainer: {
+    "controls-container": {
         display: "flex",
         alignItems: "center",
         gap: 8,
@@ -40,7 +40,7 @@ export default createStyles(({ token }) => ({
         },
     },
 
-    controlButton: {
+    "control-button": {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -69,7 +69,7 @@ export default createStyles(({ token }) => ({
         },
     },
 
-    languageIcon: {
+    "language-icon": {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -79,14 +79,14 @@ export default createStyles(({ token }) => ({
         gap: 0,
     },
 
-    languageText: {
+    "language-text": {
         fontSize: 14,
         fontWeight: 700,
         lineHeight: 1,
         color: "inherit",
     },
 
-    languageSubText: {
+    "language-sub-text": {
         fontSize: 8,
         fontWeight: 500,
         lineHeight: 1,
@@ -95,7 +95,7 @@ export default createStyles(({ token }) => ({
         marginTop: 1,
     },
 
-    menuItem: {
+    "menu-item": {
         display: "flex",
         alignItems: "center",
         padding: "4px 0",
