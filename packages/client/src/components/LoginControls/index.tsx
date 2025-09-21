@@ -20,7 +20,7 @@ interface LoginControlsProps {
 }
 
 const LoginControls: FC<LoginControlsProps> = ({ className }) => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const { theme, setTheme, lang, setLang } = useSystemStore();
     const { styles } = useStyles();
 
@@ -39,7 +39,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
             label: (
                 <div className={styles.menuItem}>
                     <GlobalOutlined />
-                    简体中文
+                    {t("common:controls.language.simplifiedChinese")}
                 </div>
             ),
         },
@@ -48,7 +48,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
             label: (
                 <div className={styles.menuItem}>
                     <TranslationOutlined />
-                    English
+                    {t("common:controls.language.english")}
                 </div>
             ),
         },
@@ -64,7 +64,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
         <div className={`${styles.loginControls} ${className || ""}`}>
             <div className={styles.controlsContainer}>
                 {/* 语言切换下拉菜单 */}
-                <Tooltip title="语言设置" placement="bottom">
+                <Tooltip title={t("common:controls.language.title")} placement="bottom">
                     <Dropdown
                         menu={{
                             items: languageItems,
@@ -77,7 +77,7 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
                         <Button
                             type="text"
                             className={styles.controlButton}
-                            title="切换语言"
+                            title={t("common:controls.language.switch")}
                         >
                             <div className={styles.languageIcon}>
                                 <span className={styles.languageText}>A</span>
@@ -92,7 +92,9 @@ const LoginControls: FC<LoginControlsProps> = ({ className }) => {
                 {/* 主题切换按钮 */}
                 <Tooltip
                     title={
-                        theme === "light" ? "切换到暗色模式" : "切换到亮色模式"
+                        theme === "light" 
+                            ? t("common:controls.theme.switchToDark") 
+                            : t("common:controls.theme.switchToLight")
                     }
                     placement="bottom"
                 >

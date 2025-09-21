@@ -5,5 +5,17 @@
     "userMenu": {
         "userInfo": "User Info",
         "logout": "Logout"
+    },
+    "controls": {
+        "language": {
+            "title": "Language Settings",
+            "switch": "Switch Language",
+            "simplifiedChinese": "简体中文",
+            "english": "English"
+        },
+        "theme": {
+            "switchToDark": "Switch to Dark Mode",
+            "switchToLight": "Switch to Light Mode"
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
     "title": "登录",
-    "subtitle": "欢迎回来，请登录您的账户",
+    "subtitle": "项目子标题占位符",
     "tabs": {
         "account": "账号密码登录",
         "email": "邮箱登录"

@@ -303,7 +303,7 @@ const Login: FC = () => {
                 logo={systemConfig.logo}
                 title={systemConfig.name}
                 onFinish={handleLoginSubmit}
-                subTitle={systemConfig.description}
+                subTitle={t("login:subtitle")}
                 actions={renderOtherLoginMethods()}
             >
                 <Tabs

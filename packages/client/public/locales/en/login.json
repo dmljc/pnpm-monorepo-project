@@ -1,6 +1,6 @@
 {
     "title": "Login",
-    "subtitle": "Welcome back, please login to your account",
+    "subtitle": "Project subtitle placeholder",
     "tabs": {
         "account": "Account Login",
         "email": "Email Login"
