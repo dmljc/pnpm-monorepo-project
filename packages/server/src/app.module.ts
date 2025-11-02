@@ -121,7 +121,8 @@ import "winston-daily-rotate-file";
                     configService.get<string>("JWT_SECRET") || "default-secret",
                 signOptions: {
                     expiresIn:
-                        configService.get<string>("JWT_EXPIRES_IN") || "1h",
+                        Number(configService.get<string>("JWT_EXPIRES_IN")) ||
+                        "1h",
                 },
             }),
         }),
