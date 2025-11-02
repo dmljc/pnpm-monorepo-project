@@ -1,0 +1,37 @@
+{
+    "name": "tthree",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "module": "dist/three-base.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "dev": "rollup -c -w",
+        "build": "rollup -c",
+        "clean": "rm -rf dist"
+    },
+    "keywords": [
+        "threejs",
+        "3d",
+        "webgl",
+        "typescript"
+    ],
+    "author": "zhangfangchao",
+    "license": "ISC",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^29.0.0",
+        "@rollup/plugin-node-resolve": "^16.0.3",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^12.3.0",
+        "@types/three": "^0.181.0",
+        "rollup": "^4.52.5",
+        "rollup-plugin-dts": "^6.2.3",
+        "three": "^0.181.0",
+        "tslib": "^2.8.1",
+        "typescript": "^5.9.3"
+    }
+}

@@ -26,6 +26,10 @@ export default tseslint.config({
     languageOptions: {
         ecmaVersion: 2020,
         globals: globals.browser,
+        parserOptions: {
+            // 解决多 tsconfig 解析根目录不明确的问题
+            tsconfigRootDir: import.meta.dirname,
+        },
     },
     plugins: {
         "react-hooks": reactHooks,
