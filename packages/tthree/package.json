@@ -2,16 +2,24 @@
     "name": "tthree",
     "type": "module",
     "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "module": "dist/three-base.esm.js",
+    "description": "A TypeScript-based Three.js wrapper library providing core functionality for 3D graphics",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/three-base.esm.js",
+            "default": "./dist/three-base.esm.js"
+        }
+    },
     "types": "dist/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "package.json"
     ],
     "scripts": {
         "dev": "rollup -c -w",
         "build": "rollup -c",
+        "docs": "typedoc",
+        "docs:zh": "pnpm docs && node ../../scripts/typedoc-zh.js && node ../../scripts/typedoc-zh-structure.js",
         "clean": "rm -rf dist"
     },
     "keywords": [
@@ -28,10 +36,12 @@
         "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-typescript": "^12.3.0",
         "@types/three": "^0.181.0",
-        "rollup": "^4.52.5",
+        "rollup": "^4.53.2",
         "rollup-plugin-dts": "^6.2.3",
-        "three": "^0.181.0",
+        "three": "^0.181.1",
         "tslib": "^2.8.1",
+        "typedoc": "^0.28.14",
+        "typedoc-plugin-markdown": "^4.9.0",
         "typescript": "^5.9.3"
     }
 }

@@ -25,6 +25,7 @@ export default defineConfig({
         nav: [
             { text: "首页", link: "/" },
             { text: "前端", link: "../react/index.md" },
+            { text: "三维", link: "/tthree/README.md" },
             { text: "后端", link: "../nest/index.md" },
         ],
         sidebar: {
@@ -54,6 +55,27 @@ export default defineConfig({
                     items: [
                         { text: "第一节", link: "/nest/1.md" },
                         { text: "第二节", link: "/nest/2.md" },
+                    ],
+                },
+            ],
+            "/tthree/": [
+                {
+                    text: "tthree API",
+                    collapsed: true,
+                    items: [
+                        { text: "概览", link: "/tthree/README.md" },
+                        {
+                            text: "基类",
+                            link: "/tthree/类/ThreeBase.md",
+                        },
+                        {
+                            text: "工具函数",
+                            link: "/tthree/functions/calculateCameraFitConfig.md",
+                        },
+                        {
+                            text: "参数",
+                            link: "/tthree/接口/Params.md",
+                        },
                     ],
                 },
             ],

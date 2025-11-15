@@ -1,0 +1,28 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["src/index.ts"],
+    "tsconfig": "./tsconfig.json",
+    "plugin": ["typedoc-plugin-markdown"],
+    "out": "../../docs/tthree",
+    "readme": "none",
+    "hideBreadcrumbs": false,
+    "hidePageTitle": false,
+    "categorizeByGroup": true,
+    "groupOrder": [
+        "Constructor",
+        "Properties",
+        "Methods",
+        "Accessors",
+        "Events"
+    ],
+    "includeVersion": true,
+    "excludeExternals": false,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "excludeInternal": true,
+    "outputFileStrategy": "members",
+    "githubPages": false,
+    "useHTMLAnchors": true,
+    "useCodeBlocks": true,
+    "sort": ["source-order"]
+}
