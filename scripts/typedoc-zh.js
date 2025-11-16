@@ -103,23 +103,16 @@ function localizeFile(path) {
     content = content.replaceAll("Defined in:", "定义于：");
     content = content.replaceAll("Defined in", "定义于");
 
-    // 针对 tthree 概览页进行幂等、无空格的标题与链接规范化
+    // 仅针对 tthree 概览页做定制化（幂等、精准）
     if (
         path.endsWith("/tthree/README.md") ||
         path.endsWith("\\tthree\\README.md")
     ) {
-        // 移除页首版本横幅：**项目 vX.Y.Z** + --- （幂等）
+        // 移除页首版本横幅：**项目 vX.Y.Z** + ---
         content = content.replace(
-            /^\s*\*\*[^*]*?\s+v\d+(?:\.\d+){1,2}\*\*\s*\n\s*---\s*\n?/i,
+            /^\s*\*\*[^*]*?v\d+(?:\.\d+){1,2}\*\*\s*\n\s*---\s*\n?/i,
             "",
         );
-
-        // 移除“函数/Functions”分组（若存在）
-        const patterns = [
-            /(^|\n)##\s*函数[\s\S]*?(?=\n##\s|$)/g,
-            /(^|\n)##\s*Functions[\s\S]*?(?=\n##\s|$)/g,
-        ];
-        for (const re of patterns) content = content.replace(re, "$1");
 
         // 标题统一为无空格版本
         content = content.replace(/^##\s*类\s*$/m, "## ThreeBase基类");
@@ -133,22 +126,26 @@ function localizeFile(path) {
             "## ThreeBase基类参数",
         );
 
-        // 链接统一到无空格目录（幂等）
-        content = content
-            .replace(
-                /\((?:\.\/)?(?:类|classes|ThreeBase(?:%20| )?基类)\/ThreeBase\.md\)/g,
-                "(ThreeBase基类/ThreeBase.md)",
-            )
-            .replace(
-                /\((?:\.\/)?(?:接口|interfaces|ThreeBase(?:%20| )?基类参数)\/Params\.md\)/g,
-                "(ThreeBase基类参数/Params.md)",
-            )
-            .replace(
-                /\((?:\.\/)?(?:接口|interfaces|ThreeBase(?:%20| )?基类参数)\/CameraFitConfig\.md\)/g,
-                "(ThreeBase基类参数/CameraFitConfig.md)",
-            )
-            .replace(/(ThreeBase基类\/)+/g, "ThreeBase基类/")
-            .replace(/(ThreeBase基类参数\/)+/g, "ThreeBase基类参数/");
+        // 链接统一为无空格目录
+        content = content.replace(
+            /\((?:\.\/)?(?:classes|类)\/ThreeBase\.md\)/g,
+            "(ThreeBase基类/ThreeBase.md)",
+        );
+        content = content.replace(
+            /\((?:\.\/)?(?:interfaces|接口)\/Params\.md\)/g,
+            "(ThreeBase基类参数/Params.md)",
+        );
+        content = content.replace(
+            /\((?:\.\/)?(?:interfaces|接口)\/CameraFitConfig\.md\)/g,
+            "(ThreeBase基类参数/CameraFitConfig.md)",
+        );
+
+        // 可选：移除“函数”分组（若 TypeDoc 输出异常保留）
+        content = content.replace(/(^|\n)##\s*函数[\s\S]*?(?=\n##\s|$)/g, "$1");
+        content = content.replace(
+            /(^|\n)##\s*Functions[\s\S]*?(?=\n##\s|$)/g,
+            "$1",
+        );
     }
 
     writeFileSync(path, content, "utf8");

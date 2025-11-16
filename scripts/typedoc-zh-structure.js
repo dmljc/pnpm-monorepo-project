@@ -1,7 +1,7 @@
 /**
- * Rename Typedoc output folders and fix links.
- * - classes / 类 / ThreeBase 基类 -> ThreeBase基类
- * - interfaces / 接口 / ThreeBase 基类参数 -> ThreeBase基类参数
+ * Rename Typedoc output folders and fix links for tthree docs.
+ * - classes / 类 -> ThreeBase基类
+ * - interfaces / 接口 -> ThreeBase基类参数
  * Also updates links inside markdown and VitePress sidebar config.
  */
 import { existsSync, renameSync, readFileSync, writeFileSync } from "node:fs";
@@ -37,37 +37,25 @@ function walk(dir, fn) {
 function fixLinksInMarkdown(mdPath) {
     let content = readFileSync(mdPath, "utf8");
 
-    // 规范化 /tthree/ 下的目录段为无空格版本
+    // 仅规范 tthree 路径段为无空格版本（幂等）
     content = content.replace(
-        /\/tthree\/(?:classes|类|ThreeBase(?:%20| )?基类)\//g,
+        /\/tthree\/(?:classes|类)\//g,
         "/tthree/ThreeBase基类/",
     );
     content = content.replace(
-        /\/tthree\/(?:interfaces|接口|ThreeBase(?:%20| )?基类参数)\//g,
+        /\/tthree\/(?:interfaces|接口)\//g,
         "/tthree/ThreeBase基类参数/",
     );
 
-    // 规范化括号内的相对链接
+    // 规范括号内的相对链接（只处理 tthree 的成员链接）
     content = content.replace(
-        /\((?:\.\/)?(?:classes|类|ThreeBase(?:%20| )?基类)\/([^)]+)\)/g,
+        /\((?:\.\/)?(?:classes|类)\/([^)]+)\)/g,
         "(ThreeBase基类/$1)",
     );
     content = content.replace(
-        /\((?:\.\/)?(?:interfaces|接口|ThreeBase(?:%20| )?基类参数)\/([^)]+)\)/g,
+        /\((?:\.\/)?(?:interfaces|接口)\/([^)]+)\)/g,
         "(ThreeBase基类参数/$1)",
     );
-
-    // 清理重复片段
-    content = content.replace(
-        /\/tthree\/(ThreeBase基类\/)+/g,
-        "/tthree/ThreeBase基类/",
-    );
-    content = content.replace(
-        /\/tthree\/(ThreeBase基类参数\/)+/g,
-        "/tthree/ThreeBase基类参数/",
-    );
-    content = content.replace(/(ThreeBase基类\/)+/g, "ThreeBase基类/");
-    content = content.replace(/(ThreeBase基类参数\/)+/g, "ThreeBase基类参数/");
 
     writeFileSync(mdPath, content, "utf8");
     console.log("Updated links:", mdPath);
@@ -76,19 +64,19 @@ function fixLinksInMarkdown(mdPath) {
 function fixVitepressConfig() {
     if (!existsSync(vitepressConfig)) return;
     let cfg = readFileSync(vitepressConfig, "utf8");
+
+    // 仅修正 tthree 侧边栏路径为无空格目录（幂等）
+    cfg = cfg.replace(/\/tthree\/(?:classes|类)\//g, "/tthree/ThreeBase基类/");
     cfg = cfg.replace(
-        /\/tthree\/(?:classes|类|ThreeBase(?:%20| )?基类)\//g,
-        "/tthree/ThreeBase基类/",
-    );
-    cfg = cfg.replace(
-        /\/tthree\/(?:interfaces|接口|ThreeBase(?:%20| )?基类参数)\//g,
+        /\/tthree\/(?:interfaces|接口)\//g,
         "/tthree/ThreeBase基类参数/",
     );
+
     writeFileSync(vitepressConfig, cfg, "utf8");
     console.log("Updated VitePress config links");
 }
 
-// 将输出目录统一重命名为无空格
+// 仅在存在时重命名到最终目录名
 renameDir("classes", "ThreeBase基类");
 renameDir("interfaces", "ThreeBase基类参数");
 renameDir("类", "ThreeBase基类");
