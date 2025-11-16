@@ -39,7 +39,7 @@ export const CAMERA_DEFAULTS = {
     POSITION: {
         x: 0,
         y: 0,
-        z: 5,
+        z: 50,
     },
 } as const;
 

@@ -33,8 +33,6 @@ export interface Params {
     antialias?: boolean;
     /** 是否启用控制器 */
     controls?: boolean;
-    /** 是否自动适应尺寸 */
-    autoResize?: boolean;
     /** 自定义相机 */
     camera?: PerspectiveCamera;
     /** 自定义渲染器 */
@@ -302,9 +300,7 @@ export class ThreeBase {
             this.controls = this.createControls();
         }
 
-        if (config.autoResize !== false) {
-            this.setupAutoResize();
-        }
+        this.setupAutoResize();
 
         this.initialized = true;
     }
