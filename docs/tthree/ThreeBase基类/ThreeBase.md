@@ -1,4 +1,4 @@
-[**tthree v1.0.0**](../README.md)
+[**tthree**](../README.md)
 
 ---
 
@@ -13,8 +13,6 @@ Three.js 基础应用类
 
 ## 示例
 
-**基础使用：**
-
 ```typescript
 // 1. 创建实例
 const app = new ThreeBase({
@@ -26,17 +24,14 @@ const app = new ThreeBase({
 // 2. 初始化
 app.init();
 
-// 3. 添加内容到场景
+// 3. 添加网格
 const mesh = new THREE.Mesh(geometry, material);
-app.scene?.add(mesh);
+app.addMesh(mesh);
 
-// 4. 自动调整相机
-app.fitToObject(mesh);
-
-// 5. 启动动画
+// 4. 启动动画
 app.animate();
 
-// 6. 清理资源
+// 5. 清理资源
 app.destroy();
 ```
 
@@ -142,6 +137,46 @@ getContainer(): HTMLElement;
 
 ---
 
+<a id="addmesh"></a>
+
+### addMesh()
+
+```ts
+addMesh(mesh): void;
+```
+
+向场景添加网格对象
+
+**功能说明：**
+
+- 自动将网格添加到场景中
+- 如果未初始化，会自动调用 init()
+
+#### 参数
+
+##### mesh
+
+`Mesh`
+
+要添加的网格对象
+
+#### 返回值
+
+`void`
+
+#### 示例
+
+```typescript
+const app = new ThreeBase({
+    container: el,
+});
+
+// 添加网格
+app.addMesh(mesh);
+```
+
+---
+
 <a id="animate"></a>
 
 ### animate()
@@ -151,37 +186,6 @@ animate(): void;
 ```
 
 启动动画循环（公开入口，使用 WebGLRenderer.setAnimationLoop）
-
-#### 返回值
-
-`void`
-
----
-
-<a id="fittoobject"></a>
-
-### fitToObject()
-
-```ts
-fitToObject(mesh, padding): void;
-```
-
-根据网格对象自动调整相机和控制器
-用于确保场景中的对象完全可见
-
-#### 参数
-
-##### mesh
-
-`Mesh`
-
-要适应的网格对象
-
-##### padding
-
-`number` = `3`
-
-相机距离的额外缩放系数，默认 3（值越大相机离物体越远）
 
 #### 返回值
 
@@ -235,7 +239,7 @@ new ThreeBase(config): ThreeBase;
 
 ##### config
 
-[`Params`](../ThreeBase基类参数/Params.md)
+[`Params`](../interfaces/Params.md)
 
 应用配置
 

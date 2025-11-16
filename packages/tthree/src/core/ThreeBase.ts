@@ -21,7 +21,7 @@ import {
     GRID_DEFAULTS,
     AXES_DEFAULTS,
 } from "./constants";
-import { disposeMesh, calculateCameraFitConfig } from "./utils";
+import { disposeMesh } from "./utils";
 
 /**
  * Three.js 应用实例配置选项
@@ -50,7 +50,6 @@ export interface Params {
  * 支持多实例隔离、自动尺寸自适应、资源管理等功能。
  *
  * @example
- * **基础使用：**
  * ```typescript
  * // 1. 创建实例
  * const app = new ThreeBase({
@@ -62,17 +61,14 @@ export interface Params {
  * // 2. 初始化
  * app.init();
  *
- * // 3. 添加内容到场景
+ * // 3. 添加网格
  * const mesh = new THREE.Mesh(geometry, material);
- * app.scene?.add(mesh);
+ * app.addMesh(mesh);
  *
- * // 4. 自动调整相机
- * app.fitToObject(mesh);
- *
- * // 5. 启动动画
+ * // 4. 启动动画
  * app.animate();
  *
- * // 6. 清理资源
+ * // 5. 清理资源
  * app.destroy();
  * ```
  */
@@ -214,10 +210,6 @@ export class ThreeBase {
                 RENDERER_DEFAULTS.CONTEXT_ATTRIBUTES.antialias,
         });
 
-        const { width, height } = this.getContainerSize();
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
         // 输出配置（保持最简）
         renderer.outputColorSpace = RENDERER_DEFAULTS.OUTPUT.colorSpace;
         renderer.toneMapping = NoToneMapping;
@@ -266,8 +258,9 @@ export class ThreeBase {
         if (!this.camera || !this.renderer) return;
 
         const { width, height } = this.getContainerSize();
+        const aspect = height === 0 ? 1 : width / height;
 
-        this.camera.aspect = width / height;
+        this.camera.aspect = aspect;
         this.camera.updateProjectionMatrix();
 
         this.renderer.setSize(width, height);
@@ -325,6 +318,36 @@ export class ThreeBase {
     }
 
     /**
+     * 向场景添加网格对象
+     *
+     * **功能说明：**
+     * - 自动将网格添加到场景中
+     * - 如果未初始化，会自动调用 init()
+     *
+     * @param mesh 要添加的网格对象
+     * @example
+     * ```typescript
+     * const app = new ThreeBase({
+     *   container: el
+     * });
+     *
+     * // 添加网格
+     * app.addMesh(mesh);
+     * ```
+     */
+    public addMesh(mesh: Mesh): void {
+        if (!this.initialized) {
+            this.init();
+        }
+
+        if (!this.scene) {
+            throw new Error("场景未初始化，无法添加网格");
+        }
+
+        this.scene.add(mesh);
+    }
+
+    /**
      * 获取容器尺寸
      *
      * @returns 容器宽度和高度
@@ -376,39 +399,6 @@ export class ThreeBase {
     }
 
     /**
-     * 根据网格对象自动调整相机和控制器
-     * 用于确保场景中的对象完全可见
-     *
-     * @param mesh - 要适应的网格对象
-     * @param padding - 相机距离的额外缩放系数，默认 3（值越大相机离物体越远）
-     */
-    public fitToObject(mesh: Mesh, padding: number = 3): void {
-        if (!this.camera) return;
-
-        // 使用工具函数计算相机拟合配置
-        const config = calculateCameraFitConfig(mesh, padding);
-        if (!config) return;
-
-        // 应用相机配置
-        this.camera.position.set(
-            config.position.x,
-            config.position.y,
-            config.position.z,
-        );
-        this.camera.lookAt(config.target.x, config.target.y, config.target.z);
-
-        // 更新控制器目标（如果存在）
-        if (this.controls) {
-            this.controls.target.set(
-                config.target.x,
-                config.target.y,
-                config.target.z,
-            );
-            this.controls.update();
-        }
-    }
-
-    /**
      * 停止应用和动画循环
      */
     public stopAnimate(): void {
@@ -429,15 +419,18 @@ export class ThreeBase {
 
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
+            this.resizeObserver = undefined;
         }
 
         if (this.controls) {
             this.controls.dispose();
+            this.controls = undefined;
         }
 
         if (this.renderer) {
             this.renderer.dispose();
             this.renderer.domElement.remove();
+            this.renderer = undefined;
         }
 
         // 遍历场景中的所有对象，释放网格资源
@@ -447,6 +440,9 @@ export class ThreeBase {
                     disposeMesh(object as Mesh);
                 }
             });
+            this.scene = undefined;
         }
+
+        this.camera = undefined;
     }
 }

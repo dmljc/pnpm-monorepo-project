@@ -85,7 +85,11 @@ const initializeScene = (
     showAxes: boolean = false,
 ): ThreeBase => {
     const { container, meshFactory } = config;
-    const threeApp = new ThreeBase({ container, showGrid, showAxes });
+    const threeApp = new ThreeBase({
+        container,
+        showGrid,
+        showAxes,
+    });
 
     // 先初始化以创建场景、相机和渲染器
     threeApp.init();
@@ -95,10 +99,7 @@ const initializeScene = (
         const mesh = new Mesh(meshConfig.geometry, meshConfig.material);
         // 将所有示例网格放大 10 倍，便于展示
         mesh.scale.set(10, 10, 10);
-        threeApp.scene.add(mesh);
-
-        // 使用 ThreeBase 的 fitToObject 方法自动调整相机
-        threeApp.fitToObject(mesh);
+        threeApp.addMesh(mesh);
     }
 
     threeApp.animate();

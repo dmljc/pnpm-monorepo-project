@@ -1,4 +1,4 @@
-[**tthree v1.0.0**](../README.md)
+[**tthree**](../README.md)
 
 ---
 
