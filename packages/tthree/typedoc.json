@@ -15,7 +15,7 @@
         "Accessors",
         "Events"
     ],
-    "includeVersion": true,
+    "includeVersion": false,
     "excludeExternals": false,
     "excludePrivate": true,
     "excludeProtected": true,

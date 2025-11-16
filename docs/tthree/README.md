@@ -1,7 +1,3 @@
-**tthree v1.0.0**
-
----
-
 # tthree v1.0.0
 
 ## ThreeBase基类

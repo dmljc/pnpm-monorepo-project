@@ -108,6 +108,12 @@ function localizeFile(path) {
         path.endsWith("/tthree/README.md") ||
         path.endsWith("\\tthree\\README.md")
     ) {
+        // 移除页首版本横幅：**项目 vX.Y.Z** + --- （幂等）
+        content = content.replace(
+            /^\s*\*\*[^*]*?\s+v\d+(?:\.\d+){1,2}\*\*\s*\n\s*---\s*\n?/i,
+            "",
+        );
+
         // 移除“函数/Functions”分组（若存在）
         const patterns = [
             /(^|\n)##\s*函数[\s\S]*?(?=\n##\s|$)/g,
@@ -127,7 +133,7 @@ function localizeFile(path) {
             "## ThreeBase基类参数",
         );
 
-        // 链接统一到无空格目录（匹配多种旧写法）
+        // 链接统一到无空格目录（幂等）
         content = content
             .replace(
                 /\((?:\.\/)?(?:类|classes|ThreeBase(?:%20| )?基类)\/ThreeBase\.md\)/g,

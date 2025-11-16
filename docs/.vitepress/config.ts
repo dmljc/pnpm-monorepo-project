@@ -65,11 +65,11 @@ export default defineConfig({
                     items: [
                         { text: "概览", link: "/tthree/README.md" },
                         {
-                            text: "基类",
+                            text: "ThreeBase基类",
                             link: "/tthree/ThreeBase基类/ThreeBase.md",
                         },
                         {
-                            text: "参数",
+                            text: "ThreeBase基类参数",
                             link: "/tthree/ThreeBase基类参数/Params.md",
                         },
                     ],
