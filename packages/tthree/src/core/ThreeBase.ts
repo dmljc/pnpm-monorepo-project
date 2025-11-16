@@ -300,6 +300,7 @@ export class ThreeBase {
             this.controls = this.createControls();
         }
 
+        // 启用尺寸自适应
         this.setupAutoResize();
 
         this.initialized = true;
