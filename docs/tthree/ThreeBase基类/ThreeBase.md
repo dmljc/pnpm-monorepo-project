@@ -261,7 +261,7 @@ new ThreeBase(config): ThreeBase;
 
 ##### config
 
-[`Params`](../接口/Params.md)
+[`Params`](../ThreeBase基类参数/Params.md)
 
 应用配置
 

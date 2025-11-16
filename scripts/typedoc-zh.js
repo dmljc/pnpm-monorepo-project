@@ -65,14 +65,14 @@ function localizeFile(path) {
     let content = readFileSync(path, "utf8");
     for (const [from, to] of replacements) {
         const re = new RegExp(
-            `(^|\n)${from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\n)`,
+            `(^|\n)${from.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}(\n)`,
             "g",
         );
         content = content.replace(re, `$1${to}$2`);
     }
     for (const [from, to] of extraReplacements) {
         const re2 = new RegExp(
-            `(^|\n)${from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(\n)`,
+            `(^|\n)${from.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}(\n)`,
             "g",
         );
         content = content.replace(re2, `$1${to}$2`);
@@ -102,6 +102,49 @@ function localizeFile(path) {
     // Replace inline occurrences that may not be alone on a line (e.g. "Defined in: [file](...)")
     content = content.replaceAll("Defined in:", "定义于：");
     content = content.replaceAll("Defined in", "定义于");
+
+    // 针对 tthree 概览页进行幂等、无空格的标题与链接规范化
+    if (
+        path.endsWith("/tthree/README.md") ||
+        path.endsWith("\\tthree\\README.md")
+    ) {
+        // 移除“函数/Functions”分组（若存在）
+        const patterns = [
+            /(^|\n)##\s*函数[\s\S]*?(?=\n##\s|$)/g,
+            /(^|\n)##\s*Functions[\s\S]*?(?=\n##\s|$)/g,
+        ];
+        for (const re of patterns) content = content.replace(re, "$1");
+
+        // 标题统一为无空格版本
+        content = content.replace(/^##\s*类\s*$/m, "## ThreeBase基类");
+        content = content.replace(/^##\s*接口\s*$/m, "## ThreeBase基类参数");
+        content = content.replace(
+            /^##\s*ThreeBase\s*基类\s*$/m,
+            "## ThreeBase基类",
+        );
+        content = content.replace(
+            /^##\s*ThreeBase\s*基类参数\s*$/m,
+            "## ThreeBase基类参数",
+        );
+
+        // 链接统一到无空格目录（匹配多种旧写法）
+        content = content
+            .replace(
+                /\((?:\.\/)?(?:类|classes|ThreeBase(?:%20| )?基类)\/ThreeBase\.md\)/g,
+                "(ThreeBase基类/ThreeBase.md)",
+            )
+            .replace(
+                /\((?:\.\/)?(?:接口|interfaces|ThreeBase(?:%20| )?基类参数)\/Params\.md\)/g,
+                "(ThreeBase基类参数/Params.md)",
+            )
+            .replace(
+                /\((?:\.\/)?(?:接口|interfaces|ThreeBase(?:%20| )?基类参数)\/CameraFitConfig\.md\)/g,
+                "(ThreeBase基类参数/CameraFitConfig.md)",
+            )
+            .replace(/(ThreeBase基类\/)+/g, "ThreeBase基类/")
+            .replace(/(ThreeBase基类参数\/)+/g, "ThreeBase基类参数/");
+    }
+
     writeFileSync(path, content, "utf8");
     console.log("Localized:", path);
 }

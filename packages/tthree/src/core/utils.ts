@@ -79,34 +79,15 @@ export interface CameraFitConfig {
 /**
  * 根据网格的包围球计算相机拟合配置
  *
- * 该函数计算最优的相机位置，使得指定的网格对象完全可见。
- * 它基于网格的包围球（bounding sphere）和缩放比例进行计算。
+ * 用法示例：
+ *   const mesh = new THREE.Mesh(geometry, material);
+ *   const config = calculateCameraFitConfig(mesh, 3);
+ *   if (config) {
+ *     camera.position.set(config.position.x, config.position.y, config.position.z);
+ *     camera.lookAt(config.target.x, config.target.y, config.target.z);
+ *   }
  *
- * @param mesh - 要适应的网格对象（Three.js Mesh）
- * @param padding - 相机距离的额外缩放系数，默认 3
- *        - padding = 1 时，相机紧贴对象
- *        - padding = 3 时（默认），相机距离为对象大小的 3 倍
- *        - padding = 5 时，相机距离更远，视角更宽
- *
- * @returns 相机配置对象包含：
- *        - position: 计算后的相机位置 (x, y, z)
- *        - target: 相机看向的目标点
- *        - 若计算失败返回 null
- *
- * @example
- * ```typescript
- * const mesh = new THREE.Mesh(geometry, material);
- * const config = calculateCameraFitConfig(mesh, 3);
- *
- * if (config) {
- *   camera.position.set(
- *     config.position.x,
- *     config.position.y,
- *     config.position.z
- *   );
- *   camera.lookAt(config.target.x, config.target.y, config.target.z);
- * }
- * ```
+ * @internal
  */
 export function calculateCameraFitConfig(
     mesh: Mesh,

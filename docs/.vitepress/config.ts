@@ -66,15 +66,11 @@ export default defineConfig({
                         { text: "概览", link: "/tthree/README.md" },
                         {
                             text: "基类",
-                            link: "/tthree/类/ThreeBase.md",
-                        },
-                        {
-                            text: "工具函数",
-                            link: "/tthree/functions/calculateCameraFitConfig.md",
+                            link: "/tthree/ThreeBase基类/ThreeBase.md",
                         },
                         {
                             text: "参数",
-                            link: "/tthree/接口/Params.md",
+                            link: "/tthree/ThreeBase基类参数/Params.md",
                         },
                     ],
                 },
