@@ -6,8 +6,6 @@
 
 # Class: ThreeBase
 
-定义于： [ThreeBase.ts:81](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L81)
-
 Three.js 基础应用类
 
 提供完整的 Three.js 场景管理、相机控制、渲染器配置和动画循环。
@@ -52,8 +50,6 @@ app.destroy();
 scene: Scene<Object3DEventMap> | undefined;
 ```
 
-定义于： [ThreeBase.ts:83](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L83)
-
 场景实例
 
 ---
@@ -65,8 +61,6 @@ scene: Scene<Object3DEventMap> | undefined;
 ```ts
 camera: PerspectiveCamera | undefined;
 ```
-
-定义于： [ThreeBase.ts:86](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L86)
 
 相机实例
 
@@ -80,8 +74,6 @@ camera: PerspectiveCamera | undefined;
 renderer: WebGLRenderer | undefined;
 ```
 
-定义于： [ThreeBase.ts:89](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L89)
-
 渲染器实例
 
 ---
@@ -94,8 +86,6 @@ renderer: WebGLRenderer | undefined;
 controls: OrbitControls | undefined;
 ```
 
-定义于： [ThreeBase.ts:92](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L92)
-
 控制器实例
 
 ## 方法
@@ -107,8 +97,6 @@ controls: OrbitControls | undefined;
 ```ts
 init(): void;
 ```
-
-定义于： [ThreeBase.ts:282](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L282)
 
 初始化应用（仅创建资源，不自动启动）
 
@@ -125,8 +113,6 @@ init(): void;
 ```ts
 getIsRunning(): boolean;
 ```
-
-定义于： [ThreeBase.ts:317](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L317)
 
 获取应用运行状态
 
@@ -146,8 +132,6 @@ getIsRunning(): boolean;
 getContainer(): HTMLElement;
 ```
 
-定义于： [ThreeBase.ts:326](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L326)
-
 获取容器元素
 
 #### 返回值
@@ -166,8 +150,6 @@ getContainer(): HTMLElement;
 animate(): void;
 ```
 
-定义于： [ThreeBase.ts:346](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L346)
-
 启动动画循环（公开入口，使用 WebGLRenderer.setAnimationLoop）
 
 #### 返回值
@@ -183,8 +165,6 @@ animate(): void;
 ```ts
 fitToObject(mesh, padding): void;
 ```
-
-定义于： [ThreeBase.ts:388](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L388)
 
 根据网格对象自动调整相机和控制器
 用于确保场景中的对象完全可见
@@ -217,8 +197,6 @@ fitToObject(mesh, padding): void;
 stopAnimate(): void;
 ```
 
-定义于： [ThreeBase.ts:417](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L417)
-
 停止应用和动画循环
 
 #### 返回值
@@ -235,8 +213,6 @@ stopAnimate(): void;
 destroy(): void;
 ```
 
-定义于： [ThreeBase.ts:428](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L428)
-
 销毁应用
 
 #### 返回值
@@ -252,8 +228,6 @@ destroy(): void;
 ```ts
 new ThreeBase(config): ThreeBase;
 ```
-
-定义于： [ThreeBase.ts:119](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L119)
 
 创建 Three.js 应用实例
 

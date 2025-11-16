@@ -16,6 +16,8 @@
         "Events"
     ],
     "includeVersion": false,
+    "disableSources": true,
+    "hideSources": true,
     "excludeExternals": false,
     "excludePrivate": true,
     "excludeProtected": true,

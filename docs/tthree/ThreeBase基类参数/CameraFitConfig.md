@@ -6,8 +6,6 @@
 
 # Interface: CameraFitConfig
 
-定义于： [utils.ts:72](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/utils.ts#L72)
-
 相机拟合配置接口
 
 表示计算后的相机位置和目标点配置，
@@ -22,8 +20,6 @@
 ```ts
 position: object;
 ```
-
-定义于： [utils.ts:74](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/utils.ts#L74)
 
 相机位置
 
@@ -54,8 +50,6 @@ z: number;
 ```ts
 target: object;
 ```
-
-定义于： [utils.ts:76](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/utils.ts#L76)
 
 相机看向的目标点
 

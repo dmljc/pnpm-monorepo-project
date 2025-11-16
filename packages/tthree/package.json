@@ -18,7 +18,7 @@
     "scripts": {
         "dev": "rollup -c -w",
         "build": "rollup -c",
-        "docs": "typedoc",
+        "docs": "rm -rf ../../docs/tthree && typedoc",
         "docs:zh": "pnpm docs && node ../../scripts/typedoc-zh.js && node ../../scripts/typedoc-zh-structure.js",
         "clean": "rm -rf dist"
     },

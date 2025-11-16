@@ -22,6 +22,7 @@ if (!targetDir) {
     process.exit(1);
 }
 
+// replacements 不再包含 “Defined in”
 const replacements = new Map([
     ["## Constructors", "## 构造函数"],
     ["## Properties", "## 属性"],
@@ -32,8 +33,6 @@ const replacements = new Map([
     ["### Returns", "### 返回值"],
     ["## Returns", "## 返回值"],
     ["## Example", "## 示例"],
-    ["Defined in:", "定义于："],
-    ["Defined in", "定义于"],
 ]);
 
 // Extra common variants and list-item forms to catch right-side TOC entries
@@ -61,8 +60,10 @@ function walk(dir) {
     }
 }
 
-function localizeFile(path) {
-    let content = readFileSync(path, "utf8");
+function localizeFile(filePath) {
+    let content = readFileSync(filePath, "utf8");
+
+    // 英->中替换
     for (const [from, to] of replacements) {
         const re = new RegExp(
             `(^|\n)${from.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}(\n)`,
@@ -100,56 +101,18 @@ function localizeFile(path) {
         content = content.replace(liRe, `$1- ${chi}$2`);
     }
     // Replace inline occurrences that may not be alone on a line (e.g. "Defined in: [file](...)")
-    content = content.replaceAll("Defined in:", "定义于：");
-    content = content.replaceAll("Defined in", "定义于");
+    // 移除“Defined in/定义于”的替换与兜底清理（改为完全依赖配置）
+    // 原先的：
+    // content = content.replaceAll("Defined in:", "定义于：");
+    // content = content.replaceAll("Defined in", "定义于");
+    // content = content.replace(/^\s*(定义于|Defined in)[：:]\s*.*$/gm, "");
 
-    // 仅针对 tthree 概览页做定制化（幂等、精准）
-    if (
-        path.endsWith("/tthree/README.md") ||
-        path.endsWith("\\tthree\\README.md")
-    ) {
-        // 移除页首版本横幅：**项目 vX.Y.Z** + ---
-        content = content.replace(
-            /^\s*\*\*[^*]*?v\d+(?:\.\d+){1,2}\*\*\s*\n\s*---\s*\n?/i,
-            "",
-        );
+    content = content.replace(/<a id="autoresize"><\/a>[\s\S]*?\n---\n/g, "");
+    content = content.replace(/(^|\n)###\s*autoResize\?[\s\S]*?\n---\n/g, "$1");
+    content = content.replace(/\n{3,}/g, "\n\n");
 
-        // 标题统一为无空格版本
-        content = content.replace(/^##\s*类\s*$/m, "## ThreeBase基类");
-        content = content.replace(/^##\s*接口\s*$/m, "## ThreeBase基类参数");
-        content = content.replace(
-            /^##\s*ThreeBase\s*基类\s*$/m,
-            "## ThreeBase基类",
-        );
-        content = content.replace(
-            /^##\s*ThreeBase\s*基类参数\s*$/m,
-            "## ThreeBase基类参数",
-        );
-
-        // 链接统一为无空格目录
-        content = content.replace(
-            /\((?:\.\/)?(?:classes|类)\/ThreeBase\.md\)/g,
-            "(ThreeBase基类/ThreeBase.md)",
-        );
-        content = content.replace(
-            /\((?:\.\/)?(?:interfaces|接口)\/Params\.md\)/g,
-            "(ThreeBase基类参数/Params.md)",
-        );
-        content = content.replace(
-            /\((?:\.\/)?(?:interfaces|接口)\/CameraFitConfig\.md\)/g,
-            "(ThreeBase基类参数/CameraFitConfig.md)",
-        );
-
-        // 可选：移除“函数”分组（若 TypeDoc 输出异常保留）
-        content = content.replace(/(^|\n)##\s*函数[\s\S]*?(?=\n##\s|$)/g, "$1");
-        content = content.replace(
-            /(^|\n)##\s*Functions[\s\S]*?(?=\n##\s|$)/g,
-            "$1",
-        );
-    }
-
-    writeFileSync(path, content, "utf8");
-    console.log("Localized:", path);
+    writeFileSync(filePath, content, "utf8");
+    console.log("Localized:", filePath);
 }
 
 walk(targetDir);

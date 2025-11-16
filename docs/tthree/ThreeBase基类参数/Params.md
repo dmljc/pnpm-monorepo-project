@@ -6,8 +6,6 @@
 
 # Interface: Params
 
-定义于： [ThreeBase.ts:29](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L29)
-
 Three.js 应用实例配置选项
 
 ## 属性
@@ -19,8 +17,6 @@ Three.js 应用实例配置选项
 ```ts
 container: HTMLElement;
 ```
-
-定义于： [ThreeBase.ts:31](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L31)
 
 挂载的DOM元素
 
@@ -34,8 +30,6 @@ container: HTMLElement;
 optional antialias: boolean;
 ```
 
-定义于： [ThreeBase.ts:33](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L33)
-
 是否启用抗锯齿
 
 ---
@@ -48,23 +42,7 @@ optional antialias: boolean;
 optional controls: boolean;
 ```
 
-定义于： [ThreeBase.ts:35](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L35)
-
 是否启用控制器
-
----
-
-<a id="autoresize"></a>
-
-### autoResize?
-
-```ts
-optional autoResize: boolean;
-```
-
-定义于： [ThreeBase.ts:37](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L37)
-
-是否自动适应尺寸
 
 ---
 
@@ -75,8 +53,6 @@ optional autoResize: boolean;
 ```ts
 optional camera: PerspectiveCamera;
 ```
-
-定义于： [ThreeBase.ts:39](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L39)
 
 自定义相机
 
@@ -90,8 +66,6 @@ optional camera: PerspectiveCamera;
 optional renderer: WebGLRenderer;
 ```
 
-定义于： [ThreeBase.ts:41](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L41)
-
 自定义渲染器
 
 ---
@@ -104,8 +78,6 @@ optional renderer: WebGLRenderer;
 optional showGrid: boolean;
 ```
 
-定义于： [ThreeBase.ts:43](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L43)
-
 是否显示网格
 
 ---
@@ -117,7 +89,5 @@ optional showGrid: boolean;
 ```ts
 optional showAxes: boolean;
 ```
-
-定义于： [ThreeBase.ts:45](https://github.com/dmljc/pnpm-monorepo-project/blob/3cb5d4968028ef304d215f3f94047aed11aabfe1/packages/tthree/src/core/ThreeBase.ts#L45)
 
 是否显示坐标轴
