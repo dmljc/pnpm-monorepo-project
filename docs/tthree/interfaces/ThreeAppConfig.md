@@ -2,13 +2,13 @@
 
 ---
 
-[tthree](../README.md) / Params
+[tthree](../README.md) / ThreeAppConfig
 
-# Interface: Params
+# Interface: ThreeAppConfig
 
 Three.js 应用实例配置选项
 
-## 属性
+## Properties
 
 <a id="container"></a>
 

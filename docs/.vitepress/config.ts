@@ -24,9 +24,9 @@ export default defineConfig({
         logo: "https://vitepress.dev/vitepress-logo-mini.svg",
         nav: [
             { text: "首页", link: "/" },
-            { text: "前端", link: "../react/index.md" },
+            { text: "前端", link: "/react/index.md" },
             { text: "三维", link: "/tthree/README.md" },
-            { text: "后端", link: "../nest/index.md" },
+            { text: "后端", link: "/nest/index.md" },
         ],
         sidebar: {
             // 当用户位于 `react` 目录时，会显示此侧边栏
@@ -65,12 +65,12 @@ export default defineConfig({
                     items: [
                         { text: "概览", link: "/tthree/README.md" },
                         {
-                            text: "ThreeBase基类",
-                            link: "/tthree/ThreeBase基类/ThreeBase.md",
+                            text: "ThreeApp基类",
+                            link: "/tthree/classes/ThreeApp.md",
                         },
                         {
-                            text: "ThreeBase基类参数",
-                            link: "/tthree/ThreeBase基类参数/Params.md",
+                            text: "ThreeAppConfig配置",
+                            link: "/tthree/interfaces/ThreeAppConfig.md",
                         },
                     ],
                 },

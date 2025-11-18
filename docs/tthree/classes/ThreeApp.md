@@ -2,20 +2,21 @@
 
 ---
 
-[tthree](../README.md) / ThreeBase
+[tthree](../README.md) / ThreeApp
 
-# Class: ThreeBase
+# Class: ThreeApp
 
-Three.js 基础应用类
+Three.js 应用类
 
-提供完整的 Three.js 场景管理、相机控制、渲染器配置和动画循环。
-支持多实例隔离、自动尺寸自适应、资源管理等功能。
+提供完整的 Three.js 应用生命周期管理，包括场景创建（背景、雾效、光照、辅助工具）、
+相机配置（透视相机、轨道控制器）、渲染器设置（WebGL、抗锯齿、颜色空间）和动画循环（基于 WebGLRenderer setAnimationLoop）。
+ResizeObserver 驱动的自动尺寸自适应、完整的资源清理和销毁机制。
 
-## 示例
+## Example
 
 ```typescript
 // 1. 创建实例
-const app = new ThreeBase({
+const app = new ThreeApp({
     container: document.getElementById("canvas-container"),
     showGrid: true,
     showAxes: true,
@@ -35,7 +36,7 @@ app.animate();
 app.destroy();
 ```
 
-## 属性
+## Properties
 
 <a id="scene"></a>
 
@@ -83,7 +84,7 @@ controls: OrbitControls | undefined;
 
 控制器实例
 
-## 方法
+## Methods
 
 <a id="init"></a>
 
@@ -93,11 +94,20 @@ controls: OrbitControls | undefined;
 init(): void;
 ```
 
-初始化应用（仅创建资源，不自动启动）
+初始化应用
 
-#### 返回值
+1. 创建场景
+2. 创建相机
+3. 创建渲染器
+4. 创建控制器
+5. 启用尺寸自适应
+6. 设置初始化标记
+
+#### Returns
 
 `void`
+
+void
 
 ---
 
@@ -111,11 +121,11 @@ getIsRunning(): boolean;
 
 获取应用运行状态
 
-#### 返回值
+#### Returns
 
 `boolean`
 
-是否正在运行
+是否正在运行(boolean)
 
 ---
 
@@ -129,11 +139,11 @@ getContainer(): HTMLElement;
 
 获取容器元素
 
-#### 返回值
+#### Returns
 
 `HTMLElement`
 
-容器DOM元素
+容器DOM元素(HTMLElement)
 
 ---
 
@@ -152,7 +162,7 @@ addMesh(mesh): void;
 - 自动将网格添加到场景中
 - 如果未初始化，会自动调用 init()
 
-#### 参数
+#### Parameters
 
 ##### mesh
 
@@ -160,19 +170,49 @@ addMesh(mesh): void;
 
 要添加的网格对象
 
-#### 返回值
+#### Returns
 
 `void`
 
-#### 示例
+#### Example
 
 ```typescript
-const app = new ThreeBase({
+const app = new ThreeApp({
     container: el,
 });
 
 // 添加网格
 app.addMesh(mesh);
+```
+
+---
+
+<a id="getcontainersize"></a>
+
+### getContainerSize()
+
+```ts
+getContainerSize(): object;
+```
+
+获取容器尺寸
+
+#### Returns
+
+`object`
+
+容器宽度和高度(number, number)
+
+##### width
+
+```ts
+width: number;
+```
+
+##### height
+
+```ts
+height: number;
 ```
 
 ---
@@ -185,27 +225,31 @@ app.addMesh(mesh);
 animate(): void;
 ```
 
-启动动画循环（公开入口，使用 WebGLRenderer.setAnimationLoop）
+启动动画循环（使用 WebGLRenderer.setAnimationLoop 实现）
 
-#### 返回值
+#### Returns
 
 `void`
 
+void
+
 ---
 
-<a id="stopanimate"></a>
+<a id="stop"></a>
 
-### stopAnimate()
+### stop()
 
 ```ts
-stopAnimate(): void;
+stop(): void;
 ```
 
 停止应用和动画循环
 
-#### 返回值
+#### Returns
 
 `void`
+
+void
 
 ---
 
@@ -219,30 +263,32 @@ destroy(): void;
 
 销毁应用
 
-#### 返回值
+#### Returns
 
 `void`
 
-## 构造函数
+void
+
+## Constructors
 
 <a id="constructor"></a>
 
 ### Constructor
 
 ```ts
-new ThreeBase(config): ThreeBase;
+new ThreeApp(config): ThreeApp;
 ```
 
-创建 Three.js 应用实例
+创建 ThreeApp 实例
 
-#### 参数
+#### Parameters
 
 ##### config
 
-[`Params`](../interfaces/Params.md)
+[`ThreeAppConfig`](../interfaces/ThreeAppConfig.md)
 
-应用配置
+应用配置选项
 
-#### 返回值
+#### Returns
 
-`ThreeBase`
+`ThreeApp`

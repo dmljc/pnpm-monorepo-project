@@ -26,7 +26,7 @@ import { disposeMesh } from "./utils";
 /**
  * Three.js 应用实例配置选项
  */
-export interface Params {
+export interface ThreeAppConfig {
     /** 挂载的DOM元素 */
     container: HTMLElement;
     /** 是否启用抗锯齿 */
@@ -44,15 +44,16 @@ export interface Params {
 }
 
 /**
- * Three.js 基础应用类
+ * Three.js 应用类
  *
- * 提供完整的 Three.js 场景管理、相机控制、渲染器配置和动画循环。
- * 支持多实例隔离、自动尺寸自适应、资源管理等功能。
+ * 提供完整的 Three.js 应用生命周期管理，包括场景创建（背景、雾效、光照、辅助工具）、
+ * 相机配置（透视相机、轨道控制器）、渲染器设置（WebGL、抗锯齿、颜色空间）和动画循环（基于 WebGLRenderer setAnimationLoop）。
+ * ResizeObserver 驱动的自动尺寸自适应、完整的资源清理和销毁机制。
  *
  * @example
  * ```typescript
  * // 1. 创建实例
- * const app = new ThreeBase({
+ * const app = new ThreeApp({
  *   container: document.getElementById('canvas-container'),
  *   showGrid: true,
  *   showAxes: true
@@ -72,7 +73,7 @@ export interface Params {
  * app.destroy();
  * ```
  */
-export class ThreeBase {
+export class ThreeApp {
     /** 场景实例 */
     public scene: Scene | undefined;
 
@@ -95,7 +96,7 @@ export class ThreeBase {
     private container: HTMLElement;
 
     /** 初始化配置缓存（用于延迟初始化） */
-    private initOptions: Params | undefined;
+    private initOptions: ThreeAppConfig | undefined;
 
     /** 尺寸观察器 */
     private resizeObserver: ResizeObserver | undefined;
@@ -106,11 +107,11 @@ export class ThreeBase {
     protected elapsedTime: number = 0;
 
     /**
-     * 创建 Three.js 应用实例
+     * 创建 ThreeApp 实例
      *
-     * @param config - 应用配置
+     * @param config - 应用配置选项
      */
-    constructor(config: Params) {
+    constructor(config: ThreeAppConfig) {
         this.container = config.container;
         this.initOptions = config;
     }
@@ -202,7 +203,7 @@ export class ThreeBase {
      * @param config - 应用配置
      * @returns 配置好的渲染器实例
      */
-    private createRenderer(config: Params): WebGLRenderer {
+    private createRenderer(config: ThreeAppConfig): WebGLRenderer {
         const renderer = new WebGLRenderer({
             ...RENDERER_DEFAULTS.CONTEXT_ATTRIBUTES,
             antialias:
@@ -242,6 +243,21 @@ export class ThreeBase {
 
     /**
      * 设置尺寸自适应
+     *
+     * 解释 ResizeObserver 与 window resize 的区别，以及为什么这里使用 ResizeObserver
+     *
+     * 1. 监听范围不同
+     * window resize 事件：
+     * - 仅在浏览器窗口大小改变时触发
+     * - 无法检测容器元素本身的尺寸变化
+     * ResizeObserver：
+     * - 可监听任意 DOM 元素的尺寸变化
+     * - 不仅响应窗口大小变化，还响应容器元素本身尺寸的变化
+     * 2. 性能优势
+     * - ResizeObserver 由浏览器优化，性能更好
+     * - 回调在布局完成后触发，避免重复计算
+     * - 可精确监听特定元素，减少不必要的处理
+     * @returns void
      */
     private setupAutoResize(): void {
         this.resizeObserver = new ResizeObserver(() => {
@@ -251,9 +267,7 @@ export class ThreeBase {
         this.resizeObserver.observe(this.container);
     }
 
-    /**
-     * 处理容器尺寸变化
-     */
+    // 处理容器尺寸变化
     private handleResize(): void {
         if (!this.camera || !this.renderer) return;
 
@@ -268,7 +282,15 @@ export class ThreeBase {
     }
 
     /**
-     * 初始化应用（仅创建资源，不自动启动）
+     * 初始化应用
+     *
+     * 1. 创建场景
+     * 2. 创建相机
+     * 3. 创建渲染器
+     * 4. 创建控制器
+     * 5. 启用尺寸自适应
+     * 6. 设置初始化标记
+     * @returns void
      */
     public init(): void {
         if (this.initialized) return;
@@ -302,7 +324,7 @@ export class ThreeBase {
     /**
      * 获取应用运行状态
      *
-     * @returns 是否正在运行
+     * @returns 是否正在运行(boolean)
      */
     public getIsRunning(): boolean {
         return this.isRunning;
@@ -311,7 +333,7 @@ export class ThreeBase {
     /**
      * 获取容器元素
      *
-     * @returns 容器DOM元素
+     * @returns 容器DOM元素(HTMLElement)
      */
     public getContainer(): HTMLElement {
         return this.container;
@@ -327,7 +349,7 @@ export class ThreeBase {
      * @param mesh 要添加的网格对象
      * @example
      * ```typescript
-     * const app = new ThreeBase({
+     * const app = new ThreeApp({
      *   container: el
      * });
      *
@@ -350,9 +372,9 @@ export class ThreeBase {
     /**
      * 获取容器尺寸
      *
-     * @returns 容器宽度和高度
+     * @returns 容器宽度和高度(number, number)
      */
-    private getContainerSize(): { width: number; height: number } {
+    public getContainerSize(): { width: number; height: number } {
         const rect = this.container.getBoundingClientRect();
         return {
             width: rect.width,
@@ -361,7 +383,9 @@ export class ThreeBase {
     }
 
     /**
-     * 启动动画循环（公开入口，使用 WebGLRenderer.setAnimationLoop）
+     * 启动动画循环（使用 WebGLRenderer.setAnimationLoop 实现）
+     *
+     * @returns void
      */
     public animate(): void {
         // 保证已初始化
@@ -380,9 +404,7 @@ export class ThreeBase {
         this.renderer.setAnimationLoop(() => this.renderFrame());
     }
 
-    /**
-     * 每帧渲染（由 setAnimationLoop 驱动）
-     */
+    // 每帧渲染
     private renderFrame(): void {
         if (!this.renderer || !this.scene || !this.camera) return;
 
@@ -400,8 +422,10 @@ export class ThreeBase {
 
     /**
      * 停止应用和动画循环
+     *
+     * @returns void
      */
-    public stopAnimate(): void {
+    public stop(): void {
         if (!this.isRunning) return;
 
         this.isRunning = false;
@@ -411,11 +435,13 @@ export class ThreeBase {
 
     /**
      * 销毁应用
+     *
+     * @returns void
      */
     public destroy(): void {
         this.initialized = false;
 
-        this.stopAnimate();
+        this.stop();
 
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();

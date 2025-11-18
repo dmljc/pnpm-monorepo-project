@@ -17,10 +17,9 @@
     ],
     "scripts": {
         "dev": "rollup -c -w",
-        "build": "rollup -c && pnpm docs:zh",
-        "docs": "rm -rf ../../docs/tthree && typedoc",
-        "docs:zh": "pnpm docs && node ../../scripts/typedoc-zh.js && node ../../scripts/typedoc-zh-structure.js",
-        "clean": "rm -rf dist"
+        "clean": "rm -rf dist",
+        "docs": "rm -rf ../../docs/tthree && pnpm exec typedoc --options typedoc.json",
+        "build": "pnpm clean && rollup -c && rm -rf ../../docs/tthree && pnpm exec typedoc --options typedoc.json"
     },
     "keywords": [
         "threejs",

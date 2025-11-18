@@ -4,10 +4,10 @@
 
 # tthree
 
-## 类
+## Classes
 
-- [ThreeBase](ThreeBase基类/ThreeBase.md)
+- [ThreeApp](classes/ThreeApp.md)
 
-## 接口
+## Interfaces
 
-- [Params](ThreeBase基类参数/Params.md)
+- [ThreeAppConfig](interfaces/ThreeAppConfig.md)
