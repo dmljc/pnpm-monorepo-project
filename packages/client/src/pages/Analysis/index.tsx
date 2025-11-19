@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { ThreeBase } from "tthree";
+import { ThreeApp } from "tthree";
 import {
     Mesh,
     SphereGeometry,
@@ -77,15 +77,15 @@ const createRandomMesh = (): MeshConfig => {
 /**
  * 初始化单个场景
  * @param config 场景配置
- * @returns ThreeBase 实例
+ * @returns ThreeApp 实例
  */
 const initializeScene = (
     config: SceneConfig,
     showGrid: boolean = false,
     showAxes: boolean = false,
-): ThreeBase => {
+): ThreeApp => {
     const { container, meshFactory } = config;
-    const threeApp = new ThreeBase({
+    const threeApp = new ThreeApp({
         container,
         showGrid,
         showAxes,
@@ -156,7 +156,7 @@ const Analysis: FC = () => {
     const container3Ref = useRef<HTMLDivElement | null>(null);
     const container4Ref = useRef<HTMLDivElement | null>(null);
 
-    const instancesRef = useRef<ThreeBase[]>([]);
+    const instancesRef = useRef<ThreeApp[]>([]);
     const [box4Dims] = useState(getRandomBox4Dims());
 
     useEffect(() => {
