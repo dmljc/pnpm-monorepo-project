@@ -25,7 +25,6 @@ export default defineConfig({
         nav: [
             { text: "首页", link: "/" },
             { text: "前端", link: "/react/index.md" },
-            { text: "三维", link: "/tthree/README.md" },
             { text: "后端", link: "/nest/index.md" },
         ],
         sidebar: {
@@ -55,23 +54,6 @@ export default defineConfig({
                     items: [
                         { text: "第一节", link: "/nest/1.md" },
                         { text: "第二节", link: "/nest/2.md" },
-                    ],
-                },
-            ],
-            "/tthree/": [
-                {
-                    text: "tthree API",
-                    collapsed: true,
-                    items: [
-                        { text: "概览", link: "/tthree/README.md" },
-                        {
-                            text: "ThreeApp基类",
-                            link: "/tthree/classes/ThreeApp.md",
-                        },
-                        {
-                            text: "ThreeAppConfig配置",
-                            link: "/tthree/interfaces/ThreeAppConfig.md",
-                        },
                     ],
                 },
             ],

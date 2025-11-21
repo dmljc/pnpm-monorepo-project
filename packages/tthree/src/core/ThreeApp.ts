@@ -1,27 +1,59 @@
-import {
-    Scene,
-    PerspectiveCamera,
-    WebGLRenderer,
-    Color,
-    Fog,
-    Clock,
-    Mesh,
-    NoToneMapping,
-    AmbientLight,
-    DirectionalLight,
-    GridHelper,
-    AxesHelper,
-} from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import {
-    RENDERER_DEFAULTS,
-    CAMERA_DEFAULTS,
-    CONTROLS_DEFAULTS,
-    SCENE_DEFAULTS,
-    GRID_DEFAULTS,
-    AXES_DEFAULTS,
-} from "./constants";
-import { disposeMesh } from "./utils";
+/**
+ * @module ThreeApp
+ * @packageDocumentation
+ *
+ * # ThreeApp 模块
+ *
+ * ThreeApp 是 tthree 库的核心应用类，提供完整的 Three.js 应用生命周期管理。
+ *
+ * ## 功能特性
+ *
+ * - 完整的应用生命周期管理（初始化、运行、销毁）
+ * - 场景创建（背景、雾效、光照、辅助工具）
+ * - 相机配置（透视相机、轨道控制器）
+ * - 渲染器设置（WebGL、抗锯齿、颜色空间）
+ * - 动画循环（基于 WebGLRenderer setAnimationLoop）
+ * - ResizeObserver 驱动的自动尺寸自适应
+ * - 完整的资源清理和销毁机制
+ *
+ * ## 架构设计
+ *
+ * ThreeApp 整合了三个核心模块：
+ * - {@link RenderEngine} - 渲染引擎
+ * - {@link SceneManager} - 场景管理器
+ * - {@link CameraController} - 相机控制器
+ *
+ * ## 使用示例
+ *
+ * ```typescript
+ * import { ThreeApp } from 'tthree';
+ *
+ * // 1. 创建实例
+ * const app = new ThreeApp({
+ *   container: document.getElementById('canvas-container'),
+ *   showGrid: true,
+ *   showAxes: true
+ * });
+ *
+ * // 2. 初始化
+ * app.init();
+ *
+ * // 3. 添加网格
+ * const mesh = new THREE.Mesh(geometry, material);
+ * app.addMesh(mesh);
+ *
+ * // 4. 启动动画
+ * app.animate();
+ *
+ * // 5. 清理资源
+ * app.destroy();
+ * ```
+ */
+
+import { Mesh, PerspectiveCamera, WebGLRenderer } from "three";
+import { RenderEngine } from "./RenderEngine";
+import { SceneManager } from "./SceneManager";
+import { CameraController } from "./CameraController";
 
 /**
  * Three.js 应用实例配置选项
@@ -74,20 +106,14 @@ export interface ThreeAppConfig {
  * ```
  */
 export class ThreeApp {
-    /** 场景实例 */
-    public scene: Scene | undefined;
+    /** 渲染引擎实例 */
+    public renderEngine: RenderEngine;
 
-    /** 相机实例 */
-    public camera: PerspectiveCamera | undefined;
+    /** 场景管理器实例 */
+    public sceneManager: SceneManager;
 
-    /** 渲染器实例 */
-    public renderer: WebGLRenderer | undefined;
-
-    /** 控制器实例 */
-    public controls: OrbitControls | undefined;
-
-    /** 是否正在运行 */
-    private isRunning: boolean = false;
+    /** 相机控制器实例 */
+    public cameraController: CameraController;
 
     /** 是否已初始化（延迟初始化标记） */
     private initialized: boolean = false;
@@ -101,8 +127,7 @@ export class ThreeApp {
     /** 尺寸观察器 */
     private resizeObserver: ResizeObserver | undefined;
 
-    /** 帧时钟与时间数据 */
-    private clock: Clock = new Clock();
+    /** 帧时间数据 */
     protected deltaTime: number = 0;
     protected elapsedTime: number = 0;
 
@@ -114,131 +139,25 @@ export class ThreeApp {
     constructor(config: ThreeAppConfig) {
         this.container = config.container;
         this.initOptions = config;
-    }
 
-    /**
-     * 创建网格
-     *
-     * @returns 网格实例
-     */
-    private createGrid(): GridHelper {
-        return new GridHelper(
-            GRID_DEFAULTS.SIZE,
-            GRID_DEFAULTS.DIVISIONS,
-            GRID_DEFAULTS.CENTER_COLOR,
-            GRID_DEFAULTS.COLOR,
-        );
-    }
+        // 初始化渲染引擎
+        this.renderEngine = new RenderEngine({ container: config.container });
 
-    /**
-     * 创建坐标轴
-     *
-     * @returns 坐标轴实例
-     */
-    private createAxes(): AxesHelper {
-        return new AxesHelper(AXES_DEFAULTS.SIZE);
-    }
-
-    /**
-     * 创建场景
-     *
-     * @returns 配置好的场景实例
-     */
-    private createScene(): Scene {
-        const scene = new Scene();
-        scene.background = new Color(SCENE_DEFAULTS.BACKGROUND);
-        scene.fog = new Fog(
-            SCENE_DEFAULTS.FOG.color,
-            SCENE_DEFAULTS.FOG.near,
-            SCENE_DEFAULTS.FOG.far,
-        );
-
-        // 添加环境光（浅色背景下可以减弱）
-        const ambientLight = new AmbientLight(0xffffff, 0.4);
-        scene.add(ambientLight);
-
-        // 添加方向光
-        const directionalLight = new DirectionalLight(0xffffff, 1.0);
-        directionalLight.position.set(10, 10, 10);
-        scene.add(directionalLight);
-
-        // 添加网格和坐标轴（根据配置）
-        if (this.initOptions?.showGrid) {
-            scene.add(this.createGrid());
-        }
-
-        if (this.initOptions?.showAxes) {
-            scene.add(this.createAxes());
-        }
-
-        return scene;
-    }
-
-    /**
-     * 创建透视相机
-     *
-     * @returns 配置好的相机实例
-     */
-    private createCamera(): PerspectiveCamera {
-        const { width, height } = this.getContainerSize();
-        const camera = new PerspectiveCamera(
-            CAMERA_DEFAULTS.PERSPECTIVE.fov,
-            width / height,
-            CAMERA_DEFAULTS.PERSPECTIVE.near,
-            CAMERA_DEFAULTS.PERSPECTIVE.far,
-        );
-
-        camera.position.set(
-            CAMERA_DEFAULTS.POSITION.x,
-            CAMERA_DEFAULTS.POSITION.y,
-            CAMERA_DEFAULTS.POSITION.z,
-        );
-
-        return camera;
-    }
-
-    /**
-     * 创建 WebGL 渲染器
-     *
-     * @param config - 应用配置
-     * @returns 配置好的渲染器实例
-     */
-    private createRenderer(config: ThreeAppConfig): WebGLRenderer {
-        const renderer = new WebGLRenderer({
-            ...RENDERER_DEFAULTS.CONTEXT_ATTRIBUTES,
-            antialias:
-                config.antialias ??
-                RENDERER_DEFAULTS.CONTEXT_ATTRIBUTES.antialias,
+        // 初始化场景管理器
+        this.sceneManager = new SceneManager({
+            showGrid: config.showGrid,
+            showAxes: config.showAxes,
         });
 
-        // 输出配置（保持最简）
-        renderer.outputColorSpace = RENDERER_DEFAULTS.OUTPUT.colorSpace;
-        renderer.toneMapping = NoToneMapping;
+        // 获取容器尺寸
+        const containerSize = this.getContainerSize();
 
-        this.container.appendChild(renderer.domElement);
-
-        return renderer;
-    }
-
-    /**
-     * 创建轨道控制器
-     *
-     * @returns 配置好的控制器实例
-     */
-    private createControls(): OrbitControls {
-        if (!this.camera || !this.renderer) {
-            throw new Error("相机和渲染器必须在创建控制器之前被初始化");
-        }
-        const controls = new OrbitControls(
-            this.camera,
-            this.renderer.domElement,
-        );
-
-        Object.entries(CONTROLS_DEFAULTS.ORBIT).forEach(([key, value]) => {
-            (controls as any)[key] = value;
+        // 初始化相机控制器
+        this.cameraController = new CameraController({
+            containerSize,
+            camera: config.camera,
+            controls: config.controls,
         });
-
-        return controls;
     }
 
     /**
@@ -269,16 +188,13 @@ export class ThreeApp {
 
     // 处理容器尺寸变化
     private handleResize(): void {
-        if (!this.camera || !this.renderer) return;
-
         const { width, height } = this.getContainerSize();
-        const aspect = height === 0 ? 1 : width / height;
 
-        this.camera.aspect = aspect;
-        this.camera.updateProjectionMatrix();
+        // 更新相机尺寸
+        this.cameraController.updateSize(width, height);
 
-        this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // 更新渲染器尺寸
+        this.renderEngine.setSize(width, height);
     }
 
     /**
@@ -302,17 +218,29 @@ export class ThreeApp {
         const config = this.initOptions;
 
         // 初始化场景
-        this.scene = this.createScene();
+        this.sceneManager.createScene();
 
         // 初始化相机
-        this.camera = config.camera || this.createCamera();
+        if (!config.camera) {
+            this.cameraController.createCamera();
+        } else {
+            this.cameraController.camera = config.camera;
+        }
 
         // 初始化渲染器
-        this.renderer = config.renderer || this.createRenderer(config);
+        if (!config.renderer) {
+            this.renderEngine.createRenderer({
+                container: config.container,
+                antialias: config.antialias,
+            });
+        } else {
+            this.renderEngine.renderer = config.renderer;
+            this.container.appendChild(config.renderer.domElement);
+        }
 
         // 初始化控制器
-        if (config.controls !== false) {
-            this.controls = this.createControls();
+        if (this.cameraController.getEnableControls() && this.renderer) {
+            this.cameraController.createControls(this.renderer.domElement);
         }
 
         // 启用尺寸自适应
@@ -321,13 +249,45 @@ export class ThreeApp {
         this.initialized = true;
     }
 
+    /** 获取场景实例
+     *
+     * @returns 场景实例(Scene)
+     */
+    public get scene() {
+        return this.sceneManager?.scene;
+    }
+
+    /** 获取相机实例
+     *
+     * @returns 相机实例(PerspectiveCamera)
+     */
+    public get camera() {
+        return this.cameraController?.camera;
+    }
+
+    /** 获取渲染器实例
+     *
+     * @returns 渲染器实例(WebGLRenderer)
+     */
+    public get renderer() {
+        return this.renderEngine?.renderer;
+    }
+
+    /** 获取 OrbitControls 控制器实例
+     *
+     * @returns 控制器实例(OrbitControls)
+     */
+    public get controls() {
+        return this.cameraController?.controls;
+    }
+
     /**
      * 获取应用运行状态
      *
      * @returns 是否正在运行(boolean)
      */
     public getIsRunning(): boolean {
-        return this.isRunning;
+        return this.renderEngine.getIsRunning();
     }
 
     /**
@@ -362,11 +322,7 @@ export class ThreeApp {
             this.init();
         }
 
-        if (!this.scene) {
-            throw new Error("场景未初始化，无法添加网格");
-        }
-
-        this.scene.add(mesh);
+        this.sceneManager.addMesh(mesh);
     }
 
     /**
@@ -392,32 +348,33 @@ export class ThreeApp {
         if (!this.initialized) {
             this.init();
         }
-        // 幂等：已运行则不重复启动
-        if (this.isRunning) return;
 
-        if (!this.renderer) {
-            throw new Error("渲染器未初始化，请先调用 init() 方法");
+        if (!this.scene || !this.camera) {
+            throw new Error("场景或相机未初始化，请先调用 init() 方法");
         }
 
-        this.isRunning = true;
-        this.clock.start();
-        this.renderer.setAnimationLoop(() => this.renderFrame());
+        // 启动渲染循环
+        this.renderEngine.start(() => this.renderFrame());
     }
 
-    // 每帧渲染
+    /**
+     * 渲染帧
+     *
+     * @returns void
+     */
     private renderFrame(): void {
-        if (!this.renderer || !this.scene || !this.camera) return;
+        if (!this.scene || !this.camera) return;
 
-        const delta = this.clock.getDelta();
-        this.deltaTime = delta;
-        this.elapsedTime += delta;
+        // 更新时间数据
+        const timeData = this.renderEngine.getTimeData();
+        this.deltaTime = timeData.deltaTime;
+        this.elapsedTime = timeData.elapsedTime;
 
-        if (this.controls) {
-            this.controls.update();
-        }
+        // 更新控制器
+        this.cameraController.update();
 
         // 渲染场景
-        this.renderer.render(this.scene, this.camera);
+        this.renderEngine.render(this.scene, this.camera);
     }
 
     /**
@@ -426,11 +383,7 @@ export class ThreeApp {
      * @returns void
      */
     public stop(): void {
-        if (!this.isRunning) return;
-
-        this.isRunning = false;
-        this.clock.stop();
-        this.renderer?.setAnimationLoop(null);
+        this.renderEngine.stop();
     }
 
     /**
@@ -443,32 +396,15 @@ export class ThreeApp {
 
         this.stop();
 
+        // 清理尺寸观察器
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = undefined;
         }
 
-        if (this.controls) {
-            this.controls.dispose();
-            this.controls = undefined;
-        }
-
-        if (this.renderer) {
-            this.renderer.dispose();
-            this.renderer.domElement.remove();
-            this.renderer = undefined;
-        }
-
-        // 遍历场景中的所有对象，释放网格资源
-        if (this.scene) {
-            this.scene.traverse((object) => {
-                if (object instanceof Mesh) {
-                    disposeMesh(object as Mesh);
-                }
-            });
-            this.scene = undefined;
-        }
-
-        this.camera = undefined;
+        // 销毁各个模块
+        this.renderEngine.destroy();
+        this.sceneManager.destroy();
+        this.cameraController.destroy();
     }
 }

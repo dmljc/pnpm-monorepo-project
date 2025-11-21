@@ -1,11 +1,16 @@
 {
     "$schema": "https://typedoc.org/schema.json",
-    "entryPoints": ["src/index.ts"],
+    "entryPoints": [
+        "src/core/CameraController.ts",
+        "src/core/RenderEngine.ts",
+        "src/core/SceneManager.ts",
+        "src/core/ThreeApp.ts"
+    ],
     "tsconfig": "./tsconfig.json",
     "plugin": ["typedoc-plugin-markdown"],
-    "out": "../../docs/tthree",
+    "out": "./docs/api",
     "readme": "none",
-    "hideBreadcrumbs": false,
+    "hideBreadcrumbs": true,
     "hidePageTitle": false,
     "categorizeByGroup": true,
     "groupOrder": [
@@ -21,7 +26,7 @@
     "excludePrivate": true,
     "excludeProtected": true,
     "excludeInternal": true,
-    "outputFileStrategy": "members",
+    "outputFileStrategy": "modules",
     "githubPages": false,
     "useHTMLAnchors": true,
     "useCodeBlocks": true,
