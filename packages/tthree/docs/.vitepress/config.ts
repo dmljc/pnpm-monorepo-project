@@ -64,6 +64,7 @@ export default defineConfig({
             { text: "首页", link: "/" },
             { text: "快速开始", link: "/guide/getting-started" },
             { text: "API 文档", link: "/api/" },
+            { text: "文档编写", link: "/TYPEDOC-TAGS-REFERENCE" },
         ],
 
         sidebar: {
@@ -83,15 +84,13 @@ export default defineConfig({
             ],
             "/": [
                 {
-                    text: "指南",
+                    text: "文档编写",
                     items: [
-                        { text: "介绍", link: "/" },
-                        { text: "快速开始", link: "/guide/getting-started" },
+                        {
+                            text: "TypeDoc 标签参考",
+                            link: "/TYPEDOC-TAGS-REFERENCE",
+                        },
                     ],
-                },
-                {
-                    text: "API",
-                    items: [{ text: "API 文档", link: "/api/" }],
                 },
             ],
         },
