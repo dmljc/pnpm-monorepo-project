@@ -9,6 +9,7 @@
     "tsconfig": "./tsconfig.json",
     "plugin": ["typedoc-plugin-markdown"],
     "out": "./docs/api",
+    "cleanOutputDir": false,
     "readme": "none",
     "hideBreadcrumbs": true,
     "hidePageTitle": false,

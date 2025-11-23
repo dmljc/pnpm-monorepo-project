@@ -87,4 +87,4 @@ app.animate();
 
 ## 配置选项
 
-查看 [ThreeAppConfig](/api/interfaces/ThreeAppConfig) 了解所有可用的配置选项。
+查看 [ThreeAppConfig](/api/ThreeApp#threeappconfig) 了解所有可用的配置选项。
