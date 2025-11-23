@@ -32,7 +32,7 @@ const App = () => {
     useEffect(() => {
         if (userInfo?.name && !hasNotification) {
             api.success({
-                message: t("common:notifications.loginSuccess"),
+                title: t("common:notifications.loginSuccess"),
                 description: (
                     <span style={{ display: "flex", alignItems: "center" }}>
                         {t("common:notifications.welcomeBack")}: {userInfo.name}

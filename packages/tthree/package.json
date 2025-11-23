@@ -18,7 +18,7 @@
     "scripts": {
         "dev": "rollup -c -w",
         "docs": "pnpm exec typedoc --options typedoc.json && prettier --write \"docs/api/**/*.md\"",
-        "docs:dev": "pnpm docs && vitepress dev docs --port 1111",
+        "docs:dev": "pnpm docs && vitepress dev docs --port 3333",
         "docs:build": "pnpm docs && vitepress build docs",
         "docs:preview": "vitepress preview docs",
         "build": "rollup -c && pnpm run docs"

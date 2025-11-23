@@ -1,7 +1,7 @@
 // 顺序标准化 - React → 第三方库 → 内部模块 → 相对路径
 import { useState, useEffect, useMemo } from "react";
 
-import { message, Space, Table, Tag, Form } from "antd";
+import { message, Space, Table, Tag } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import { useTranslation } from "react-i18next";
@@ -81,7 +81,6 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
         ModalTypeEnum.CREATE,
     );
     const [record, setRecord] = useState<UpdateMenu>({} as UpdateMenu);
-    const [form] = Form.useForm();
     // 使用外部selectedRowKeys初始化，如果没有则使用空数组
     const [selectedRowKeyList, setSelectedRowKeyList] = useState<React.Key[]>(
         selectedRowKeys || [],
@@ -263,14 +262,12 @@ const TreeTable = <T extends Record<string, any>>(props: Props) => {
     const handleCreate = () => {
         setOpen(true);
         setModalType(ModalTypeEnum.CREATE);
-        form.resetFields();
     };
 
     const handleUpdate = (record: UpdateMenu) => {
         setOpen(true);
         setRecord({ ...record });
         setModalType(ModalTypeEnum.UPDATE);
-        form.setFieldsValue(record);
     };
 
     const handleDelete = async (record: DataType) => {

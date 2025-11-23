@@ -14,7 +14,7 @@
         "@ant-design/pro-components": "^2.8.10",
         "@emotion/css": "^11.13.5",
         "@iconify/react": "^6.0.2",
-        "antd": "^5.29.1",
+        "antd": "^6.0.0",
         "antd-img-crop": "^4.27.0",
         "antd-style": "^3.7.1",
         "dayjs": "^1.11.19",
@@ -30,7 +30,6 @@
         "zustand": "^5.0.8"
     },
     "devDependencies": {
-        "@ant-design/v5-patch-for-react-19": "^1.0.3",
         "@types/react": "^19.2.6",
         "@types/react-dom": "^19.2.3",
         "@types/three": "^0.181.0",
