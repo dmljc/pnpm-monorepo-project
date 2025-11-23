@@ -68,13 +68,9 @@ export default defineConfig({
             ],
         },
 
-        socialLinks: [
-            // { icon: 'github', link: 'https://github.com/yourusername/tthree' }
-        ],
-
         footer: {
             message: "基于 TypeDoc 生成",
-            copyright: "Copyright © 2024 tthree",
+            copyright: "Copyright © 2025 tthree",
         },
 
         search: {
