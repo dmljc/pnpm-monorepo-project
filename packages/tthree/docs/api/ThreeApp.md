@@ -40,16 +40,6 @@ app.destroy();
 
 #### Properties
 
-<a id="renderengine"></a>
-
-##### renderEngine
-
-```ts
-renderEngine: RenderEngine;
-```
-
-渲染引擎实例
-
 <a id="scenemanager"></a>
 
 ##### sceneManager
@@ -69,6 +59,16 @@ cameraController: CameraController;
 ```
 
 相机控制器实例
+
+<a id="renderengine"></a>
+
+##### renderEngine
+
+```ts
+renderEngine: RenderEngine;
+```
+
+渲染引擎实例
 
 #### Methods
 

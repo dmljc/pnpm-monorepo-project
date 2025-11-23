@@ -10,36 +10,36 @@ export default defineConfig({
         nav: [
             { text: "首页", link: "/" },
             { text: "快速开始", link: "/guide/getting-started" },
-            { text: "API 文档", link: "/api" },
+            { text: "API 文档", link: "/api/" },
             { text: "文档编写", link: "/TYPEDOC-TAGS-REFERENCE" },
         ],
 
         sidebar: {
-            "/api": [
+            "/api/": [
                 {
                     text: "API 文档",
                     items: [
+                        { text: "SceneManager", link: "/api/SceneManager" },
                         {
                             text: "CameraController",
                             link: "/api/CameraController",
                         },
                         { text: "RenderEngine", link: "/api/RenderEngine" },
-                        { text: "SceneManager", link: "/api/SceneManager" },
                         { text: "ThreeApp", link: "/api/ThreeApp" },
                     ],
                     collapsed: false,
                 },
             ],
-            "/api/": [
+            "/api": [
                 {
                     text: "API 文档",
                     items: [
+                        { text: "SceneManager", link: "/api/SceneManager" },
                         {
                             text: "CameraController",
                             link: "/api/CameraController",
                         },
                         { text: "RenderEngine", link: "/api/RenderEngine" },
-                        { text: "SceneManager", link: "/api/SceneManager" },
                         { text: "ThreeApp", link: "/api/ThreeApp" },
                     ],
                     collapsed: false,
@@ -97,3 +97,4 @@ export default defineConfig({
         },
     },
 });
+

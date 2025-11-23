@@ -6,12 +6,23 @@
 
 tthree 库的核心功能由以下模块提供，每个模块都有独立的文档：
 
+- [SceneManager](./SceneManager) - 场景管理器模块
 - [CameraController](./CameraController) - 相机控制器模块
 - [RenderEngine](./RenderEngine) - 渲染引擎模块
-- [SceneManager](./SceneManager) - 场景管理器模块
 - [ThreeApp](./ThreeApp) - 主应用类模块
 
 ## 模块说明
+
+### SceneManager
+
+负责场景的创建、配置、对象管理和资源清理。
+
+**主要功能：**
+
+- 场景的创建和配置（背景、雾效、光照）
+- 网格和坐标轴辅助工具的添加
+- 场景对象的添加和移除
+- 自动资源清理和内存管理
 
 ### CameraController
 
@@ -34,17 +45,6 @@ tthree 库的核心功能由以下模块提供，每个模块都有独立的文�
 - 渲染循环管理（基于 setAnimationLoop）
 - 帧时间数据获取
 - 自动像素比适配
-
-### SceneManager
-
-负责场景的创建、配置、对象管理和资源清理。
-
-**主要功能：**
-
-- 场景的创建和配置（背景、雾效、光照）
-- 网格和坐标轴辅助工具的添加
-- 场景对象的添加和移除
-- 自动资源清理和内存管理
 
 ### ThreeApp
 

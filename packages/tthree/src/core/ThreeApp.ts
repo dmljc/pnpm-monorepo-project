@@ -51,14 +51,14 @@ export interface ThreeAppConfig {
  * ```
  */
 export class ThreeApp {
-    /** 渲染引擎实例 */
-    public renderEngine: RenderEngine;
-
     /** 场景管理器实例 */
     public sceneManager: SceneManager;
 
     /** 相机控制器实例 */
     public cameraController: CameraController;
+
+    /** 渲染引擎实例 */
+    public renderEngine: RenderEngine;
 
     /** 是否已初始化（延迟初始化标记） */
     private initialized: boolean = false;
@@ -85,9 +85,6 @@ export class ThreeApp {
         this.container = config.container;
         this.initOptions = config;
 
-        // 初始化渲染引擎
-        this.renderEngine = new RenderEngine({ container: config.container });
-
         // 初始化场景管理器
         this.sceneManager = new SceneManager({
             showGrid: config.showGrid,
@@ -103,6 +100,9 @@ export class ThreeApp {
             camera: config.camera,
             controls: config.controls,
         });
+
+        // 初始化渲染引擎
+        this.renderEngine = new RenderEngine({ container: config.container });
     }
 
     /**
