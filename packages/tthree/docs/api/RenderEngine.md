@@ -4,13 +4,38 @@
 
 # RenderEngine
 
+## Classes
+
 <a id="renderengine"></a>
 
 ### RenderEngine
 
-渲染引擎类
+渲染引擎类：负责 WebGL 渲染器的创建、配置、渲染循环和资源管理
 
-负责 WebGL 渲染器的创建、配置、渲染循环和资源管理
+## 使用示例
+
+```typescript
+import { RenderEngine } from "tthree";
+
+const engine = new RenderEngine({
+    container: document.getElementById("canvas"),
+    antialias: true,
+});
+
+// 创建渲染器
+engine.createRenderer({ container, antialias: true });
+
+// 设置尺寸
+engine.setSize(800, 600);
+
+// 启动渲染循环
+engine.start(() => {
+    engine.render(scene, camera);
+});
+
+// 获取时间数据
+const { deltaTime, elapsedTime } = engine.getTimeData();
+```
 
 #### Properties
 
@@ -223,6 +248,8 @@ new RenderEngine(config): RenderEngine;
 ###### Returns
 
 [`RenderEngine`](#renderengine)
+
+## Interfaces
 
 <a id="renderengineconfig"></a>
 

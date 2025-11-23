@@ -1,55 +1,3 @@
-/**
- * @module ThreeApp
- * @packageDocumentation
- *
- * # ThreeApp 模块
- *
- * ThreeApp 是 tthree 库的核心应用类，提供完整的 Three.js 应用生命周期管理。
- *
- * ## 功能特性
- *
- * - 完整的应用生命周期管理（初始化、运行、销毁）
- * - 场景创建（背景、雾效、光照、辅助工具）
- * - 相机配置（透视相机、轨道控制器）
- * - 渲染器设置（WebGL、抗锯齿、颜色空间）
- * - 动画循环（基于 WebGLRenderer setAnimationLoop）
- * - ResizeObserver 驱动的自动尺寸自适应
- * - 完整的资源清理和销毁机制
- *
- * ## 架构设计
- *
- * ThreeApp 整合了三个核心模块：
- * - {@link RenderEngine} - 渲染引擎
- * - {@link SceneManager} - 场景管理器
- * - {@link CameraController} - 相机控制器
- *
- * ## 使用示例
- *
- * ```typescript
- * import { ThreeApp } from 'tthree';
- *
- * // 1. 创建实例
- * const app = new ThreeApp({
- *   container: document.getElementById('canvas-container'),
- *   showGrid: true,
- *   showAxes: true
- * });
- *
- * // 2. 初始化
- * app.init();
- *
- * // 3. 添加网格
- * const mesh = new THREE.Mesh(geometry, material);
- * app.addMesh(mesh);
- *
- * // 4. 启动动画
- * app.animate();
- *
- * // 5. 清理资源
- * app.destroy();
- * ```
- */
-
 import { Mesh, PerspectiveCamera, WebGLRenderer } from "three";
 import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
@@ -76,12 +24,9 @@ export interface ThreeAppConfig {
 }
 
 /**
- * Three.js 应用类
+ * Three.js 应用类：负责 Three.js 应用的创建、初始化、渲染和销毁
  *
- * 提供完整的 Three.js 应用生命周期管理，包括场景创建（背景、雾效、光照、辅助工具）、
- * 相机配置（透视相机、轨道控制器）、渲染器设置（WebGL、抗锯齿、颜色空间）和动画循环（基于 WebGLRenderer setAnimationLoop）。
- * ResizeObserver 驱动的自动尺寸自适应、完整的资源清理和销毁机制。
- *
+ * ## 使用示例
  * @example
  * ```typescript
  * // 1. 创建实例

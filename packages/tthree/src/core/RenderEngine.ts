@@ -1,18 +1,24 @@
+import {
+    WebGLRenderer,
+    Scene,
+    PerspectiveCamera,
+    NoToneMapping,
+    Clock,
+} from "three";
+import { RENDERER_DEFAULTS } from "./constants";
+
 /**
- * @module RenderEngine
- * @packageDocumentation
- *
- * # RenderEngine 模块
- *
- * 渲染引擎模块负责 WebGL 渲染器的创建、配置、渲染循环和资源管理。
- *
- * ## 功能特性
- *
- * - WebGL 渲染器的创建和配置
- * - 渲染循环管理（基于 setAnimationLoop）
- * - 帧时间数据获取
- * - 自动像素比适配
- * - 渲染器资源清理
+ * 渲染引擎配置选项
+ */
+export interface RenderEngineConfig {
+    /** 挂载的DOM元素 */
+    container: HTMLElement;
+    /** 是否启用抗锯齿 */
+    antialias?: boolean;
+}
+
+/**
+ * 渲染引擎类：负责 WebGL 渲染器的创建、配置、渲染循环和资源管理
  *
  * ## 使用示例
  *
@@ -38,31 +44,6 @@
  * // 获取时间数据
  * const { deltaTime, elapsedTime } = engine.getTimeData();
  * ```
- */
-
-import {
-    WebGLRenderer,
-    Scene,
-    PerspectiveCamera,
-    NoToneMapping,
-    Clock,
-} from "three";
-import { RENDERER_DEFAULTS } from "./constants";
-
-/**
- * 渲染引擎配置选项
- */
-export interface RenderEngineConfig {
-    /** 挂载的DOM元素 */
-    container: HTMLElement;
-    /** 是否启用抗锯齿 */
-    antialias?: boolean;
-}
-
-/**
- * 渲染引擎类
- *
- * 负责 WebGL 渲染器的创建、配置、渲染循环和资源管理
  */
 export class RenderEngine {
     /** 渲染器实例 */

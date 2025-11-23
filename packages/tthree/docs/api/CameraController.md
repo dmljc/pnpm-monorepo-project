@@ -4,13 +4,13 @@
 
 # CameraController
 
+## Classes
+
 <a id="cameracontroller"></a>
 
 ### CameraController
 
-相机控制器类
-
-负责相机的创建、配置、控制器管理和尺寸自适应
+相机控制器类：负责相机的创建、配置、控制器管理和尺寸自适应
 
 #### Properties
 
@@ -23,27 +23,6 @@ camera: PerspectiveCamera | undefined;
 ```
 
 相机实例
-
-透视相机对象，用于控制场景的视角和投影。
-如果未创建相机，此值为 `undefined`。
-
-<a id="aspect"></a>
-
-##### aspect
-
-```ts
-aspect: number = 1;
-```
-
-宽高比（aspect ratio）
-
-通常是画布宽度 / 画布高度。如果设置为 1，则显示为正方形。
-
-###### Default
-
-```ts
-1;
-```
 
 <a id="controls-1"></a>
 
@@ -192,6 +171,8 @@ new CameraController(config): CameraController;
 ###### Returns
 
 [`CameraController`](#cameracontroller)
+
+## Interfaces
 
 <a id="cameracontrollerconfig"></a>
 

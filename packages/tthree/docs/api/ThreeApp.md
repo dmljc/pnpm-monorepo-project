@@ -4,15 +4,15 @@
 
 # ThreeApp
 
+## Classes
+
 <a id="threeapp"></a>
 
 ### ThreeApp
 
-Three.js 应用类
+Three.js 应用类：负责 Three.js 应用的创建、初始化、渲染和销毁
 
-提供完整的 Three.js 应用生命周期管理，包括场景创建（背景、雾效、光照、辅助工具）、
-相机配置（透视相机、轨道控制器）、渲染器设置（WebGL、抗锯齿、颜色空间）和动画循环（基于 WebGLRenderer setAnimationLoop）。
-ResizeObserver 驱动的自动尺寸自适应、完整的资源清理和销毁机制。
+## 使用示例
 
 #### Example
 
@@ -338,6 +338,8 @@ new ThreeApp(config): ThreeApp;
 ###### Returns
 
 [`ThreeApp`](#threeapp)
+
+## Interfaces
 
 <a id="threeappconfig"></a>
 

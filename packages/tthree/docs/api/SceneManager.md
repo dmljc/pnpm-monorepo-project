@@ -4,13 +4,34 @@
 
 # SceneManager
 
+## Classes
+
 <a id="scenemanager"></a>
 
 ### SceneManager
 
-场景管理器类
+场景管理器类：负责场景的创建、配置、对象管理和资源清理
 
-负责场景的创建、配置、对象管理和资源清理
+## 使用示例
+
+```typescript
+import { SceneManager } from "tthree";
+
+const manager = new SceneManager({
+    showGrid: true,
+    showAxes: true,
+});
+
+// 创建场景
+const scene = manager.createScene();
+
+// 添加网格对象
+const mesh = new THREE.Mesh(geometry, material);
+manager.addMesh(mesh);
+
+// 移除网格对象
+manager.removeMesh(mesh);
+```
 
 #### Properties
 
@@ -123,6 +144,8 @@ new SceneManager(config): SceneManager;
 ###### Returns
 
 [`SceneManager`](#scenemanager)
+
+## Interfaces
 
 <a id="scenemanagerconfig"></a>
 

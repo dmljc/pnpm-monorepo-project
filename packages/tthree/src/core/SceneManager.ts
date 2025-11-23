@@ -1,40 +1,3 @@
-/**
- * @module SceneManager
- * @packageDocumentation
- *
- * # SceneManager 模块
- *
- * 场景管理器模块负责场景的创建、配置、对象管理和资源清理。
- *
- * ## 功能特性
- *
- * - 场景的创建和配置（背景、雾效、光照）
- * - 网格和坐标轴辅助工具的添加
- * - 场景对象的添加和移除
- * - 自动资源清理和内存管理
- *
- * ## 使用示例
- *
- * ```typescript
- * import { SceneManager } from 'tthree';
- *
- * const manager = new SceneManager({
- *   showGrid: true,
- *   showAxes: true
- * });
- *
- * // 创建场景
- * const scene = manager.createScene();
- *
- * // 添加网格对象
- * const mesh = new THREE.Mesh(geometry, material);
- * manager.addMesh(mesh);
- *
- * // 移除网格对象
- * manager.removeMesh(mesh);
- * ```
- */
-
 import {
     Scene,
     Color,
@@ -59,9 +22,28 @@ export interface SceneManagerConfig {
 }
 
 /**
- * 场景管理器类
+ * 场景管理器类：负责场景的创建、配置、对象管理和资源清理
  *
- * 负责场景的创建、配置、对象管理和资源清理
+ * ## 使用示例
+ *
+ * ```typescript
+ * import { SceneManager } from 'tthree';
+ *
+ * const manager = new SceneManager({
+ *   showGrid: true,
+ *   showAxes: true
+ * });
+ *
+ * // 创建场景
+ * const scene = manager.createScene();
+ *
+ * // 添加网格对象
+ * const mesh = new THREE.Mesh(geometry, material);
+ * manager.addMesh(mesh);
+ *
+ * // 移除网格对象
+ * manager.removeMesh(mesh);
+ * ```
  */
 export class SceneManager {
     /** 场景实例 */

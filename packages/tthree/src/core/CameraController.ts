@@ -1,42 +1,3 @@
-/**
- * @module CameraController
- * @packageDocumentation
- *
- * # CameraController 模块
- *
- * 相机控制器模块负责相机的创建、配置、控制器管理和尺寸自适应。
- *
- * ## 功能特性
- *
- * - 透视相机的创建和配置
- * - OrbitControls 轨道控制器的集成
- * - 自动尺寸自适应
- * - 相机和控制器生命周期管理
- *
- * ## 使用示例
- *
- * ```typescript
- * import { CameraController } from 'tthree';
- *
- * const controller = new CameraController({
- *   containerSize: { width: 800, height: 600 },
- *   controls: true
- * });
- *
- * // 创建相机
- * controller.createCamera();
- *
- * // 创建控制器
- * controller.createControls(renderer.domElement);
- *
- * // 更新尺寸
- * controller.updateSize(1920, 1080);
- *
- * // 在渲染循环中更新
- * controller.update();
- * ```
- */
-
 import { PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CAMERA_DEFAULTS, CONTROLS_DEFAULTS } from "./constants";
@@ -54,9 +15,7 @@ export interface CameraControllerConfig {
 }
 
 /**
- * 相机控制器类
- *
- * 负责相机的创建、配置、控制器管理和尺寸自适应
+ * 相机控制器类：负责相机的创建、配置、控制器管理和尺寸自适应
  */
 export class CameraController {
     /** 相机实例 */
@@ -83,7 +42,6 @@ export class CameraController {
 
     /**
      * 创建透视相机
-     *
      * @returns 配置好的相机实例
      */
     public createCamera(): PerspectiveCamera {
