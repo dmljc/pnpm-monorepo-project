@@ -18,7 +18,7 @@
     "scripts": {
         "dev": "rollup -c -w",
         "clean": "rm -rf dist",
-        "docs": "rm -rf docs/api && pnpm exec typedoc --options typedoc.json && node scripts/clean-docs.js",
+        "docs": "rm -rf docs/api && pnpm exec typedoc --options typedoc.json",
         "docs:dev": "pnpm docs && vitepress dev docs --port 1111",
         "docs:build": "pnpm docs && vitepress build docs",
         "docs:preview": "vitepress preview docs",

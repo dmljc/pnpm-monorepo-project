@@ -1,6 +1,12 @@
+[**tthree**](README.md)
+
+---
+
 # SceneManager
 
 <a id="scenemanager"></a>
+
+### SceneManager
 
 场景管理器类
 
@@ -117,8 +123,6 @@ new SceneManager(config): SceneManager;
 ###### Returns
 
 [`SceneManager`](#scenemanager)
-
-## Interfaces
 
 <a id="scenemanagerconfig"></a>
 
