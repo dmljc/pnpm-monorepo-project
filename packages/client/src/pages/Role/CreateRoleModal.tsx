@@ -19,9 +19,16 @@ import { create, update } from "./api";
 const { TextArea } = Input;
 const { Item } = Form;
 
+// Form 级别的布局配置（用于非 Row/Col 嵌套的 Item）
 const layout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 20 },
+};
+
+// Row/Col 中 Item 的布局配置
+const rowItemLayout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
 };
 
 const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
@@ -114,8 +121,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         : t("role:modal.title.edit")
                 }
                 open={open}
-                size="large"
-                style={{ width: "70%" }}
+                width="70%"
                 onClose={handleClose}
                 placement="right"
                 extra={
@@ -146,6 +152,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                     <Row>
                         <Col span={12}>
                             <Item
+                                {...rowItemLayout}
                                 label={t("role:form.name.label")}
                                 name="name"
                                 rules={[
@@ -168,6 +175,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
 
                         <Col span={12}>
                             <Item
+                                {...rowItemLayout}
                                 label={t("role:form.icon.label")}
                                 name="icon"
                                 rules={[
@@ -186,6 +194,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                     <Row>
                         <Col span={12}>
                             <Item
+                                {...rowItemLayout}
                                 label={t("role:form.code.label")}
                                 name="code"
                                 rules={[
@@ -207,6 +216,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         </Col>
                         <Col span={12}>
                             <Item
+                                {...rowItemLayout}
                                 label={t("role:form.status.label")}
                                 name="status"
                                 rules={[
@@ -230,6 +240,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                     <Row>
                         <Col span={12}>
                             <Item
+                                {...rowItemLayout}
                                 label={t("role:form.remark.label")}
                                 name="remark"
                                 rules={[

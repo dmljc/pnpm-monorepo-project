@@ -77,6 +77,10 @@
             "remark": {
                 "label": "Remark",
                 "placeholder": "Please enter remark"
+            },
+            "avatar": {
+                "label": "Avatar",
+                "required": "Please upload avatar"
             }
         },
         "buttons": {

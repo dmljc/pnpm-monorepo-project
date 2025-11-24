@@ -106,7 +106,7 @@ const CreateMenu: FC<ModalProps> = (props: ModalProps) => {
             <Modal
                 title={
                     modalType === ModalTypeEnum.CREATE
-                        ? t("menu:actions.add")
+                        ? t("menu:table.actions.add")
                         : t("menu:table.actions.edit")
                 }
                 open={open}

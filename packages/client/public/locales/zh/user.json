@@ -77,6 +77,10 @@
             "remark": {
                 "label": "备注",
                 "placeholder": "请输入备注"
+            },
+            "avatar": {
+                "label": "头像",
+                "required": "请上传头像"
             }
         },
         "buttons": {
