@@ -1,5 +1,5 @@
 // React 相关
-import { FC, useState, useRef } from "react";
+import { FC, useState, useRef, useTransition } from "react";
 
 // 第三方库
 import { message, Image, Upload } from "antd";
@@ -226,11 +226,17 @@ const User: FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [loading, setLoading] = useState(false);
 
+    // React 19: 使用 useTransition 优化并发渲染，提升用户体验
+    // React 19 改进了自动批处理，多个状态更新会自动批处理，减少不必要的渲染
+    const [isPending, startTransition] = useTransition();
+
     // ==================== API 调用函数 ====================
     const addUser = async (params: CreateUser) => {
         const resp = await create(params);
         if (resp.success === true) {
-            actionRef.current?.reload();
+            startTransition(() => {
+                actionRef.current?.reload();
+            });
             messageApi.success(t("user:messages.createSuccess"));
         }
     };
@@ -238,15 +244,20 @@ const User: FC = () => {
     const handleDelete = async (record: UpdateUser) => {
         const resp = await del(record.id);
         if (resp) {
-            actionRef.current?.reload();
+            startTransition(() => {
+                actionRef.current?.reload();
+            });
             messageApi.success(t("user:messages.deleteSuccess"));
         }
     };
 
     const handleFreeze = async (record: UpdateUser) => {
-        const resp = await freeze(record.id, record.status === 1 ? 0 : 1);
+        const newStatus = record.status === 1 ? 0 : 1;
+        const resp = await freeze(record.id, newStatus);
         if (resp) {
-            actionRef.current?.reload();
+            startTransition(() => {
+                actionRef.current?.reload();
+            });
             const enabled = record.status === 0;
             messageApi.success(
                 enabled
@@ -265,20 +276,26 @@ const User: FC = () => {
 
             const response = await importExcel(formData);
             if (!response) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-                const result = JSON.parse(reader.result as string);
-                if (!result.success) {
-                    messageApi.error(t("user:messages.importFailed"));
-                    return;
-                }
-                addUser(result.data);
-            };
-            reader.onerror = () => {
-                console.log("import failed");
-            };
-            reader.readAsText(response);
+
+            // 使用 Promise 包装 FileReader，配合 React 19 的 use() hook
+            const readerPromise = new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = () => reject(new Error("读取文件失败"));
+                reader.readAsText(response);
+            });
+
+            const resultText = await readerPromise;
+            const result = JSON.parse(resultText);
+
+            if (!result.success) {
+                messageApi.error(t("user:messages.importFailed"));
+                return;
+            }
+
+            await addUser(result.data);
         } catch (error) {
+            // FileReader 错误或 JSON 解析错误需要单独处理
             console.error("import failed", error);
             messageApi.error(t("user:messages.importFailed"));
         } finally {
@@ -287,8 +304,8 @@ const User: FC = () => {
     };
 
     const handleExport = async () => {
-        try {
-            const response = await exportExcel();
+        const response = await exportExcel();
+        startTransition(() => {
             // 直接使用response作为Blob数据，因为它已经是二进制文件流
             const blob = new Blob([response], {
                 type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -298,7 +315,10 @@ const User: FC = () => {
             const link = document.createElement("a");
             link.href = url;
             const formatted = dayjs().format("YYYY/MM/DD HH:mm:ss");
-            link.setAttribute("download", `user_template_${formatted}.xlsx`);
+            link.setAttribute(
+                "download",
+                `user_template_${formatted}.xlsx`,
+            );
             document.body.appendChild(link);
             link.click();
 
@@ -309,10 +329,7 @@ const User: FC = () => {
             }, 100);
 
             messageApi.success(t("user:messages.exportSuccess"));
-        } catch (error) {
-            console.error("export failed", error);
-            messageApi.error(t("user:messages.exportFailed"));
-        }
+        });
     };
 
     // ==================== UI 事件处理函数 ====================
@@ -351,6 +368,7 @@ const User: FC = () => {
                 columns={columns}
                 actionRef={actionRef}
                 cardBordered
+                loading={isPending || loading}
                 request={async (params, sort, filter) => {
                     const resp = await list({
                         current: params.current ?? 1,

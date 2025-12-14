@@ -121,9 +121,9 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         : t("role:modal.title.edit")
                 }
                 open={open}
-                width="70%"
                 onClose={handleClose}
                 placement="right"
+                styles={{ wrapper: { width: "70%" } }}
                 extra={
                     <Space>
                         <Button onClick={handleClose}>

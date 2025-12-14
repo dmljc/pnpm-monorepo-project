@@ -10,7 +10,7 @@ import { Request, Response } from "express";
 import { tap } from "rxjs";
 import * as requestIp from "request-ip";
 import { HttpService } from "@nestjs/axios";
-import * as iconv from "iconv-lite";
+import iconv from "iconv-lite";
 
 @Injectable()
 export class RequestLogInterceptor implements NestInterceptor {

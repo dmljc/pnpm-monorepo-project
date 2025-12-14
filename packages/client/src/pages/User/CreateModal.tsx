@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useTransition, useState } from "react";
 import { Form, Input, message, Modal, Radio, Select } from "antd";
 import { useTranslation } from "react-i18next";
 import { OSSUpload } from "../../components/index";
@@ -24,10 +24,36 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
     const { t } = useTranslation();
 
     const [form] = Form.useForm<UpdateUser>();
-    const [roleOptions, setRoleOptions] = useState([]);
-    const [confirmLoading, setConfirmLoading] = useState(false);
-
     const [messageApi, contextHolder] = message.useMessage();
+
+    // React 19: 使用 useTransition 优化并发渲染和表单提交
+    const [isPending, startTransition] = useTransition();
+
+    // 角色列表状态
+    const [roleOptions, setRoleOptions] = useState<any[]>([]);
+    const [roleLoading, setRoleLoading] = useState(false);
+
+    // 获取角色列表
+    const fetchRoleList = async () => {
+        setRoleLoading(true);
+        try {
+            const resp = await list({ current: 1, pageSize: 100 });
+            const options = Array.isArray(resp?.data)
+                ? resp.data
+                : resp?.data?.data || [];
+            setRoleOptions(options);
+        } finally {
+            // API 错误由拦截器统一处理，这里只需要确保 loading 状态重置
+            setRoleLoading(false);
+        }
+    };
+
+    // 只在 Modal 打开时获取一次
+    useEffect(() => {
+        if (open && roleOptions.length === 0) {
+            fetchRoleList();
+        }
+    }, [open]);
 
     const onOk = async () => {
         await form.validateFields();
@@ -37,8 +63,8 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 ? values
                 : { ...values, id: record.id };
 
-        try {
-            setConfirmLoading(true);
+        // React 19: 在 startTransition 包装异步操作，确保流畅的 UI 过渡
+        startTransition(async () => {
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
@@ -47,13 +73,10 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         ? t("user:messages.createSuccess")
                         : t("user:messages.updateSuccess"),
                 );
+
                 handleOk();
             }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setConfirmLoading(false);
-        }
+        });
     };
 
     useEffect(() => {
@@ -67,24 +90,6 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
             }
         }
     }, [modalType, record, open]);
-
-    useEffect(() => {
-        open && onFetchRoleOptions();
-    }, [open]);
-
-    const onFetchRoleOptions = async () => {
-        try {
-            const resp = await list({
-                current: 1,
-                pageSize: 100,
-            });
-            // 强制更新状态
-            setRoleOptions(resp?.data || []);
-        } catch (error) {
-            console.error("获取角色列表失败:", error);
-            setRoleOptions([]);
-        }
-    };
 
     const onChangeStatus = (e: any) => {
         console.log(e.target.value);
@@ -110,7 +115,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                 onOk={onOk}
                 forceRender
                 onCancel={handleClose}
-                confirmLoading={confirmLoading}
+                confirmLoading={isPending}
             >
                 <Form
                     form={form}
@@ -134,6 +139,7 @@ const CreateModal: FC<ModalProps> = (props: ModalProps) => {
                         <Select
                             allowClear
                             showSearch
+                            loading={roleLoading}
                             optionFilterProp="label"
                             fieldNames={{ label: "name", value: "code" }}
                             options={roleOptions}
