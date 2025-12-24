@@ -315,10 +315,7 @@ const User: FC = () => {
             const link = document.createElement("a");
             link.href = url;
             const formatted = dayjs().format("YYYY/MM/DD HH:mm:ss");
-            link.setAttribute(
-                "download",
-                `user_template_${formatted}.xlsx`,
-            );
+            link.setAttribute("download", `user_template_${formatted}.xlsx`);
             document.body.appendChild(link);
             link.click();
 

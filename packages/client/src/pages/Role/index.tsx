@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, message, Modal, Radio, RadioChangeEvent } from "antd";
 import { useTranslation } from "react-i18next";
@@ -14,17 +14,18 @@ import { ModalTypeEnum, formatTime } from "@/utils";
 import useStyles from "./style";
 import { useMenuStore } from "@/store";
 import { list, del } from "./api.ts";
+import { formatStringToNumberArray } from "./utils";
 
 const { Item } = Form;
 const { Group, Button: RButton } = Radio;
 
-const Role: FC = () => {
+const Role = () => {
     const { t } = useTranslation();
     // ==================== 状态管理 ====================
     const { styles: ss } = useStyles();
 
     // 角色列表相关状态
-    const [roleList, setRoleList] = useState<any[]>([]);
+    const [roleList, setRoleList] = useState<UpdateRole[]>([]);
     const [record, setRecord] = useState<UpdateRole>();
 
     // 模态框相关状态
@@ -38,60 +39,44 @@ const Role: FC = () => {
     const [roleDesc, setRoleDesc] = useState<string>("permission");
     const [selectedMenuKeys, setSelectedMenuKeys] = useState<React.Key[]>([]);
 
+    // ==================== API 调用函数 ====================
+    const getRoleList = async (id?: number) => {
+        const { data } = await list({
+            current: 1,
+            pageSize: 10,
+        });
+
+        setRoleList(data);
+        if (id) {
+            const foundRecord = data.find((item: UpdateRole) => item.id === id);
+            if (foundRecord) {
+                setRecord(foundRecord);
+            }
+        }
+    };
+
     // ==================== 副作用钩子 ====================
     useEffect(() => {
         getRoleList();
     }, []);
 
     useEffect(() => {
-        setRecord(roleList?.[0]);
-    }, [roleList.length]);
+        if (roleList?.[0]) {
+            setRecord(roleList[0]);
+        }
+    }, [roleList]);
 
     // 当选中角色变化时，更新菜单权限选中状态
     useEffect(() => {
-        if (record?.permission && typeof record.permission === "string") {
-            const permissionArray = record.permission
-                .split(",")
-                .map(Number)
-                .filter((id) => id > 0); // 过滤掉无效的ID
-            setSelectedMenuKeys(permissionArray);
-        } else {
-            setSelectedMenuKeys([]);
-        }
+        const permissionArray = formatStringToNumberArray(record?.permission);
+        setSelectedMenuKeys(permissionArray);
     }, [record]);
 
-    // ==================== API 调用函数 ====================
-    const getRoleList = async (id?: number) => {
-        try {
-            const { data } = await list({
-                current: 1,
-                pageSize: 10,
-            });
-
-            setRoleList(data);
-
-            if (!id) return;
-            setRecord(data.find((item: UpdateRole) => item.id === id));
-        } catch (error) {
-            console.error("get roles failed:", error);
-            messageApi.error(t("role:messages.getListFailed"));
-        }
-    };
-
-    const handleDelete = async (item: any) => {
-        try {
-            const response = await del(item.id);
-            if (response.success) {
-                messageApi.success(t("role:messages.deleteSuccess"));
-                getRoleList();
-            } else {
-                messageApi.error(
-                    response.message || t("role:messages.deleteFailed"),
-                );
-            }
-        } catch (error) {
-            console.error("delete failed:", error);
-            messageApi.error(t("role:messages.deleteFailed"));
+    const handleDelete = async (item: UpdateRole) => {
+        const response = await del(item.id);
+        if (response.success) {
+            messageApi.success(t("role:messages.deleteSuccess"));
+            await getRoleList();
         }
     };
 
@@ -102,13 +87,13 @@ const Role: FC = () => {
         setOpen(true);
     };
 
-    const handleEditRole = (item: any) => {
+    const handleEditRole = (item: UpdateRole) => {
         setRecord(item);
         setModalType(ModalTypeEnum.UPDATE);
         setOpen(true);
     };
 
-    const handleDeleteConfirm = (item: any) => {
+    const handleDeleteConfirm = (item: UpdateRole) => {
         Modal.confirm({
             title: t("role:modal.title.edit"),
             content: t("role:messages.deleteConfirm", { name: item.name }),
@@ -119,7 +104,7 @@ const Role: FC = () => {
         });
     };
 
-    const handleItemAction = (action: string, item: any) => {
+    const handleItemAction = (action: string, item: UpdateRole) => {
         switch (action) {
             case "edit":
                 handleEditRole(item);
@@ -137,7 +122,10 @@ const Role: FC = () => {
     };
 
     const handleRoleSelect = (_selectedKeys: React.Key[], info: any) => {
-        setRecord(info.selectedNodes?.[0]);
+        const selectedNode = info.selectedNodes?.[0];
+        if (selectedNode) {
+            setRecord(selectedNode);
+        }
     };
 
     const handleModalClose = () => {
@@ -150,24 +138,14 @@ const Role: FC = () => {
         useMenuStore.getState().getMenuMeList();
     };
 
-    // 处理TreeTable选中项变化（只读模式，不需要实际更新权限）
-    const handleMenuSelectionChange = useCallback(
-        (selectedRowKeys: React.Key[]) => {
-            // 在角色列表页面，TreeTable是只读的，所以这里只是用于显示
-            // 不需要实际更新角色的权限
-            console.log("角色权限查看模式 - 选中的菜单项:", selectedRowKeys);
-        },
-        [],
-    );
-
     return (
         <>
             <div className={ss.root}>
                 <div className={ss.left}>
                     <TreeComponent
-                        treeData={roleList}
-                        onItemAction={handleItemAction}
-                        onSelect={handleRoleSelect}
+                        treeData={roleList as any}
+                        onItemAction={handleItemAction as any}
+                        onSelect={handleRoleSelect as any}
                     >
                         <AuthButton
                             code="role:create"
@@ -196,7 +174,6 @@ const Role: FC = () => {
                             disabledCheck={true}
                             selecteable={true}
                             selectedRowKeys={selectedMenuKeys}
-                            onChange={handleMenuSelectionChange}
                         />
                     )}
                     {roleDesc === "info" && (
@@ -229,13 +206,17 @@ const Role: FC = () => {
                                 {record?.permission}
                             </Item>
                             <Item label={t("role:info.createTime")} required>
-                                {formatTime(record?.createTime)}
+                                {record?.createTime
+                                    ? formatTime(record.createTime)
+                                    : "-"}
                             </Item>
                             <Item label={t("role:info.updateTime")} required>
-                                {formatTime(record?.updateTime)}
+                                {record?.updateTime
+                                    ? formatTime(record.updateTime)
+                                    : "-"}
                             </Item>
                             <Item label={t("role:info.remark")}>
-                                {record?.remark}
+                                {record?.remark || "-"}
                             </Item>
                         </Form>
                     )}

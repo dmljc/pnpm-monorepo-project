@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
     Form,
     Input,
@@ -15,6 +15,7 @@ import { IconComponent, TreeTable } from "@/components/index.tsx";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
+import { formatStringToNumberArray } from "./utils";
 
 const { TextArea } = Input;
 const { Item } = Form;
@@ -31,27 +32,26 @@ const rowItemLayout = {
     wrapperCol: { span: 16 },
 };
 
-const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
+const CreateRoleModal = (props: ModalProps) => {
     const { modalType, open, record, handleClose, handleOk } = props;
     const { t } = useTranslation();
     const [form] = Form.useForm<UpdateRole>();
-    const [confirmLoading, setConfirmLoading] = useState(false);
     const [selectedMenuKeys, setSelectedMenuKeys] = useState<React.Key[]>([]);
+    const [isPending, setIsPending] = useState(false);
 
     const [messageApi, contextHolder] = message.useMessage();
 
     const onOk = async () => {
-        await form.validateFields();
-        const values = form.getFieldsValue();
-
-        // permission字段现在已经是字符串，不需要再转换
-        const params =
-            modalType === ModalTypeEnum.CREATE
-                ? values
-                : { ...values, id: record.id };
-
         try {
-            setConfirmLoading(true);
+            setIsPending(true);
+            await form.validateFields();
+            const values = form.getFieldsValue();
+
+            const params =
+                modalType === ModalTypeEnum.CREATE
+                    ? values
+                    : { ...values, id: record.id };
+
             const apiUrl = modalType === ModalTypeEnum.CREATE ? create : update;
             const resp = await apiUrl(params);
             if (resp.success === true) {
@@ -62,54 +62,31 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                 );
                 handleOk(record?.id);
             }
-        } catch (error) {
-            console.log(error);
         } finally {
-            setConfirmLoading(false);
+            setIsPending(false);
         }
     };
 
     useEffect(() => {
         if (open) {
-            if (modalType === ModalTypeEnum.UPDATE) {
+            if (modalType === ModalTypeEnum.UPDATE && record) {
                 form.setFieldsValue({ ...record });
-                // 将权限字符串转换为数组
-                if (
-                    record.permission &&
-                    typeof record.permission === "string"
-                ) {
-                    const permissionArray = record.permission
-                        .split(",")
-                        .map(Number);
-                    setSelectedMenuKeys(permissionArray);
-                } else {
-                    setSelectedMenuKeys([]);
-                }
+                setSelectedMenuKeys(
+                    record?.permission
+                        ? formatStringToNumberArray(record.permission)
+                        : [],
+                );
             } else {
                 form.resetFields();
                 setSelectedMenuKeys([]);
             }
         }
-    }, [open, modalType, record]); // 移除form依赖，避免循环
+    }, [open, modalType, record, form]);
 
-    const onChangeStatus = (e: any) => {
-        console.log(e.target.value);
+    const onChangeMenu = (selectedRowKeys: React.Key[]) => {
+        setSelectedMenuKeys(selectedRowKeys);
+        form.setFieldValue("permission", selectedRowKeys.join(","));
     };
-
-    const onChangeMenu = useCallback(
-        (selectedRowKeys: React.Key[]) => {
-            // 避免频繁调用，只在值真正改变时更新
-            if (
-                JSON.stringify(selectedRowKeys) !==
-                JSON.stringify(selectedMenuKeys)
-            ) {
-                setSelectedMenuKeys(selectedRowKeys);
-                // 将选中的键转换为字符串并设置为表单值
-                form.setFieldValue("permission", selectedRowKeys.join(","));
-            }
-        },
-        [selectedMenuKeys],
-    );
 
     return (
         <>
@@ -132,11 +109,10 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                         <Button
                             type="primary"
                             onClick={onOk}
-                            disabled={confirmLoading}
+                            disabled={isPending}
+                            loading={isPending}
                         >
-                            {confirmLoading
-                                ? t("common:loading", { defaultValue: "..." })
-                                : t("role:modal.buttons.confirm")}
+                            {t("role:modal.buttons.confirm")}
                         </Button>
                     </Space>
                 }
@@ -226,7 +202,7 @@ const CreateRoleModal: FC<ModalProps> = (props: ModalProps) => {
                                     },
                                 ]}
                             >
-                                <Radio.Group onChange={onChangeStatus}>
+                                <Radio.Group>
                                     <Radio value={1}>
                                         {t("role:form.status.enabled")}
                                     </Radio>
