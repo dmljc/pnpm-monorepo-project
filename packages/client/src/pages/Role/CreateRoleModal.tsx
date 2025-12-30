@@ -11,7 +11,8 @@ import {
     Space,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import { IconComponent, TreeTable } from "@/components/index.tsx";
+import { IconComponent } from "@/components/index.tsx";
+import { TreeTable } from "@/pages/Menu";
 import { ModalProps, UpdateRole } from "./interface";
 import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";

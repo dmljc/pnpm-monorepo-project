@@ -7,7 +7,7 @@ import { ModalTypeEnum } from "@/utils";
 import { create, update } from "./api";
 import { getTypeOptions } from "./constant";
 import { IconComponent } from "@/components";
-import { useMenuStore } from "@/store";
+import { useMenuStore } from "@/store/menuStore";
 
 const { Item } = Form;
 

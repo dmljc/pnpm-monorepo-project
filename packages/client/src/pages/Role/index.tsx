@@ -3,16 +3,16 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Form, message, Modal, Radio, RadioChangeEvent } from "antd";
 import { useTranslation } from "react-i18next";
 import {
-    TreeTable,
     TreeComponent,
     IconRenderer,
     AuthButton,
 } from "@/components";
+import { TreeTable } from "@/pages/Menu";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
 import { ModalTypeEnum, formatTime } from "@/utils";
 import useStyles from "./style";
-import { useMenuStore } from "@/store";
+import { useMenuStore } from "@/store/menuStore";
 import { list, del } from "./api.ts";
 import { formatStringToNumberArray } from "./utils";
 

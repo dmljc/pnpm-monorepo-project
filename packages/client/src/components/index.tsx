@@ -6,7 +6,6 @@ import NotFound from "./NotFound";
 import IconComponent from "./IconComponent";
 import IconRenderer from "./IconComponent/IconRenderer";
 import TreeComponent from "./TreeComponent";
-import TreeTable from "./TreeTable";
 import AuthButton from "./AuthButton";
 import LoginControls from "./LoginControls";
 
@@ -19,7 +18,6 @@ export {
     IconComponent,
     IconRenderer,
     TreeComponent,
-    TreeTable,
     AuthButton,
     LoginControls,
 };
