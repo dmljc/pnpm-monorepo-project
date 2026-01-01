@@ -38,7 +38,7 @@ export interface SceneManagerConfig {
  * const scene = manager.createScene();
  *
  * // 添加网格对象
- * const mesh = new THREE.Mesh(geometry, material);
+ * const mesh = new Mesh(geometry, material);
  * manager.addMesh(mesh);
  *
  * // 移除网格对象

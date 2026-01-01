@@ -40,7 +40,7 @@ export interface ThreeAppConfig {
  * app.init();
  *
  * // 3. 添加网格
- * const mesh = new THREE.Mesh(geometry, material);
+ * const mesh = new Mesh(geometry, material);
  * app.addMesh(mesh);
  *
  * // 4. 启动动画

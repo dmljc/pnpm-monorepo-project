@@ -14,7 +14,7 @@ const mainConfig = {
             sourcemap: true,
         },
     ],
-    external: ["three"],
+    external: [/^three($|\/)/],
     plugins: [
         nodeResolve({
             browser: true,
@@ -40,7 +40,7 @@ const dtsConfig = {
         },
     ],
     plugins: [dts()],
-    external: ["three"],
+    external: [/^three($|\/)/],
 };
 
 // 根据是否为 watch 模式导出相应的配置
