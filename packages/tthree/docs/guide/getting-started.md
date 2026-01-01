@@ -103,8 +103,7 @@ ThreeApp 支持以下配置选项：
 
 - 查看 [API 文档](/api/) 了解所有可用的 API
 - 了解各个模块的详细用法：
-  - [SceneManager](/api/SceneManager) - 场景管理
-  - [CameraController](/api/CameraController) - 相机控制
-  - [RenderEngine](/api/RenderEngine) - 渲染引擎
-  - [ThreeApp](/api/ThreeApp) - 主应用类
-
+    - [SceneManager](/api/SceneManager) - 场景管理
+    - [CameraController](/api/CameraController) - 相机控制
+    - [RenderEngine](/api/RenderEngine) - 渲染引擎
+    - [ThreeApp](/api/ThreeApp) - 主应用类

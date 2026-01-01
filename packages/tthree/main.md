@@ -56,8 +56,8 @@
 
 ### 🏗️ 构建优化
 
-- **建议**：检查 `rollup.config.js` 的 Tree-shaking 效果。建议将 `three` 的导入方式保持一致，确保最终产物足够精简。
-- **规范**：项目中目前缺乏 ESLint 和 Prettier 的具体配置（虽然 scripts 中有调用），建议统一代码风格。
+<!-- - **建议**：检查 `rollup.config.js` 的 Tree-shaking 效果。建议将 `three` 的导入方式保持一致，确保最终产物足够精简。 -->
+<!-- - **规范**：项目中目前缺乏 ESLint 和 Prettier 的具体配置（虽然 scripts 中有调用），建议统一代码风格。 -->
 
 ### 🎨 Shader 管理
 
