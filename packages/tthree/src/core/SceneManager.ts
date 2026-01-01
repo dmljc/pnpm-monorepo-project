@@ -9,7 +9,7 @@ import {
     Mesh,
 } from "three";
 import { SCENE_DEFAULTS, GRID_DEFAULTS, AXES_DEFAULTS } from "./constants";
-import { disposeMesh } from "../utils";
+import { disposeObject } from "../utils";
 
 /**
  * 场景管理器配置选项
@@ -150,13 +150,9 @@ export class SceneManager {
      * 销毁场景管理器
      */
     public destroy(): void {
-        // 遍历场景中的所有对象，释放网格资源
         if (this.scene) {
-            this.scene.traverse((object) => {
-                if (object instanceof Mesh) {
-                    disposeMesh(object as Mesh);
-                }
-            });
+            // 使用递归释放场景中所有对象的资源
+            disposeObject(this.scene);
             this.scene = undefined;
         }
     }

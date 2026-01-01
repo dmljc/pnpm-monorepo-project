@@ -76,9 +76,9 @@ export class CameraController {
 
         const controls = new OrbitControls(this.camera, rendererDomElement);
 
-        Object.entries(CONTROLS_DEFAULTS.ORBIT).forEach(([key, value]) => {
-            (controls as any)[key] = value;
-        });
+        const orbitConfig = CONTROLS_DEFAULTS.ORBIT;
+        // 使用 Object.assign 结合类型断言实现简洁且相对安全的赋值
+        Object.assign(controls, orbitConfig);
 
         this.controls = controls;
         return controls;
