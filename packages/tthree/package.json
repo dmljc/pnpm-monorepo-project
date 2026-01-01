@@ -18,8 +18,8 @@
     "scripts": {
         "dev": "rollup -c -w",
         "docs": "pnpm exec typedoc --options typedoc.json && prettier --write \"docs/api/**/*.md\" --config ../../prettier.config.js",
-        "docs:dev": "pnpm docs && vitepress dev docs --port 3333",
-        "docs:build": "pnpm docs && vitepress build docs",
+        "docs:dev": "pnpm --silent docs && vitepress dev docs --port 3333 --open",
+        "docs:build": "pnpm --silent docs && vitepress build docs",
         "docs:preview": "vitepress preview docs",
         "build": "rollup -c && pnpm run docs",
         "lint": "eslint . --config ../../eslint.config.js",

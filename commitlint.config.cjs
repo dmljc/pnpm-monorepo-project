@@ -44,6 +44,7 @@ module.exports = {
         scopes: [
             { name: "client" },
             { name: "server" },
+            { name: "tthree" },
             { name: "docs" },
             { name: "global" },
         ],
