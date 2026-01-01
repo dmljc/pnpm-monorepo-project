@@ -1,1 +1,10 @@
-npm run lint:lint-staged
+#!/bin/zsh
+
+# Load nvm and set up path for GUI apps
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Add pnpm to path
+export PATH="$HOME/Library/pnpm:$PATH"
+
+pnpm lint:lint-staged

@@ -1,1 +1,10 @@
-npx --no -- commitlint --edit 
+#!/bin/zsh
+
+# Load nvm and set up path for GUI apps
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Add pnpm to path
+export PATH="$HOME/Library/pnpm:$PATH"
+
+npx --no -- commitlint --edit "$1"
