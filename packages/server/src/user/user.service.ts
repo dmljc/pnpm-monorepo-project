@@ -48,12 +48,13 @@ export class UserService {
     }
 
     async list(queryData: QueryDto) {
-        const { username, name, phone } = queryData;
+        const { username, name, phone, email } = queryData;
         const users = await this.userRepository.find({
             where: {
                 username: Like(createLikeQuery(username)),
                 name: Like(createLikeQuery(name)),
                 phone: Like(createLikeQuery(phone)),
+                email: Like(createLikeQuery(email)),
             },
             order: {
                 updateTime: "DESC",

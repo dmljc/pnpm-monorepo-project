@@ -1,8 +1,15 @@
 // React 相关
-import { FC, useState, useRef, useTransition } from "react";
+import {
+    FC,
+    useState,
+    useEffect,
+    useCallback,
+    useTransition,
+    useMemo,
+} from "react";
 
 // 第三方库
-import { message, Image, Upload } from "antd";
+import { message, Image, Upload, Table, Space, Typography } from "antd";
 import {
     PlusOutlined,
     DownloadOutlined,
@@ -11,15 +18,18 @@ import {
     DeleteOutlined,
     CloseCircleOutlined,
     CheckCircleOutlined,
+    SyncOutlined,
+    ColumnHeightOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
-import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { ProTable } from "@ant-design/pro-components";
+import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 
 // 内部组件
 import { AuthButton } from "@/components";
 import CreateUserModal from "./CreateModal.tsx";
+import SearchForm from "./SearchForm.tsx";
 
 // 类型定义
 import type { CreateUser, UpdateUser, GithubIssueItem } from "./interface.ts";
@@ -30,190 +40,28 @@ import { ModalTypeEnum } from "@/utils";
 // API 调用
 import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
 
-// ==================== 表格列配置 ====================
-const createColumns = (
-    t: (key: string, options?: any) => string,
-    handleEditUser: (record: UpdateUser) => void,
-    handleDelete: (record: UpdateUser) => void,
-    handleFreeze: (record: UpdateUser) => void,
-): ProColumns<GithubIssueItem>[] => [
-    {
-        title: t("user:table.columns.avatar"),
-        dataIndex: "avatar",
-        width: 120,
-        fixed: "left",
-        // @ts-expect-error 目前无法确定 `OSSUpload` 组件在接收 `value` 参数时的类型检查细节，直接传入字符串类型的 `text` 可能会触发类型错误，因此暂时使用此指令绕过类型检查。
-        render: (text: string | undefined) =>
-            text !== undefined && typeof text === "string" ? (
-                <div
-                    style={{
-                        position: "relative",
-                        width: "60px",
-                        height: "60px",
-                        borderRadius: "50%",
-                        overflow: "hidden",
-                    }}
-                >
-                    <Image
-                        width={60}
-                        height={60}
-                        style={{
-                            borderRadius: "100%",
-                            objectFit: "cover",
-                            border: "1px solid #ccc",
-                            padding: "4px",
-                            cursor: "pointer",
-                            transition: "transform 0.3s ease",
-                        }}
-                        src={text}
-                    />
-                </div>
-            ) : null,
-    },
-    {
-        title: t("user:table.columns.username"),
-        dataIndex: "username",
-        width: 120,
-        fixed: "left",
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: t("user:table.columns.password"),
-        dataIndex: "password",
-        search: false,
-        width: 110,
-    },
-    {
-        title: t("user:table.columns.name"),
-        dataIndex: "name",
-        width: 110,
-    },
-    {
-        title: t("user:table.columns.role"),
-        dataIndex: "role",
-        hideInSearch: true,
-        width: 100,
-    },
-    {
-        title: t("user:table.columns.phone"),
-        dataIndex: "phone",
-        width: 130,
-    },
-    {
-        title: t("user:table.columns.email"),
-        dataIndex: "email",
-        width: 180,
-    },
-    {
-        title: t("user:table.columns.status"),
-        dataIndex: "status",
-        search: false,
-        filters: true,
-        onFilter: true,
-        width: 100,
-        valueType: "select",
-        valueEnum: {
-            1: { text: t("user:table.status.enabled"), status: "Success" },
-            0: { text: t("user:table.status.disabled"), status: "Error" },
-        },
-    },
-    {
-        title: t("user:table.columns.createTime"),
-        dataIndex: "createTime",
-        valueType: "dateTime",
-        sorter: true,
-        hideInSearch: true,
-        width: 180,
-    },
-    {
-        title: t("user:table.columns.createTime"),
-        dataIndex: "createTime",
-        valueType: "dateRange",
-        hideInTable: true,
-        hideInSearch: true,
-        search: {
-            transform: (value) => {
-                return {
-                    startTime: value[0],
-                    endTime: value[1],
-                };
-            },
-        },
-    },
-    {
-        title: t("user:table.columns.updateTime"),
-        dataIndex: "updateTime",
-        valueType: "dateTime",
-        sorter: true,
-        hideInSearch: true,
-        width: 180,
-    },
-    {
-        title: t("user:table.columns.remark"),
-        dataIndex: "remark",
-        search: false,
-        ellipsis: true,
-        copyable: true,
-        width: 200,
-    },
-    {
-        title: t("user:table.columns.actions"),
-        valueType: "option",
-        key: "option",
-        width: 200,
-        render: (_text, _record) => [
-            <AuthButton
-                code="user:update"
-                key="user:update"
-                color="primary"
-                variant="link"
-                className="btn-p0"
-                icon={<EditOutlined />}
-                onClick={() => handleEditUser(_record)}
-            >
-                {t("user:table.actions.edit")}
-            </AuthButton>,
-            <AuthButton
-                code="user:disabled"
-                key="user:disabled"
-                color="primary"
-                variant="link"
-                className="btn-p0"
-                icon={
-                    _record.status === 1 ? (
-                        <CloseCircleOutlined />
-                    ) : (
-                        <CheckCircleOutlined />
-                    )
-                }
-                // disabled={_record.role === "root"}
-                onClick={() => handleFreeze(_record)}
-            >
-                {_record.status === 1
-                    ? t("user:table.actions.disable")
-                    : t("user:table.actions.enable")}
-            </AuthButton>,
-            <AuthButton
-                code="user:delete"
-                key="user:delete"
-                color="danger"
-                variant="link"
-                className="btn-p0"
-                icon={<DeleteOutlined />}
-                // disabled={_record.role === "root"}
-                onClick={() => handleDelete(_record)}
-            >
-                {t("user:table.actions.delete")}
-            </AuthButton>,
-        ],
-    },
-];
+const { Title } = Typography;
 
 const User: FC = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+
+    // 稳定化翻译函数
+    const tText = useCallback(
+        (key: string, options?: any) => String(i18n.t(key, options)),
+        [i18n, i18n.resolvedLanguage],
+    );
+
     // ==================== 状态管理 ====================
-    // 表格相关状态
-    const actionRef = useRef<ActionType>(null);
+    // 数据相关状态
+    const [dataSource, setDataSource] = useState<GithubIssueItem[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [total, setTotal] = useState(0);
+    const [current, setCurrent] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [searchParams, setSearchParams] = useState<any>({});
+    const [sorter, setSorter] = useState<{ field?: string; order?: string }>(
+        {},
+    );
 
     // 模态框相关状态
     const [open, setOpen] = useState<boolean>(false);
@@ -224,40 +72,62 @@ const User: FC = () => {
 
     // UI 相关状态
     const [messageApi, contextHolder] = message.useMessage();
-    const [loading, setLoading] = useState(false);
+    const [importLoading, setImportLoading] = useState(false);
 
-    // React 19: 使用 useTransition 优化并发渲染，提升用户体验
-    // React 19 改进了自动批处理，多个状态更新会自动批处理，减少不必要的渲染
+    // React 19: 使用 useTransition 优化并发渲染
     const [isPending, startTransition] = useTransition();
 
     // ==================== API 调用函数 ====================
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const params = {
+                current,
+                pageSize,
+                ...searchParams,
+                ...sorter,
+            };
+            const resp = await list(params);
+
+            const dataList = Array.isArray(resp.data)
+                ? resp.data
+                : resp.data?.data || [];
+            const totalCount = resp.data?.total ?? dataList.length;
+
+            setDataSource(dataList);
+            setTotal(totalCount);
+        } catch (error) {
+            console.error("fetch data failed", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [current, pageSize, searchParams, sorter]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
     const addUser = async (params: CreateUser) => {
         const resp = await create(params);
         if (resp.success === true) {
-            startTransition(() => {
-                actionRef.current?.reload();
-            });
+            fetchData();
             messageApi.success(t("user:messages.createSuccess"));
         }
     };
 
-    const handleDelete = async (record: UpdateUser) => {
+    const handleDelete = async (record: GithubIssueItem) => {
         const resp = await del(record.id);
         if (resp) {
-            startTransition(() => {
-                actionRef.current?.reload();
-            });
+            fetchData();
             messageApi.success(t("user:messages.deleteSuccess"));
         }
     };
 
-    const handleFreeze = async (record: UpdateUser) => {
+    const handleFreeze = async (record: GithubIssueItem) => {
         const newStatus = record.status === 1 ? 0 : 1;
         const resp = await freeze(record.id, newStatus);
         if (resp) {
-            startTransition(() => {
-                actionRef.current?.reload();
-            });
+            fetchData();
             const enabled = record.status === 0;
             messageApi.success(
                 enabled
@@ -269,15 +139,13 @@ const User: FC = () => {
 
     // ==================== 文件操作函数 ====================
     const handleImport = async (file: File) => {
-        setLoading(true);
+        setImportLoading(true);
         try {
             const formData = new FormData();
             formData.append("file", file);
-
             const response = await importExcel(formData);
             if (!response) return;
 
-            // 使用 Promise 包装 FileReader，配合 React 19 的 use() hook
             const readerPromise = new Promise<string>((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result as string);
@@ -292,25 +160,21 @@ const User: FC = () => {
                 messageApi.error(t("user:messages.importFailed"));
                 return;
             }
-
             await addUser(result.data);
         } catch (error) {
-            // FileReader 错误或 JSON 解析错误需要单独处理
             console.error("import failed", error);
             messageApi.error(t("user:messages.importFailed"));
         } finally {
-            setLoading(false);
+            setImportLoading(false);
         }
     };
 
     const handleExport = async () => {
         const response = await exportExcel();
         startTransition(() => {
-            // 直接使用response作为Blob数据，因为它已经是二进制文件流
             const blob = new Blob([response], {
                 type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             });
-
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
@@ -318,13 +182,10 @@ const User: FC = () => {
             link.setAttribute("download", `user_template_${formatted}.xlsx`);
             document.body.appendChild(link);
             link.click();
-
-            // 清理
             setTimeout(() => {
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
             }, 100);
-
             messageApi.success(t("user:messages.exportSuccess"));
         });
     };
@@ -335,136 +196,297 @@ const User: FC = () => {
         setOpen(true);
     };
 
-    const handleEditUser = (record: UpdateUser) => {
+    const handleEditUser = (record: GithubIssueItem) => {
         setModalType(ModalTypeEnum.UPDATE);
-        setRecord(record);
+        setRecord(record as any);
         setOpen(true);
     };
 
-    const handleModalClose = () => {
-        setOpen(false);
-    };
+    const handleModalClose = () => setOpen(false);
 
     const handleModalSuccess = () => {
         setOpen(false);
-        actionRef.current?.reload();
+        fetchData();
     };
 
-    // ==================== 表格配置 ====================
-    const columns = createColumns(
-        t,
-        handleEditUser,
-        handleDelete,
-        handleFreeze,
+    const handleSearch = (values: any) => {
+        setSearchParams(values);
+        setCurrent(1);
+    };
+
+    const handleReset = () => {
+        setSearchParams({});
+        setCurrent(1);
+        setSorter({});
+    };
+
+    const handleTableChange = (
+        pagination: TablePaginationConfig,
+        _filters: any,
+        sorter: any,
+    ) => {
+        setCurrent(pagination.current || 1);
+        setPageSize(pagination.pageSize || 10);
+        if (sorter.field) {
+            setSorter({
+                field: sorter.field,
+                order: sorter.order === "ascend" ? "asc" : "desc",
+            });
+        } else {
+            setSorter({});
+        }
+    };
+
+    // ==================== 表格列配置 ====================
+    const columns: ColumnsType<GithubIssueItem> = useMemo(
+        () => [
+            {
+                title: "账号",
+                dataIndex: "username",
+                width: 100,
+                fixed: "left",
+                render: (text) => <a style={{ color: "#1890ff" }}>{text}</a>,
+            },
+            {
+                title: "头像",
+                dataIndex: "avatar",
+                width: 80,
+                align: "center",
+                render: (text: string) => (
+                    <Image
+                        width={50}
+                        height={50}
+                        style={{
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                        }}
+                        src={text}
+                        preview={false}
+                    />
+                ),
+            },
+
+            {
+                title: "密码",
+                dataIndex: "password",
+                width: 120,
+            },
+            {
+                title: "姓名",
+                dataIndex: "name",
+                width: 100,
+            },
+            {
+                title: "角色",
+                dataIndex: "role",
+                width: 100,
+            },
+            {
+                title: "手机号",
+                dataIndex: "phone",
+                width: 130,
+            },
+            {
+                title: "邮箱",
+                dataIndex: "email",
+                width: 200,
+            },
+            {
+                title: "状态",
+                dataIndex: "status",
+                width: 80,
+                filters: [
+                    { text: "启用", value: 1 },
+                    { text: "停用", value: 0 },
+                ],
+                render: (status: number) => (
+                    <span>
+                        <span
+                            style={{
+                                display: "inline-block",
+                                width: 6,
+                                height: 6,
+                                borderRadius: "50%",
+                                backgroundColor:
+                                    status === 1 ? "#52c41a" : "#d9d9d9",
+                                marginRight: 8,
+                            }}
+                        />
+                        {status === 1 ? "启用" : "停用"}
+                    </span>
+                ),
+            },
+            {
+                title: "创建时间",
+                dataIndex: "createTime",
+                width: 180,
+                sorter: true,
+                render: (text) =>
+                    text ? dayjs(text).format("YYYY-MM-DD HH:mm:ss") : "-",
+            },
+            {
+                title: "操作",
+                key: "action",
+                width: 200,
+                fixed: "right",
+                render: (_, record) => (
+                    <Space
+                        size={0}
+                        separator={
+                            <span style={{ color: "#d9d9d9", margin: "0 4px" }}>
+                                |
+                            </span>
+                        }
+                    >
+                        <AuthButton
+                            code="user:update"
+                            type="link"
+                            size="small"
+                            style={{ padding: "0 4px" }}
+                            icon={<EditOutlined />}
+                            onClick={() => handleEditUser(record)}
+                        >
+                            编辑
+                        </AuthButton>
+                        <AuthButton
+                            code="user:disabled"
+                            type="link"
+                            size="small"
+                            style={{ padding: "0 4px" }}
+                            icon={
+                                record.status === 1 ? (
+                                    <CloseCircleOutlined />
+                                ) : (
+                                    <CheckCircleOutlined />
+                                )
+                            }
+                            onClick={() => handleFreeze(record)}
+                        >
+                            {record.status === 1 ? "停用" : "启用"}
+                        </AuthButton>
+                        <AuthButton
+                            code="user:delete"
+                            type="link"
+                            size="small"
+                            danger
+                            style={{ padding: "0 4px" }}
+                            icon={<DeleteOutlined />}
+                            onClick={() => handleDelete(record)}
+                        >
+                            删除
+                        </AuthButton>
+                    </Space>
+                ),
+            },
+        ],
+        [tText],
     );
 
     return (
         <>
             {contextHolder}
-            <ProTable<any>
-                columns={columns}
-                actionRef={actionRef}
-                cardBordered
-                loading={isPending || loading}
-                request={async (params, sort, filter) => {
-                    const resp = await list({
-                        current: params.current ?? 1,
-                        pageSize: params.pageSize ?? 10,
-                        ...params,
-                        ...sort,
-                        ...filter,
-                    });
 
-                    // 兼容 resp.data 可能为对象或数组
-                    const dataList = Array.isArray(resp.data)
-                        ? resp.data
-                        : resp.data?.data || [];
-                    const total = resp.data?.total ?? dataList.length;
-                    return {
-                        data: dataList,
-                        success: resp.success !== false,
-                        total,
-                    };
+            {/* 搜索表单区域 */}
+            <div
+                style={{
+                    padding: "16px 24px",
+                    marginBottom: 16,
+                    background: "#fff",
+                    borderRadius: 8,
+                    border: "1px solid #f0f0f0",
                 }}
-                editable={{
-                    type: "multiple",
+            >
+                <SearchForm onSearch={handleSearch} onReset={handleReset} />
+            </div>
+
+            {/* 工具栏和表格区域 */}
+            <div
+                style={{
+                    padding: "16px 24px",
+                    background: "#fff",
+                    borderRadius: 8,
+                    border: "1px solid #f0f0f0",
                 }}
-                columnsState={{
-                    persistenceKey: "pro-table-singe-demos",
-                    persistenceType: "localStorage",
-                    defaultValue: {
-                        option: { fixed: "right", disable: true },
-                    },
-                }}
-                key="user"
-                rowKey="id"
-                search={{
-                    labelWidth: "auto",
-                }}
-                scroll={{
-                    x: 1400,
-                }}
-                options={{
-                    setting: {
-                        listsHeight: 400,
-                    },
-                }}
-                form={{
-                    name: "userList",
-                    // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
-                    syncToUrl: (values, type) => {
-                        if (type === "get") {
-                            return {
-                                ...values,
-                                createTime: [values.startTime, values.endTime],
-                            };
-                        }
-                        return values;
-                    },
-                }}
-                pagination={{
-                    pageSize: 10,
-                }}
-                dateFormatter="string"
-                headerTitle={t("user:title")}
-                toolBarRender={() => [
-                    <AuthButton
-                        code="user:create"
-                        key="user:create"
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={handleCreateUser}
-                    >
-                        {t("user:toolbar.add")}
-                    </AuthButton>,
-                    <AuthButton
-                        code="user:export"
-                        key="user:export"
-                        icon={<DownloadOutlined />}
-                        onClick={handleExport}
-                    >
-                        {t("user:toolbar.export")}
-                    </AuthButton>,
-                    <Upload
-                        name="file"
-                        accept=".xlsx,.xls"
-                        beforeUpload={(file) => {
-                            handleImport(file);
-                            return false;
-                        }}
-                        showUploadList={false}
-                    >
+            >
+                <div
+                    style={{
+                        marginBottom: 16,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <Title level={5} style={{ margin: 0, fontWeight: 600 }}>
+                        用户管理
+                    </Title>
+                    <Space size="middle">
                         <AuthButton
-                            code="user:import"
-                            key="user:import"
-                            icon={<UploadOutlined />}
-                            loading={loading}
+                            code="user:create"
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={handleCreateUser}
                         >
-                            {t("user:toolbar.import")}
+                            新增
                         </AuthButton>
-                    </Upload>,
-                ]}
-            />
+                        <AuthButton
+                            code="user:export"
+                            icon={<DownloadOutlined />}
+                            onClick={handleExport}
+                            loading={isPending}
+                        >
+                            导出Excel
+                        </AuthButton>
+                        <Upload
+                            name="file"
+                            accept=".xlsx,.xls"
+                            beforeUpload={(file) => {
+                                handleImport(file);
+                                return false;
+                            }}
+                            showUploadList={false}
+                        >
+                            <AuthButton
+                                code="user:import"
+                                icon={<UploadOutlined />}
+                                loading={importLoading}
+                            >
+                                导入Excel
+                            </AuthButton>
+                        </Upload>
+                        <SyncOutlined
+                            style={{ fontSize: 16, cursor: "pointer" }}
+                            onClick={fetchData}
+                        />
+                        <ColumnHeightOutlined
+                            style={{ fontSize: 16, cursor: "pointer" }}
+                        />
+                        <SettingOutlined
+                            style={{ fontSize: 16, cursor: "pointer" }}
+                        />
+                    </Space>
+                </div>
+
+                <Table
+                    columns={columns}
+                    dataSource={dataSource}
+                    rowKey="id"
+                    loading={loading}
+                    pagination={{
+                        current,
+                        pageSize,
+                        total,
+                        showSizeChanger: false,
+                        showQuickJumper: false,
+                        showTotal: (total, range) =>
+                            `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+                        size: "default",
+                    }}
+                    scroll={{ x: 1400 }}
+                    onChange={handleTableChange}
+                    size="middle"
+                    bordered={false}
+                />
+            </div>
 
             <CreateUserModal
                 open={open}

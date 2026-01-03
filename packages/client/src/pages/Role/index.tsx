@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, message, Modal, Radio, RadioChangeEvent } from "antd";
 import { useTranslation } from "react-i18next";
-import {
-    TreeComponent,
-    IconRenderer,
-    AuthButton,
-} from "@/components";
+import { TreeComponent, IconRenderer, AuthButton } from "@/components";
 import { TreeTable } from "@/pages/Menu";
 import CreateRoleModal from "./CreateRoleModal";
 import type { UpdateRole } from "./interface.ts";
