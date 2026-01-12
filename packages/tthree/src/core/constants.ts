@@ -35,11 +35,11 @@ export const CAMERA_DEFAULTS = {
         far: 1000,
     },
 
-    /** 默认相机位置 */
+    /** 默认相机位置（俯视角度） */
     POSITION: {
         x: 0,
-        y: 0,
-        z: 50,
+        y: 80,
+        z: 80,
     },
 } as const;
 

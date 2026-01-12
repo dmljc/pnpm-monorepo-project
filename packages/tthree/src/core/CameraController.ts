@@ -59,6 +59,9 @@ export class CameraController {
             CAMERA_DEFAULTS.POSITION.z,
         );
 
+        // 让相机看向场景中心，实现俯视效果
+        camera.lookAt(0, 0, 0);
+
         this.camera = camera;
         return camera;
     }
