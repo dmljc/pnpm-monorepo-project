@@ -14,26 +14,26 @@
         "@ant-design/pro-components": "^3.1.0-0",
         "@emotion/css": "^11.13.5",
         "@iconify/react": "^6.0.2",
-        "antd": "^6.1.3",
+        "antd": "^6.1.4",
         "antd-img-crop": "^4.27.0",
         "antd-style": "^4.1.0",
         "dayjs": "^1.11.19",
-        "i18next": "^25.7.3",
+        "i18next": "^25.7.4",
         "i18next-browser-languagedetector": "^8.2.0",
         "i18next-http-backend": "^3.0.2",
         "react": "^19.2.3",
         "react-dom": "^19.2.3",
-        "react-i18next": "^16.5.1",
-        "react-router-dom": "^7.11.0",
+        "react-i18next": "^16.5.2",
+        "react-router-dom": "^7.12.0",
         "three": "^0.182.0",
         "tthree": "workspace:^",
-        "zustand": "^5.0.9"
+        "zustand": "^5.0.10"
     },
     "devDependencies": {
-        "@types/react": "^19.2.7",
+        "@types/react": "^19.2.8",
         "@types/react-dom": "^19.2.3",
         "@types/three": "^0.182.0",
         "@vitejs/plugin-react-swc": "^4.2.2",
-        "vite": "^7.3.0"
+        "vite": "^7.3.1"
     }
 }
