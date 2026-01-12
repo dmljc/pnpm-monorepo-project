@@ -27,9 +27,8 @@ const app = new ThreeApp({
 // 2. 初始化
 app.init();
 
-// 3. 添加网格
-const mesh = new Mesh(geometry, material);
-app.addMesh(mesh);
+// 3. 加载模型（新增）
+const result = await app.loadModel("/models/character.glb");
 
 // 4. 启动动画
 app.animate();
@@ -77,7 +76,7 @@ renderEngine: RenderEngine;
 ##### init()
 
 ```ts
-init(): void;
+init(): this;
 ```
 
 初始化应用
@@ -91,9 +90,9 @@ init(): void;
 
 ###### Returns
 
-`void`
+`this`
 
-void
+this - 支持链式调用
 
 <a id="getisrunning"></a>
 
@@ -193,37 +192,143 @@ width: number;
 height: number;
 ```
 
+<a id="loadmodel"></a>
+
+##### loadModel()
+
+```ts
+loadModel(url, autoAddToScene): Promise<ModelLoadResult | null>;
+```
+
+加载 GLTF/GLB 3D 模型
+
+**功能说明：**
+
+- 自动创建模型加载器
+- 自动将模型添加到场景
+- 内置错误处理，无需外部 try-catch
+- 支持进度条显示（通过配置 showProgressBar: true）
+- 如果未初始化，会自动调用 init()
+
+###### Parameters
+
+###### url
+
+`string`
+
+模型文件的 URL
+
+###### autoAddToScene
+
+`boolean` = `true`
+
+是否自动添加到场景（默认 true）
+
+###### Returns
+
+`Promise`\<`ModelLoadResult` \| `null`\>
+
+Promise<ModelLoadResult | null> 加载结果，失败时返回 null
+
+###### Example
+
+```typescript
+// 基础使用（无需 try-catch）
+const app = new ThreeApp({ container: el });
+app.init();
+await app.loadModel("/models/character.glb");
+
+// 带错误处理
+const app = new ThreeApp({
+    container: el,
+    onLoadError: (url, error) => {
+        console.error("加载失败:", url, error);
+    },
+});
+await app.loadModel("/models/character.glb");
+```
+
+<a id="loadmodels"></a>
+
+##### loadModels()
+
+```ts
+loadModels(urls, autoAddToScene): Promise<ModelLoadResult[]>;
+```
+
+批量加载多个模型
+
+**功能说明：**
+
+- 内置错误处理，部分失败不影响其他模型加载
+- 自动将成功加载的模型添加到场景
+- 无需外部 try-catch
+
+###### Parameters
+
+###### urls
+
+`string`[]
+
+模型文件 URL 数组
+
+###### autoAddToScene
+
+`boolean` = `true`
+
+是否自动添加到场景（默认 true）
+
+###### Returns
+
+`Promise`\<`ModelLoadResult`[]\>
+
+Promise<ModelLoadResult[]> 成功加载的模型结果数组
+
+###### Example
+
+```typescript
+const app = new ThreeApp({ container: el });
+app.init();
+
+// 批量加载，即使部分失败也不会中断
+await app.loadModels([
+    "/models/model1.glb",
+    "/models/model2.glb",
+    "/models/model3.glb",
+]);
+```
+
 <a id="animate"></a>
 
 ##### animate()
 
 ```ts
-animate(): void;
+animate(): this;
 ```
 
 启动动画循环（使用 WebGLRenderer.setAnimationLoop 实现）
 
 ###### Returns
 
-`void`
+`this`
 
-void
+this - 支持链式调用
 
 <a id="stop"></a>
 
 ##### stop()
 
 ```ts
-stop(): void;
+stop(): this;
 ```
 
 停止应用和动画循环
 
 ###### Returns
 
-`void`
+`this`
 
-void
+this - 支持链式调用
 
 <a id="destroy"></a>
 
@@ -418,3 +523,91 @@ optional showAxes: boolean;
 ```
 
 是否显示坐标轴
+
+<a id="showprogressbar"></a>
+
+##### showProgressBar?
+
+```ts
+optional showProgressBar: boolean;
+```
+
+是否显示模型加载进度条（默认 false）
+
+<a id="enabledraco"></a>
+
+##### enableDraco?
+
+```ts
+optional enableDraco: boolean;
+```
+
+是否启用 Draco 压缩（默认 false）
+
+<a id="dracodecoderpath"></a>
+
+##### dracoDecoderPath?
+
+```ts
+optional dracoDecoderPath: string;
+```
+
+Draco 解码器路径
+
+<a id="onloadprogress"></a>
+
+##### onLoadProgress()?
+
+```ts
+optional onLoadProgress: (progress) => void;
+```
+
+模型加载进度回调
+
+###### Parameters
+
+###### progress
+
+`ModelLoadProgress`
+
+###### Returns
+
+`void`
+
+<a id="onloadcomplete"></a>
+
+##### onLoadComplete()?
+
+```ts
+optional onLoadComplete: () => void;
+```
+
+模型加载完成回调
+
+###### Returns
+
+`void`
+
+<a id="onloaderror"></a>
+
+##### onLoadError()?
+
+```ts
+optional onLoadError: (url, error) => void;
+```
+
+模型加载错误回调
+
+###### Parameters
+
+###### url
+
+`string`
+
+###### error
+
+`Error`
+
+###### Returns
+
+`void`

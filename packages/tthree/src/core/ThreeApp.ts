@@ -2,6 +2,11 @@ import { Mesh, PerspectiveCamera, WebGLRenderer } from "three";
 import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
 import { CameraController } from "./CameraController";
+import {
+    ModelLoader,
+    type ModelLoadResult,
+    type ModelLoadProgress,
+} from "./ModelLoader";
 
 /**
  * Three.js 应用实例配置选项
@@ -21,6 +26,18 @@ export interface ThreeAppConfig {
     showGrid?: boolean;
     /** 是否显示坐标轴 */
     showAxes?: boolean;
+    /** 是否显示模型加载进度条（默认 false） */
+    showProgressBar?: boolean;
+    /** 是否启用 Draco 压缩（默认 false） */
+    enableDraco?: boolean;
+    /** Draco 解码器路径 */
+    dracoDecoderPath?: string;
+    /** 模型加载进度回调 */
+    onLoadProgress?: (progress: ModelLoadProgress) => void;
+    /** 模型加载完成回调 */
+    onLoadComplete?: () => void;
+    /** 模型加载错误回调 */
+    onLoadError?: (url: string, error: Error) => void;
 }
 
 /**
@@ -39,9 +56,8 @@ export interface ThreeAppConfig {
  * // 2. 初始化
  * app.init();
  *
- * // 3. 添加网格
- * const mesh = new Mesh(geometry, material);
- * app.addMesh(mesh);
+ * // 3. 加载模型（新增）
+ * const result = await app.loadModel('/models/character.glb');
  *
  * // 4. 启动动画
  * app.animate();
@@ -59,6 +75,9 @@ export class ThreeApp {
 
     /** 渲染引擎实例 */
     public renderEngine: RenderEngine;
+
+    /** 模型加载器实例 */
+    private modelLoader: ModelLoader | undefined;
 
     /** 是否已初始化（延迟初始化标记） */
     private initialized: boolean = false;
@@ -103,6 +122,8 @@ export class ThreeApp {
 
         // 初始化渲染引擎
         this.renderEngine = new RenderEngine({ container: config.container });
+
+        // 初始化模型加载器（延迟创建，在首次使用时创建）
     }
 
     /**
@@ -151,10 +172,10 @@ export class ThreeApp {
      * 4. 创建控制器
      * 5. 启用尺寸自适应
      * 6. 设置初始化标记
-     * @returns void
+     * @returns this - 支持链式调用
      */
-    public init(): void {
-        if (this.initialized) return;
+    public init(): this {
+        if (this.initialized) return this;
 
         if (!this.initOptions) {
             throw new Error("初始化失败：缺少必要的配置参数");
@@ -192,6 +213,8 @@ export class ThreeApp {
         this.setupAutoResize();
 
         this.initialized = true;
+
+        return this;
     }
 
     /** 获取场景实例
@@ -284,11 +307,165 @@ export class ThreeApp {
     }
 
     /**
+     * 获取或创建模型加载器实例
+     *
+     * @returns ModelLoader 实例
+     */
+    private getModelLoader(): ModelLoader {
+        if (!this.modelLoader) {
+            const config = this.initOptions;
+            this.modelLoader = new ModelLoader({
+                showProgressBar: config?.showProgressBar ?? true, // 默认为 true
+                progressBarConfig: {
+                    color: "#4CAF50",
+                    showPercentage: true,
+                    showInfo: true,
+                    showCenterText: true, // 默认显示居中文本
+                    centerText: "正在加载模型...",
+                },
+                enableDraco: config?.enableDraco,
+                dracoDecoderPath: config?.dracoDecoderPath,
+                onProgress: config?.onLoadProgress,
+                onLoadComplete: () => {
+                    // 先调用用户的回调（如果有）
+                    config?.onLoadComplete?.();
+
+                    // 如果用户没有提供回调，自动启动动画
+                    if (!config?.onLoadComplete) {
+                        this.animate();
+                    }
+                },
+                onLoadError: config?.onLoadError,
+            });
+        }
+        return this.modelLoader;
+    }
+
+    /**
+     * 加载 GLTF/GLB 3D 模型
+     *
+     * **功能说明：**
+     * - 自动创建模型加载器
+     * - 自动将模型添加到场景
+     * - 内置错误处理，无需外部 try-catch
+     * - 支持进度条显示（通过配置 showProgressBar: true）
+     * - 如果未初始化，会自动调用 init()
+     *
+     * @param url - 模型文件的 URL
+     * @param autoAddToScene - 是否自动添加到场景（默认 true）
+     * @returns Promise<ModelLoadResult | null> 加载结果，失败时返回 null
+     *
+     * @example
+     * ```typescript
+     * // 基础使用（无需 try-catch）
+     * const app = new ThreeApp({ container: el });
+     * app.init();
+     * await app.loadModel('/models/character.glb');
+     *
+     * // 带错误处理
+     * const app = new ThreeApp({
+     *   container: el,
+     *   onLoadError: (url, error) => {
+     *     console.error('加载失败:', url, error);
+     *   }
+     * });
+     * await app.loadModel('/models/character.glb');
+     * ```
+     */
+    public async loadModel(
+        url: string,
+        autoAddToScene: boolean = true,
+    ): Promise<ModelLoadResult | null> {
+        try {
+            // 确保已初始化
+            if (!this.initialized) {
+                this.init();
+            }
+
+            // 获取模型加载器
+            const loader = this.getModelLoader();
+
+            // 加载模型
+            const result = await loader.loadModel(url);
+
+            // 自动添加到场景
+            if (autoAddToScene && this.scene) {
+                this.scene.add(result.model);
+            }
+
+            return result;
+        } catch (error) {
+            // 内部错误处理
+            const err =
+                error instanceof Error
+                    ? error
+                    : new Error(`Failed to load model: ${url}`);
+
+            // 调用用户的错误回调（如果有）
+            if (this.initOptions?.onLoadError) {
+                this.initOptions.onLoadError(url, err);
+            } else {
+                // 如果用户没有提供错误回调，输出到控制台
+                console.error(`[ThreeApp] 模型加载失败: ${url}`, err);
+            }
+
+            return null;
+        }
+    }
+
+    /**
+     * 批量加载多个模型
+     *
+     * **功能说明：**
+     * - 内置错误处理，部分失败不影响其他模型加载
+     * - 自动将成功加载的模型添加到场景
+     * - 无需外部 try-catch
+     *
+     * @param urls - 模型文件 URL 数组
+     * @param autoAddToScene - 是否自动添加到场景（默认 true）
+     * @returns Promise<ModelLoadResult[]> 成功加载的模型结果数组
+     *
+     * @example
+     * ```typescript
+     * const app = new ThreeApp({ container: el });
+     * app.init();
+     *
+     * // 批量加载，即使部分失败也不会中断
+     * await app.loadModels([
+     *   '/models/model1.glb',
+     *   '/models/model2.glb',
+     *   '/models/model3.glb'
+     * ]);
+     * ```
+     */
+    public async loadModels(
+        urls: string[],
+        autoAddToScene: boolean = true,
+    ): Promise<ModelLoadResult[]> {
+        // 确保已初始化
+        if (!this.initialized) {
+            this.init();
+        }
+
+        // 逐个加载模型，收集成功的结果
+        const results: ModelLoadResult[] = [];
+
+        for (const url of urls) {
+            const result = await this.loadModel(url, autoAddToScene);
+            if (result) {
+                results.push(result);
+            }
+        }
+
+        return results;
+    }
+
+    /**
      * 启动动画循环（使用 WebGLRenderer.setAnimationLoop 实现）
      *
-     * @returns void
+     * @returns this - 支持链式调用
      */
-    public animate(): void {
+    public animate(): this {
         // 保证已初始化
         if (!this.initialized) {
             this.init();
@@ -300,6 +477,8 @@ export class ThreeApp {
 
         // 启动渲染循环
         this.renderEngine.start(() => this.renderFrame());
+
+        return this;
     }
 
     /**
@@ -325,10 +504,11 @@ export class ThreeApp {
     /**
      * 停止应用和动画循环
      *
-     * @returns void
+     * @returns this - 支持链式调用
      */
-    public stop(): void {
+    public stop(): this {
         this.renderEngine.stop();
+        return this;
     }
 
     /**
@@ -345,6 +525,12 @@ export class ThreeApp {
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = undefined;
+        }
+
+        // 销毁模型加载器
+        if (this.modelLoader) {
+            this.modelLoader.destroy();
+            this.modelLoader = undefined;
         }
 
         // 销毁各个模块
