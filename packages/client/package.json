@@ -14,7 +14,7 @@
         "@ant-design/pro-components": "^3.1.0-0",
         "@emotion/css": "^11.13.5",
         "@iconify/react": "^6.0.2",
-        "antd": "^6.1.4",
+        "antd": "^6.2.0",
         "antd-img-crop": "^4.27.0",
         "antd-style": "^4.1.0",
         "dayjs": "^1.11.19",
