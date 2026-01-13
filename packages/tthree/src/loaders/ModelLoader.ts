@@ -3,7 +3,6 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { Group, Object3D } from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { LoadingManager, type LoadingProgress } from "./LoadingManager";
-import { ProgressBar } from "../utils/ProgressBar";
 import { disposeObject } from "../utils";
 
 /**
@@ -28,21 +27,6 @@ export interface ModelLoaderConfig {
     enableDraco?: boolean;
     /** Draco 解码器路径 */
     dracoDecoderPath?: string;
-    /** 是否显示进度条（默认 false） */
-    showProgressBar?: boolean;
-    /** 进度条配置（仅在 showProgressBar 为 true 时有效） */
-    progressBarConfig?: {
-        /** 进度条颜色 */
-        color?: string;
-        /** 是否显示百分比 */
-        showPercentage?: boolean;
-        /** 是否显示加载信息 */
-        showInfo?: boolean;
-        /** 是否显示居中文本提示 */
-        showCenterText?: boolean;
-        /** 居中文本提示内容 */
-        centerText?: string;
-    };
     /** 加载开始回调 */
     onLoadStart?: (url: string) => void;
     /** 加载进度回调 */
@@ -120,14 +104,8 @@ export class ModelLoader {
     /** 加载管理器实例（内部自动创建） */
     private loadingManager: LoadingManager;
 
-    /** 进度条实例 */
-    private progressBar: ProgressBar | undefined;
-
     /** 已加载的模型缓存 */
     private cache: Map<string, ModelLoadResult> = new Map();
-
-    /** 配置选项 */
-    private config: ModelLoaderConfig;
 
     /**
      * 创建 ModelLoader 实例
@@ -135,32 +113,12 @@ export class ModelLoader {
      * @param config - 模型加载器配置选项
      */
     constructor(config: ModelLoaderConfig = {}) {
-        this.config = config;
-
-        // 自动创建进度条（如果需要）
-        if (config.showProgressBar) {
-            this.progressBar = new ProgressBar({
-                container: document.body,
-                color: config.progressBarConfig?.color || "#4CAF50",
-                showPercentage:
-                    config.progressBarConfig?.showPercentage ?? true,
-                showInfo: config.progressBarConfig?.showInfo ?? true,
-                showCenterText:
-                    config.progressBarConfig?.showCenterText ?? false,
-                centerText: config.progressBarConfig?.centerText,
-            });
-        }
-
         // 自动创建加载管理器
         this.loadingManager = new LoadingManager({
             onStart: (url: string) => {
                 config.onLoadStart?.(url);
             },
             onProgress: (progress: LoadingProgress) => {
-                // 更新进度条
-                if (this.progressBar) {
-                    this.progressBar.update(progress);
-                }
                 // 调用用户的进度回调
                 config.onProgress?.({
                     url: progress.url,
@@ -170,10 +128,6 @@ export class ModelLoader {
                 });
             },
             onLoad: () => {
-                // 完成进度条
-                if (this.progressBar) {
-                    this.progressBar.complete();
-                }
                 // 调用用户的完成回调
                 config.onLoadComplete?.();
             },
@@ -369,11 +323,5 @@ export class ModelLoader {
 
         // 销毁加载管理器
         this.loadingManager?.destroy();
-
-        // 销毁进度条
-        if (this.progressBar) {
-            this.progressBar.destroy();
-            this.progressBar = undefined;
-        }
     }
 }

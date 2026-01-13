@@ -59,6 +59,15 @@ export default tseslint.config(
                     allowShortCircuit: true,
                 },
             ],
+            // 检测未使用的变量
+            "@typescript-eslint/no-unused-vars": [
+                "warn",
+                {
+                    argsIgnorePattern: "^_",
+                    varsIgnorePattern: "^_",
+                    ignoreRestSiblings: true,
+                },
+            ],
         },
     },
 );

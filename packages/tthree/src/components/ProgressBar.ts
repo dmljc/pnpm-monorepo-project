@@ -1,4 +1,4 @@
-import type { LoadingProgress } from "../core/LoadingManager";
+import type { LoadingProgress } from "../loaders/LoadingManager";
 
 /**
  * 进度条配置选项
@@ -90,12 +90,12 @@ export class ProgressBar {
     constructor(config: ProgressBarConfig = {}) {
         this.config = {
             container: config.container || document.body,
-            color: config.color || "#4CAF50",
+            color: config.color || "#4ade80", // 默认绿色
             backgroundColor: config.backgroundColor || "#f0f0f0",
             height: config.height || 4,
-            showPercentage: config.showPercentage ?? false,
-            showInfo: config.showInfo ?? false,
-            showCenterText: config.showCenterText ?? false,
+            showPercentage: config.showPercentage ?? true, // 默认显示百分比
+            showInfo: config.showInfo ?? false, // 默认不显示信息
+            showCenterText: config.showCenterText ?? false, // 默认不显示居中文本
             centerText: config.centerText || "正在加载...",
             className: config.className || "tthree-progress-bar",
         };
@@ -119,12 +119,12 @@ export class ProgressBar {
             this.centerTextElement = this.createCenterText();
         }
 
-        // 组装元素
-        this.progressBarElement.appendChild(this.progressFill);
-
+        // 组装元素（顺序：百分比 -> 进度条 -> 信息）
         if (this.percentageText) {
             this.progressBarElement.appendChild(this.percentageText);
         }
+
+        // 进度条已在 createProgressFill 中添加
 
         if (this.infoText) {
             this.progressBarElement.appendChild(this.infoText);
@@ -132,11 +132,6 @@ export class ProgressBar {
 
         // 添加到容器
         this.container.appendChild(this.progressBarElement);
-
-        // 居中文本单独添加到容器
-        if (this.centerTextElement) {
-            this.container.appendChild(this.centerTextElement);
-        }
     }
 
     /**
@@ -148,13 +143,12 @@ export class ProgressBar {
 
         Object.assign(element.style, {
             position: "fixed",
-            top: "0",
-            left: "0",
-            width: "100%",
-            height: `${this.config.height}px`,
-            backgroundColor: this.config.backgroundColor,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "250px",
+            textAlign: "center",
             zIndex: "9999",
-            overflow: "hidden",
         });
 
         return element;
@@ -164,8 +158,20 @@ export class ProgressBar {
      * 创建进度填充元素
      */
     private createProgressFill(): HTMLDivElement {
-        const element = document.createElement("div");
+        // 创建进度条轨道容器
+        const track = document.createElement("div");
+        Object.assign(track.style, {
+            position: "relative",
+            width: "100%",
+            height: "3px",
+            backgroundColor: "rgba(128, 128, 128, 0.3)",
+            borderRadius: "2px",
+            overflow: "hidden",
+            margin: "12px 0",
+        });
 
+        // 创建进度填充
+        const element = document.createElement("div");
         Object.assign(element.style, {
             position: "absolute",
             top: "0",
@@ -173,8 +179,12 @@ export class ProgressBar {
             height: "100%",
             width: "0%",
             backgroundColor: this.config.color,
+            borderRadius: "2px",
             transition: "width 0.3s ease",
         });
+
+        track.appendChild(element);
+        this.progressBarElement.appendChild(track);
 
         return element;
     }
@@ -186,14 +196,13 @@ export class ProgressBar {
         const element = document.createElement("div");
 
         Object.assign(element.style, {
-            position: "absolute",
-            top: `${this.config.height + 10}px`,
-            left: "50%",
-            transform: "translateX(-50%)",
-            fontSize: "14px",
-            fontWeight: "bold",
-            color: "#333",
-            fontFamily: "Arial, sans-serif",
+            fontSize: "16px",
+            fontWeight: "500",
+            color: this.config.color,
+            fontFamily:
+                "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            textAlign: "center",
+            marginTop: "8px",
         });
 
         element.textContent = "0%";
@@ -208,13 +217,12 @@ export class ProgressBar {
         const element = document.createElement("div");
 
         Object.assign(element.style, {
-            position: "absolute",
-            top: `${this.config.height + 30}px`,
-            left: "50%",
-            transform: "translateX(-50%)",
             fontSize: "12px",
-            color: "#666",
-            fontFamily: "Arial, sans-serif",
+            color: "rgba(255, 255, 255, 0.4)",
+            fontFamily:
+                "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            textAlign: "center",
+            marginTop: "6px",
         });
 
         element.textContent = "正在加载...";
@@ -223,27 +231,12 @@ export class ProgressBar {
     }
 
     /**
-     * 创建居中文本元素
+     * 创建居中文本元素（已集成到进度条容器中，不再需要单独的居中元素）
      */
     private createCenterText(): HTMLDivElement {
+        // 不再创建单独的居中文本，因为已经集成到进度条容器中
         const element = document.createElement("div");
-
-        Object.assign(element.style, {
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontSize: "18px",
-            color: "#666",
-            fontWeight: "500",
-            fontFamily: "Arial, sans-serif",
-            zIndex: "9999",
-            pointerEvents: "none",
-            textAlign: "center",
-        });
-
-        element.textContent = `${this.config.centerText} 0%`;
-
+        element.style.display = "none";
         return element;
     }
 

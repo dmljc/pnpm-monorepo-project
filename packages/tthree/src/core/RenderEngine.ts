@@ -5,7 +5,7 @@ import {
     NoToneMapping,
     Clock,
 } from "three";
-import { RENDERER_DEFAULTS } from "./constants";
+import { RENDERER_DEFAULTS } from "../config/constants";
 
 /**
  * 渲染引擎配置选项

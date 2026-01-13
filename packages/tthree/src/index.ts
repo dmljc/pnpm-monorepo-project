@@ -11,19 +11,20 @@ export type { RenderEngineConfig } from "./core/RenderEngine";
 export { SceneManager } from "./core/SceneManager";
 export type { SceneManagerConfig } from "./core/SceneManager";
 
-export { LoadingManager } from "./core/LoadingManager";
+// Loaders
+export { LoadingManager } from "./loaders/LoadingManager";
 export type {
     LoadingManagerConfig,
     LoadingProgress,
-} from "./core/LoadingManager";
+} from "./loaders/LoadingManager";
 
-export { ModelLoader } from "./core/ModelLoader";
+export { ModelLoader } from "./loaders/ModelLoader";
 export type {
     ModelLoaderConfig,
     ModelLoadResult,
     ModelLoadProgress,
-} from "./core/ModelLoader";
+} from "./loaders/ModelLoader";
 
-// Utils
-export { ProgressBar } from "./utils/ProgressBar";
-export type { ProgressBarConfig } from "./utils/ProgressBar";
+// Components
+export { ProgressBar } from "./components/ProgressBar";
+export type { ProgressBarConfig } from "./components/ProgressBar";

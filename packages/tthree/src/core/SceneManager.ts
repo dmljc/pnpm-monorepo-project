@@ -8,7 +8,11 @@ import {
     AxesHelper,
     Mesh,
 } from "three";
-import { SCENE_DEFAULTS, GRID_DEFAULTS, AXES_DEFAULTS } from "./constants";
+import {
+    SCENE_DEFAULTS,
+    GRID_DEFAULTS,
+    AXES_DEFAULTS,
+} from "../config/constants";
 import { disposeObject } from "../utils";
 
 /**

@@ -1,6 +1,6 @@
 import { PerspectiveCamera } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { CAMERA_DEFAULTS, CONTROLS_DEFAULTS } from "./constants";
+import { CAMERA_DEFAULTS, CONTROLS_DEFAULTS } from "../config/constants";
 
 /**
  * 相机控制器配置选项

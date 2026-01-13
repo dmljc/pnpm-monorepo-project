@@ -6,7 +6,8 @@ import {
     ModelLoader,
     type ModelLoadResult,
     type ModelLoadProgress,
-} from "./ModelLoader";
+} from "../loaders/ModelLoader";
+import { ProgressBar } from "../components/ProgressBar";
 
 /**
  * Three.js 应用实例配置选项
@@ -78,6 +79,9 @@ export class ThreeApp {
 
     /** 模型加载器实例 */
     private modelLoader: ModelLoader | undefined;
+
+    /** 进度条实例（独立管理） */
+    private progressBar: ProgressBar | undefined;
 
     /** 是否已初始化（延迟初始化标记） */
     private initialized: boolean = false;
@@ -307,6 +311,19 @@ export class ThreeApp {
     }
 
     /**
+     * 获取或创建进度条实例
+     *
+     * @returns ProgressBar 实例
+     */
+    private getProgressBar(): ProgressBar {
+        if (!this.progressBar) {
+            // ProgressBar 内部已包含默认配置，无需传递参数
+            this.progressBar = new ProgressBar();
+        }
+        return this.progressBar;
+    }
+
+    /**
      * 获取或创建模型加载器实例
      *
      * @returns ModelLoader 实例
@@ -314,19 +331,31 @@ export class ThreeApp {
     private getModelLoader(): ModelLoader {
         if (!this.modelLoader) {
             const config = this.initOptions;
+            const shouldShowProgressBar = config?.showProgressBar ?? true;
+
             this.modelLoader = new ModelLoader({
-                showProgressBar: config?.showProgressBar ?? true, // 默认为 true
-                progressBarConfig: {
-                    color: "#4CAF50",
-                    showPercentage: true,
-                    showInfo: true,
-                    showCenterText: true, // 默认显示居中文本
-                    centerText: "正在加载模型...",
-                },
                 enableDraco: config?.enableDraco,
                 dracoDecoderPath: config?.dracoDecoderPath,
-                onProgress: config?.onLoadProgress,
+                onProgress: (progress: ModelLoadProgress) => {
+                    // 如果启用进度条，更新进度条
+                    if (shouldShowProgressBar) {
+                        const progressBar = this.getProgressBar();
+                        progressBar.update({
+                            url: progress.url,
+                            loaded: progress.loaded,
+                            total: progress.total,
+                            progress: progress.progress,
+                        });
+                    }
+                    // 调用用户的进度回调
+                    config?.onLoadProgress?.(progress);
+                },
                 onLoadComplete: () => {
+                    // 如果启用进度条，完成进度条
+                    if (shouldShowProgressBar && this.progressBar) {
+                        this.progressBar.complete();
+                    }
+
                     // 先调用用户的回调（如果有）
                     config?.onLoadComplete?.();
 
@@ -525,6 +554,12 @@ export class ThreeApp {
         if (this.resizeObserver) {
             this.resizeObserver.disconnect();
             this.resizeObserver = undefined;
+        }
+
+        // 销毁进度条
+        if (this.progressBar) {
+            this.progressBar.destroy();
+            this.progressBar = undefined;
         }
 
         // 销毁模型加载器
