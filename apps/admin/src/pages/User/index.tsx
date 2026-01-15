@@ -479,7 +479,7 @@ const User: FC = () => {
                         showQuickJumper: false,
                         showTotal: (total, range) =>
                             `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
-                        size: "default",
+                        size: "middle" as const,
                     }}
                     scroll={{ x: 1400 }}
                     onChange={handleTableChange}

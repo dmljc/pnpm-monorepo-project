@@ -42,11 +42,22 @@ module.exports = {
             confirmCommit: "是否提交当前 Commit ?",
         },
         scopes: [
-            { name: "client" },
-            { name: "server" },
-            { name: "tthree" },
-            { name: "docs" },
-            { name: "global" },
+            // 应用层 (apps)
+            { name: "apps/admin", description: "后台管理系统应用" },
+            { name: "apps/dashboard", description: "三维可视化大屏应用" },
+            { name: "apps/server", description: "后端API服务应用" },
+
+            // 共享库层 (packages)
+            { name: "packages/tthree", description: "Three.js基础封装库" },
+
+            // 全局层 (global)
+            { name: "global", description: "全局变更（影响多个模块）" },
+            { name: "global/docs", description: "全局文档变更" },
+            {
+                name: "global/config",
+                description:
+                    "全局配置文件变更（eslint、prettier、commitlint等）",
+            },
         ],
         types: [
             { value: "feat", name: "特性: ✨ 新增功能", emoji: ":sparkles:" },

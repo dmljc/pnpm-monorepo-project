@@ -12,17 +12,21 @@ outline: deep
 -   `提升协作效率`
 
 ```js
-├── docs
-├── packages
-|   ├── client
-|   |   ├── package.json
-|   ├── server
-|   |   ├── package.json
+├── apps/                    # 应用层（可独立部署）
+│   ├── admin/               # 后台管理系统（原client）
+│   │   ├── package.json
+│   ├── dashboard/           # 三维可视化大屏应用
+│   └── server/              # 后端API服务
+│       ├── package.json
+├── packages/                # 共享库层
+│   └── tthree/             # Three.js基础封装库
+│       ├── package.json
+├── docs/                    # 文档
 ├── .gitignore
 ├── eslint.config.js
 ├── package.json
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
 ├── prettier.config.js
-├── README.md
+└── README.md
 ```
