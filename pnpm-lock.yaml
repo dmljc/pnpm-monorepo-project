@@ -158,6 +158,31 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@25.0.8)(jiti@2.6.1)(terser@5.44.1)(yaml@2.8.2)
 
+  apps/dashboard:
+    dependencies:
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
+      tthree:
+        specifier: workspace:^
+        version: link:../../packages/tthree
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.8
+        version: 19.2.8
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.8)
+      '@vitejs/plugin-react-swc':
+        specifier: ^4.2.2
+        version: 4.2.2(vite@7.3.1(@types/node@25.0.8)(jiti@2.6.1)(terser@5.44.1)(yaml@2.8.2))
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(@types/node@25.0.8)(jiti@2.6.1)(terser@5.44.1)(yaml@2.8.2)
+
   apps/server:
     dependencies:
       '@nestjs/axios':
