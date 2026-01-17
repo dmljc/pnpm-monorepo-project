@@ -103,11 +103,11 @@ export class SceneManager {
         );
 
         // 添加环境光（浅色背景下可以减弱）
-        const ambientLight = new AmbientLight(0xffffff, 0.4);
+        const ambientLight = new AmbientLight(0xffffff);
         scene.add(ambientLight);
 
         // 添加方向光
-        const directionalLight = new DirectionalLight(0xffffff, 1.0);
+        const directionalLight = new DirectionalLight(0xffffff);
         directionalLight.position.set(10, 10, 10);
         scene.add(directionalLight);
 
