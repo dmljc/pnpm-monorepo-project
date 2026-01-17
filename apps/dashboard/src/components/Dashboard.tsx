@@ -9,7 +9,10 @@ const Dashboard: FC = () => {
         if (!containerRef.current) return;
 
         // 使用 containerRef 外部传入的dom元素创建 Three.js 应用，并链式调用初始化和加载模型
-        const app = new ThreeApp({ container: containerRef.current });
+        const app = new ThreeApp({
+            container: containerRef.current,
+            showStats: true,
+        });
         app.init().loadModel("/park.glb");
 
         // 在组件卸载时清理资源

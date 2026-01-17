@@ -1,4 +1,5 @@
 import { Mesh, PerspectiveCamera, WebGLRenderer } from "three";
+import Stats from "three/examples/jsm/libs/stats.module";
 import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
 import { CameraController } from "./CameraController";
@@ -39,6 +40,8 @@ export interface ThreeAppConfig {
     onLoadComplete?: () => void;
     /** 模型加载错误回调 */
     onLoadError?: (url: string, error: Error) => void;
+    /** 是否启用 Stats 性能监测（默认 false） */
+    showStats?: boolean;
 }
 
 /**
@@ -82,6 +85,9 @@ export class ThreeApp {
 
     /** 进度条实例（独立管理） */
     private progressBar: ProgressBar | undefined;
+
+    /** Stats 性能监测实例 */
+    public stats: Stats | undefined;
 
     /** 是否已初始化（延迟初始化标记） */
     private initialized: boolean = false;
@@ -215,6 +221,12 @@ export class ThreeApp {
 
         // 启用尺寸自适应
         this.setupAutoResize();
+
+        // 初始化 Stats（在渲染器创建后）
+        if (config.showStats && this.renderer) {
+            this.stats = new Stats();
+            document.body.appendChild(this.stats.dom);
+        }
 
         this.initialized = true;
 
@@ -528,6 +540,9 @@ export class ThreeApp {
 
         // 渲染场景
         this.renderEngine.render(this.scene, this.camera);
+
+        // 更新 Stats（在渲染后）
+        this.stats?.update();
     }
 
     /**
@@ -566,6 +581,12 @@ export class ThreeApp {
         if (this.modelLoader) {
             this.modelLoader.destroy();
             this.modelLoader = undefined;
+        }
+
+        // 销毁 Stats
+        if (this.stats) {
+            this.stats.dom.remove();
+            this.stats = undefined;
         }
 
         // 销毁各个模块

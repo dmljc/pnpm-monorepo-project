@@ -69,6 +69,16 @@ renderEngine: RenderEngine;
 
 渲染引擎实例
 
+<a id="stats"></a>
+
+##### stats
+
+```ts
+stats: Stats | undefined;
+```
+
+Stats 性能监测实例
+
 #### Methods
 
 <a id="init"></a>
@@ -611,3 +621,13 @@ optional onLoadError: (url, error) => void;
 ###### Returns
 
 `void`
+
+<a id="showstats"></a>
+
+##### showStats?
+
+```ts
+optional showStats: boolean;
+```
+
+是否启用 Stats 性能监测（默认 false）
