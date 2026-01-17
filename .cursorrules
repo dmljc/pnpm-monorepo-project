@@ -1,0 +1,28 @@
+# Cursor 配置规则
+
+## Ant Design 文档配置
+
+本项目已包含 Ant Design 的 LLMs.txt 文档，用于为 Cursor AI 提供 Ant Design 组件的上下文信息。
+
+### 文档位置
+- `docs/antd-llms.txt` - Ant Design 组件概览和文档链接
+- `docs/antd-llms-full.txt` - Ant Design 组件完整的语义化描述（推荐使用）
+
+### 在 Cursor 中使用 @Docs
+
+1. 打开 Cursor 设置：`Cursor → Settings → Cursor Settings → Docs`
+2. 点击 `@Docs → Add New Doc`
+3. 添加以下文档源之一：
+   - **在线版本（推荐）**：`https://ant.design/llms-full.txt`
+   - **本地版本**：`docs/antd-llms-full.txt`
+
+4. 在对话中使用 `@Docs` 引用文档，例如：
+   ```
+   @Docs antd-llms-full 如何使用 Button 组件？
+   ```
+
+### 注意事项
+
+- 优先使用 `llms-full.txt`，因为它包含完整的组件语义描述
+- 文档索引完成后，可以在 Cursor 的对话中通过 `@Docs` 功能引用
+- 本地文档文件会自动被 Cursor 索引，也可以直接引用
