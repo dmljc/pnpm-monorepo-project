@@ -101,5 +101,32 @@
         "deleteConfirm": "Are you sure to delete this user?",
         "disableConfirm": "Are you sure to disable this user?",
         "enableConfirm": "Are you sure to enable this user?"
+    },
+    "search": {
+        "form": {
+            "username": {
+                "label": "Username",
+                "placeholder": "Please enter"
+            },
+            "name": {
+                "label": "Name",
+                "placeholder": "Please enter"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "Please enter"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Please enter"
+            },
+            "buttons": {
+                "search": "Search",
+                "reset": "Reset"
+            }
+        }
+    },
+    "pagination": {
+        "total": "Items {{start}}-{{end}} / Total {{total}}"
     }
 }

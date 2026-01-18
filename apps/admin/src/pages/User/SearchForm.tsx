@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Form, Input, Button, Space } from "antd";
 import { SearchOutlined, ReloadOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 interface SearchFormProps {
     onSearch: (values: any) => void;
@@ -8,6 +9,7 @@ interface SearchFormProps {
 }
 
 const SearchForm: React.FC<SearchFormProps> = memo(({ onSearch, onReset }) => {
+    const { t } = useTranslation();
     const [form] = Form.useForm();
 
     const handleSearch = () => {
@@ -22,33 +24,36 @@ const SearchForm: React.FC<SearchFormProps> = memo(({ onSearch, onReset }) => {
 
     return (
         <Form form={form} layout="inline">
-            <Form.Item name="username" label="账号">
+            <Form.Item
+                name="username"
+                label={t("user:search.form.username.label")}
+            >
                 <Input
-                    placeholder="请输入"
+                    placeholder={t("user:search.form.username.placeholder")}
                     allowClear
                     onPressEnter={handleSearch}
                     style={{ width: 160 }}
                 />
             </Form.Item>
-            <Form.Item name="name" label="姓名">
+            <Form.Item name="name" label={t("user:search.form.name.label")}>
                 <Input
-                    placeholder="请输入"
+                    placeholder={t("user:search.form.name.placeholder")}
                     allowClear
                     onPressEnter={handleSearch}
                     style={{ width: 160 }}
                 />
             </Form.Item>
-            <Form.Item name="phone" label="手机号">
+            <Form.Item name="phone" label={t("user:search.form.phone.label")}>
                 <Input
-                    placeholder="请输入"
+                    placeholder={t("user:search.form.phone.placeholder")}
                     allowClear
                     onPressEnter={handleSearch}
                     style={{ width: 160 }}
                 />
             </Form.Item>
-            <Form.Item name="email" label="邮箱">
+            <Form.Item name="email" label={t("user:search.form.email.label")}>
                 <Input
-                    placeholder="请输入"
+                    placeholder={t("user:search.form.email.placeholder")}
                     allowClear
                     onPressEnter={handleSearch}
                     style={{ width: 160 }}
@@ -61,10 +66,10 @@ const SearchForm: React.FC<SearchFormProps> = memo(({ onSearch, onReset }) => {
                         icon={<SearchOutlined />}
                         onClick={handleSearch}
                     >
-                        查询
+                        {t("user:search.form.buttons.search")}
                     </Button>
                     <Button icon={<ReloadOutlined />} onClick={handleReset}>
-                        重置
+                        {t("user:search.form.buttons.reset")}
                     </Button>
                 </Space>
             </Form.Item>

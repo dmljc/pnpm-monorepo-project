@@ -1,4 +1,99 @@
+/**
+ * 图标组件样式
+ * 参考旧版设计，简洁优雅
+ */
 import { css } from "@emotion/css";
+
+// 下拉容器样式
+export const dropdownContainerStyle: React.CSSProperties = {
+    width: "354px",
+    minWidth: "354px", // 确保最小宽度
+    maxWidth: "354px", // 确保最大宽度
+    padding: "12px",
+    display: "flex",
+    flexDirection: "column",
+    boxSizing: "border-box", // 确保 padding 包含在宽度内
+    overflow: "visible", // 允许内容正常显示
+};
+
+// 搜索框样式
+export const searchInputStyle: React.CSSProperties = {
+    marginBottom: "12px",
+    width: "100%",
+    boxSizing: "border-box",
+};
+
+// 图标网格容器样式（6列布局）
+export const iconGridContainerStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(6, 1fr)", // 6列
+    gap: "4px", // 减小间距，使图标更紧凑
+    padding: "4px 0", // 减小上下 padding
+    height: "280px", // 固定高度：6行 × 42px + 5个gap × 4px + padding 8px = 280px
+    width: "100%",
+    boxSizing: "border-box",
+    alignContent: "start", // 确保图标从顶部开始排列
+};
+
+// 图标卡片样式（参考旧版，简洁设计）
+export const iconCardClass = css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background-color: transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: var(--ant-color-primary);
+        background-color: var(--ant-color-primary-bg);
+    }
+
+    &.selected {
+        border-color: var(--ant-color-primary);
+        background-color: var(--ant-color-primary-bg);
+    }
+`;
+
+// 图标样式
+export const iconItemStyle: React.CSSProperties = {
+    fontSize: 22,
+    color: "var(--ant-color-text)",
+};
+
+// 分页容器样式
+export const paginationContainerStyle: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "12px",
+    paddingTop: "12px",
+    borderTop: "1px solid var(--ant-color-border)",
+    width: "100%",
+    boxSizing: "border-box",
+    flexShrink: 0, // 防止压缩
+};
+
+// 空状态样式
+export const emptyStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "200px",
+};
+
+// Select 样式
+export const selectStyle: React.CSSProperties = {
+    width: 300,
+};
+
+// ============================================
+// 以下是为了兼容旧代码，保留的样式定义
+// ============================================
 
 export const iconSelector = css`
     min-width: 120px;
@@ -75,8 +170,6 @@ export const iconPlaceholder = css`
     color: var(--ant-color-text-placeholder);
 `;
 
-// IconComponent 样式定义
-
 export const iconCardStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -87,12 +180,6 @@ export const iconCardStyle: React.CSSProperties = {
     borderRadius: "4px",
     transition: "all 0.2s",
     justifyContent: "center",
-};
-
-export const iconItemStyle: React.CSSProperties = {
-    width: 24,
-    height: 24,
-    marginBottom: "4px",
 };
 
 export const iconNameStyle: React.CSSProperties = {
@@ -109,52 +196,20 @@ export const emptyPlaceholderStyle: React.CSSProperties = {
     height: "60px",
 };
 
-export const dropdownContainerStyle: React.CSSProperties = {
-    padding: "16px",
-    height: "410px", // 固定高度，防止跳动
-    display: "flex",
-    flexDirection: "column",
-};
-
-export const searchInputStyle: React.CSSProperties = {
-    marginBottom: 10,
-};
-
-export const paginationContainerStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between", // 改为两端对齐
-    alignItems: "center", // 垂直居中对齐
-    marginTop: 0,
-    flexShrink: 0, // 防止分页组件被压缩
-    padding: "8px", // 添加左右内边距
-    borderTop: "1px solid var(--ant-color-border)", // 添加顶部分割线
-};
-
 export const paginationLeftStyle: React.CSSProperties = {
-    width: "100px", // 固定左侧区域宽度
-    textAlign: "left", // 左对齐
-    flexShrink: 0, // 防止被压缩
-    fontSize: "12px", // 固定字体大小
-    color: "var(--ant-color-text-secondary)", // 设置颜色
+    width: "100px",
+    textAlign: "left",
+    flexShrink: 0,
+    fontSize: "12px",
+    color: "var(--ant-color-text-secondary)",
 };
 
 export const paginationRightStyle: React.CSSProperties = {
-    width: "220px", // 固定右侧区域宽度
-    textAlign: "right", // 右对齐
-    flexShrink: 0, // 防止被压缩
+    width: "220px",
+    textAlign: "right",
+    flexShrink: 0,
     display: "flex",
-    justifyContent: "flex-end", // 右对齐
-};
-
-export const iconGridContainerStyle: React.CSSProperties = {
-    flex: 1,
-    overflow: "hidden",
-    display: "flex",
-    flexDirection: "column",
-};
-
-export const selectStyle: React.CSSProperties = {
-    width: 360,
+    justifyContent: "flex-end",
 };
 
 export const popupStyle = {

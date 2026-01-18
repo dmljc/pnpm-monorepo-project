@@ -14,29 +14,25 @@ i18n
     // 启动 i18n
     .init({
         fallbackLng: "zh", // 默认语言
-        ns: [
-            "common",
-            "login",
-            "user",
-            "role",
-            "menu",
-            "systemConfig",
-            "profile",
-            "workplace",
-            "analysis",
-        ], // 命名空间
+        // 只预加载必要的命名空间（common 和 login）
+        ns: ["common", "login"],
         defaultNS: "common", // 默认命名空间
+        // 启用懒加载，其他命名空间按需加载
+        load: "languageOnly", // 只加载当前语言
+        preload: [], // 不预加载其他语言
         interpolation: {
             escapeValue: false, // 不转义HTML， 防止 XSS 攻击（React 已默认转义）
         },
         // 配置 react-i18next 插件
         react: {
-            useSuspense: true, // 使用React Suspense
+            useSuspense: true, // 启用 Suspense，确保翻译加载完成后再渲染
         },
         // 配置后端语言包
         backend: {
             loadPath: "/locales/{{lng}}/{{ns}}.json", // 语言包路径（public/locales 下）
         },
+        // 分区加载语言包
+        partialBundledLanguages: true, // 启用部分打包语言
     });
 
 export default i18n;

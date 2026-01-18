@@ -1,465 +1,50 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { Select, Input, Spin, Pagination, Row, Col } from "antd";
+/**
+ * 图标选择器组件
+ * 重构版：基于 Ant Design Icons，零网络请求，高性能
+ * 无分类，6行6列分页显示
+ */
+import React, { useState, useCallback, useMemo } from "react";
+import { Select, Input, Empty, Pagination } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { Icon } from "@iconify/react";
+import { ALL_ICONS, searchIcons, getIconComponent } from "./icons";
+import IconRenderer from "./IconRenderer";
 import {
-    iconCardStyle,
-    iconItemStyle,
-    emptyPlaceholderStyle,
     dropdownContainerStyle,
     searchInputStyle,
-    paginationContainerStyle,
-    paginationLeftStyle,
-    paginationRightStyle,
     iconGridContainerStyle,
+    iconCardClass,
+    iconItemStyle,
+    emptyStyle,
     selectStyle,
-    popupStyle,
+    paginationContainerStyle,
 } from "./style";
-
-// 常量定义
-const CONSTANTS = {
-    API: {
-        DEFAULT_URL: "https://api.iconify.design/search?query=home&limit=210",
-        SEARCH_URL: "https://api.iconify.design/search?query=",
-        LIMIT: 210,
-    },
-    GRID: {
-        COLS: 6,
-        ROWS: 7,
-        PAGE_SIZE: 42, // 6 * 7
-    },
-    DEBOUNCE_DELAY: 300,
-} as const;
-
-// 默认图标列表
-const FALLBACK_ICONS = [
-    "add",
-    "edit",
-    "delete",
-    "search",
-    "user",
-    "settings",
-    "home",
-    "menu",
-    "arrow-up",
-    "arrow-down",
-    "arrow-left",
-    "arrow-right",
-].map((name) => `carbon:${name}`);
-
-// 全局状态管理
-class IconCache {
-    private static instance: IconCache;
-    private cache: string[] = [];
-    private loadingPromise: Promise<string[]> | null = null;
-
-    static getInstance(): IconCache {
-        if (!IconCache.instance) {
-            IconCache.instance = new IconCache();
-        }
-        return IconCache.instance;
-    }
-
-    async getIcons(): Promise<string[]> {
-        if (this.cache.length > 0) {
-            return this.cache;
-        }
-
-        if (this.loadingPromise) {
-            return this.loadingPromise;
-        }
-
-        this.loadingPromise = this.fetchIcons();
-        return this.loadingPromise;
-    }
-
-    private async fetchIcons(): Promise<string[]> {
-        try {
-            const response = await fetch(CONSTANTS.API.DEFAULT_URL);
-
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP ${response.status}: ${response.statusText}`,
-                );
-            }
-
-            const data = await response.json();
-            let icons: string[] = [];
-
-            if (Array.isArray(data.icons)) {
-                icons = data.icons.map((icon: string) =>
-                    icon.replace(/^carbon:/, ""),
-                );
-            }
-
-            // 合并默认图标和API返回的图标
-            const allIcons = this.uniq([...FALLBACK_ICONS, ...icons]);
-            this.cache = allIcons;
-
-            return allIcons;
-        } catch (error) {
-            console.warn("Iconify API 请求失败，使用默认图标:", error);
-            this.cache = FALLBACK_ICONS;
-            return FALLBACK_ICONS;
-        } finally {
-            this.loadingPromise = null;
-        }
-    }
-
-    private uniq(arr: string[]): string[] {
-        return Array.from(new Set(arr));
-    }
-}
-
-// 防抖Hook
-const useDebounce = <T,>(value: T, delay: number): T => {
-    const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, delay]);
-
-    return debouncedValue;
-};
-
-// 图标项组件
-const IconItem = React.memo<{
-    icon: string;
-    onSelect: (icon: string) => void;
-}>(({ icon, onSelect }) => {
-    const handleClick = useCallback(() => {
-        onSelect(icon);
-    }, [icon, onSelect]);
-
-    const handleMouseEnter = useCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
-            e.currentTarget.style.borderColor = "#1890ff";
-            e.currentTarget.style.backgroundColor = "#f0f8ff";
-        },
-        [],
-    );
-
-    const handleMouseLeave = useCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
-            e.currentTarget.style.borderColor = "transparent";
-            e.currentTarget.style.backgroundColor = "transparent";
-        },
-        [],
-    );
-
-    return (
-        <div
-            style={iconCardStyle}
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            title={icon}
-        >
-            <Icon icon={icon} style={iconItemStyle} />
-        </div>
-    );
-});
-
-IconItem.displayName = "IconItem";
-
-// 图标网格组件
-const IconGrid = React.memo<{
-    icons: string[];
-    onSelect: (icon: string) => void;
-}>(({ icons, onSelect }) => {
-    const renderIconRows = useMemo(() => {
-        const rows = [];
-        for (let i = 0; i < icons.length; i += CONSTANTS.GRID.COLS) {
-            const rowIcons = icons.slice(i, i + CONSTANTS.GRID.COLS);
-            const cols = rowIcons.map((icon, index) => (
-                <Col span={24 / CONSTANTS.GRID.COLS} key={`${icon}-${index}`}>
-                    <IconItem icon={icon} onSelect={onSelect} />
-                </Col>
-            ));
-
-            // 填充空位
-            while (cols.length < CONSTANTS.GRID.COLS) {
-                cols.push(
-                    <Col
-                        span={24 / CONSTANTS.GRID.COLS}
-                        key={`empty-${cols.length}`}
-                    >
-                        <div style={emptyPlaceholderStyle} />
-                    </Col>,
-                );
-            }
-
-            rows.push(
-                <Row key={i} gutter={[8, 8]}>
-                    {cols}
-                </Row>,
-            );
-        }
-        return rows;
-    }, [icons, onSelect]);
-
-    return <>{renderIconRows}</>;
-});
-
-IconGrid.displayName = "IconGrid";
-
-// 搜索组件
-const IconSearch = React.memo<{
-    value: string;
-    onChange: (value: string) => void;
-    onSearch: (query: string) => void;
-}>(({ value, onChange, onSearch }) => {
-    const { t } = useTranslation();
-    const debouncedValue = useDebounce(value, CONSTANTS.DEBOUNCE_DELAY);
-
-    useEffect(() => {
-        onSearch(debouncedValue);
-    }, [debouncedValue, onSearch]);
-
-    const handleChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value);
-        },
-        [onChange],
-    );
-
-    return (
-        <Input
-            placeholder={t("menu:form.icon.searchPlaceholder", {
-                defaultValue: "搜索图标名称",
-            })}
-            value={value}
-            onChange={handleChange}
-            allowClear
-            style={searchInputStyle}
-            onPressEnter={(e) => e.preventDefault()}
-            prefix={<Icon icon="search" width={16} height={16} />}
-        />
-    );
-});
-
-IconSearch.displayName = "IconSearch";
-
-// 图标选择器组件
-const IconSelector: React.FC<{
-    value?: string;
-    onChange?: (val: string) => void;
-    style?: React.CSSProperties;
-    pageSize?: number;
-    showSearch?: boolean;
-}> = ({
-    value,
-    onChange,
-    style,
-    pageSize = CONSTANTS.GRID.PAGE_SIZE,
-    showSearch = true,
-}) => {
-    const [iconList, setIconList] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [search, setSearch] = useState("");
-    const [current, setCurrent] = useState(1);
-    const [filtered, setFiltered] = useState<string[]>([]);
-
-    // 图标缓存实例
-    const iconCache = useMemo(() => IconCache.getInstance(), []);
-
-    // 初始化加载图标
-    useEffect(() => {
-        const loadIcons = async () => {
-            setLoading(true);
-
-            try {
-                const icons = await iconCache.getIcons();
-                setIconList(icons);
-                setFiltered(icons);
-            } catch (error) {
-                console.error("加载图标失败:", error);
-                setIconList(FALLBACK_ICONS);
-                setFiltered(FALLBACK_ICONS);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadIcons();
-    }, [iconCache]);
-
-    // 搜索处理
-    const handleSearch = useCallback(
-        async (query: string) => {
-            if (!query.trim()) {
-                setFiltered(iconList);
-                setCurrent(1);
-                return;
-            }
-
-            setLoading(true);
-            setCurrent(1);
-
-            try {
-                const safeQuery = query.replace(/[^a-zA-Z0-9-_]/g, "");
-                if (!safeQuery) {
-                    setFiltered(iconList);
-                    return;
-                }
-
-                const url = `${CONSTANTS.API.SEARCH_URL}${encodeURIComponent(safeQuery)}&limit=${CONSTANTS.API.LIMIT}`;
-                const response = await fetch(url);
-
-                if (!response.ok) {
-                    throw new Error(
-                        `HTTP ${response.status}: ${response.statusText}`,
-                    );
-                }
-
-                const data = await response.json();
-                let icons: string[] = [];
-
-                if (Array.isArray(data.icons)) {
-                    icons = data.icons.map((icon: string) =>
-                        icon.replace(/^carbon:/, ""),
-                    );
-                }
-
-                setFiltered(Array.from(new Set(icons)));
-            } catch (error) {
-                console.warn("搜索图标失败:", error);
-                // 本地过滤作为备选
-                const localFiltered = iconList.filter((icon) =>
-                    icon.toLowerCase().includes(query.toLowerCase()),
-                );
-                setFiltered(localFiltered);
-            } finally {
-                setLoading(false);
-            }
-        },
-        [iconList],
-    );
-
-    // 分页计算
-    const paginationData = useMemo(() => {
-        const total = filtered.length;
-        const pageIcons = filtered.slice(
-            (current - 1) * pageSize,
-            current * pageSize,
-        );
-        return { total, pageIcons };
-    }, [filtered, current, pageSize]);
-
-    // 图标选择处理
-    const handleIconSelect = useCallback(
-        (icon: string) => {
-            onChange?.(icon);
-        },
-        [onChange],
-    );
-
-    // 分页变化处理
-    const handlePageChange = useCallback(
-        (page: number) => {
-            // 防止快速点击导致的跳动
-            if (loading) return;
-            setCurrent(page);
-        },
-        [loading],
-    );
-
-    // 搜索变化处理
-    const handleSearchChange = useCallback((value: string) => {
-        setSearch(value);
-    }, []);
-
-    const { t } = useTranslation();
-
-    return (
-        <Select
-            showSearch={false}
-            value={value}
-            onChange={onChange}
-            style={{ ...selectStyle, ...style }}
-            placeholder={t("menu:form.icon.placeholder")}
-            popupRender={() => (
-                <div style={dropdownContainerStyle}>
-                    {showSearch && (
-                        <IconSearch
-                            value={search}
-                            onChange={handleSearchChange}
-                            onSearch={handleSearch}
-                        />
-                    )}
-                    <div style={iconGridContainerStyle}>
-                        <Spin spinning={loading}>
-                            <IconGrid
-                                icons={paginationData.pageIcons}
-                                onSelect={handleIconSelect}
-                            />
-                        </Spin>
-                    </div>
-                    <div style={paginationContainerStyle}>
-                        <div style={paginationLeftStyle}>
-                            {paginationData.total > 0
-                                ? `${(current - 1) * pageSize + 1}-${Math.min(current * pageSize, paginationData.total)} / ${paginationData.total}`
-                                : "0-0 / 0"}
-                        </div>
-                        <div style={paginationRightStyle}>
-                            <Pagination
-                                size="small"
-                                current={current}
-                                pageSize={pageSize}
-                                total={paginationData.total}
-                                showSizeChanger={false}
-                                showTotal={() => null} // 不显示默认的total，因为我们自定义了
-                                onChange={handlePageChange}
-                                // 添加分页组件的样式，防止跳动
-                                style={{
-                                    margin: 0,
-                                    padding: 0,
-                                }}
-                                // 添加loading延迟，避免快速切换时的闪烁
-                                disabled={loading}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
-            options={[]}
-            filterOption={false}
-            allowClear
-            styles={popupStyle}
-            notFoundContent={
-                loading ? (
-                    <Spin size="small" />
-                ) : (
-                    t("menu:messages.noData", { defaultValue: "暂无数据" })
-                )
-            }
-        />
-    );
-};
 
 // 主组件接口
 interface IconComponentProps {
+    /** 当前选中的图标 */
     value?: string;
+    /** 图标变化回调 */
     onChange?: (val: string) => void;
+    /** 自定义样式 */
     style?: React.CSSProperties;
+    /** 占位符 */
+    placeholder?: string;
+    /** 每页显示数量（已废弃，新版本不需要分页） */
     pageSize?: number;
+    /** 是否显示搜索（已废弃，新版本始终显示） */
     showSearch?: boolean;
-    // 新增：用于渲染单个图标的属性
+    /** 用于渲染单个图标的属性 */
     icon?: string;
+    /** CSS 类名 */
     className?: string;
 }
 
 const IconComponent: React.FC<IconComponentProps> = (props) => {
-    // 如果提供了 icon 属性，则渲染单个图标
+    // 如果提供了 icon 属性，则渲染单个图标（兼容旧用法）
     if (props.icon) {
         return (
-            <Icon
+            <IconRenderer
                 icon={props.icon}
                 className={props.className}
                 style={props.style}
@@ -469,6 +54,190 @@ const IconComponent: React.FC<IconComponentProps> = (props) => {
 
     // 否则渲染图标选择器
     return <IconSelector {...props} />;
+};
+
+// 常量：每页显示 6行6列 = 36 个图标
+const PAGE_SIZE = 36; // 6 rows × 6 columns
+
+// 图标选择器组件
+const IconSelector: React.FC<IconComponentProps> = ({
+    value,
+    onChange,
+    style,
+    placeholder,
+}) => {
+    const { t } = useTranslation();
+    const [search, setSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // 搜索过滤
+    const filteredIcons = useMemo(() => {
+        if (search) {
+            return searchIcons(search);
+        }
+        return ALL_ICONS;
+    }, [search]);
+
+    // 分页数据
+    const paginationData = useMemo(() => {
+        const total = filteredIcons.length;
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const pageIcons = filteredIcons.slice(start, end);
+
+        return {
+            total,
+            pageIcons,
+            current: currentPage,
+            totalPages: Math.ceil(total / PAGE_SIZE),
+        };
+    }, [filteredIcons, currentPage]);
+
+    // 搜索时重置到第一页
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [search]);
+
+    // 图标选择
+    const handleIconSelect = useCallback(
+        (iconName: string) => {
+            onChange?.(iconName);
+        },
+        [onChange],
+    );
+
+    // 分页变化
+    const handlePageChange = useCallback((page: number) => {
+        setCurrentPage(page);
+    }, []);
+
+    // 渲染图标网格
+    const renderIconGrid = () => {
+        if (paginationData.pageIcons.length === 0) {
+            return (
+                <div style={emptyStyle}>
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description={
+                            search
+                                ? `未找到 "${search}" 相关图标`
+                                : t("common:noData", {
+                                      defaultValue: "暂无图标",
+                                  })
+                        }
+                    />
+                </div>
+            );
+        }
+
+        return (
+            <div style={iconGridContainerStyle}>
+                {paginationData.pageIcons.map((iconName) => {
+                    const IconComponent = getIconComponent(iconName);
+                    if (!IconComponent) return null;
+
+                    const isSelected = value === iconName;
+
+                    return (
+                        <div
+                            key={iconName}
+                            className={`${iconCardClass} ${isSelected ? "selected" : ""}`}
+                            onClick={() => handleIconSelect(iconName)}
+                            title={iconName}
+                        >
+                            <IconComponent style={iconItemStyle} />
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    return (
+        <Select
+            value={value}
+            onChange={onChange}
+            style={{ ...selectStyle, ...style }}
+            placeholder={
+                placeholder ||
+                t("menu:form.icon.placeholder", {
+                    defaultValue: "请选择图标",
+                })
+            }
+            popupMatchSelectWidth={false} // 不匹配选择框宽度，使用自定义宽度
+            styles={{
+                popup: {
+                    root: {
+                        minWidth: "354px",
+                        width: "354px",
+                        maxWidth: "354px",
+                    },
+                },
+            }}
+            placement="bottomLeft" // 确保下拉面板正确定位
+            getPopupContainer={(triggerNode) => {
+                // 返回最近的定位父元素，如果没有则返回 body
+                let parent = triggerNode.parentElement;
+                while (
+                    parent &&
+                    getComputedStyle(parent).position === "static"
+                ) {
+                    parent = parent.parentElement;
+                }
+                return parent || document.body;
+            }}
+            popupRender={() => (
+                <div style={dropdownContainerStyle}>
+                    {/* 搜索框 */}
+                    <Input
+                        placeholder={t("menu:form.icon.searchPlaceholder", {
+                            defaultValue: "搜索图标名称...",
+                        })}
+                        prefix={<SearchOutlined />}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        allowClear
+                        style={searchInputStyle}
+                    />
+
+                    {/* 搜索结果统计 */}
+                    {search && (
+                        <div
+                            style={{
+                                marginBottom: "12px",
+                                fontSize: "13px",
+                                color: "var(--ant-color-text-secondary)",
+                            }}
+                        >
+                            找到 {filteredIcons.length} 个图标
+                        </div>
+                    )}
+
+                    {/* 图标网格 */}
+                    {renderIconGrid()}
+
+                    {/* 分页 */}
+                    {paginationData.total > PAGE_SIZE && (
+                        <div style={paginationContainerStyle}>
+                            <Pagination
+                                current={paginationData.current}
+                                total={paginationData.total}
+                                pageSize={PAGE_SIZE}
+                                size="small"
+                                showSizeChanger={false}
+                                showTotal={(total, range) =>
+                                    `${String(range[0]).padStart(2, "0")}-${String(range[1]).padStart(2, "0")} / ${total}`
+                                }
+                                onChange={handlePageChange}
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
+            options={[]}
+            labelRender={() => (value ? <IconRenderer icon={value} /> : null)}
+        />
+    );
 };
 
 export default React.memo(IconComponent);

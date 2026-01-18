@@ -43,13 +43,7 @@ import { list, del, importExcel, exportExcel, create, freeze } from "./api.ts";
 const { Title } = Typography;
 
 const User: FC = () => {
-    const { t, i18n } = useTranslation();
-
-    // 稳定化翻译函数
-    const tText = useCallback(
-        (key: string, options?: any) => String(i18n.t(key, options)),
-        [i18n, i18n.resolvedLanguage],
-    );
+    const { t } = useTranslation();
 
     // ==================== 状态管理 ====================
     // 数据相关状态
@@ -241,14 +235,14 @@ const User: FC = () => {
     const columns: ColumnsType<GithubIssueItem> = useMemo(
         () => [
             {
-                title: "账号",
+                title: t("user:table.columns.username"),
                 dataIndex: "username",
                 width: 100,
                 fixed: "left",
                 render: (text) => <a style={{ color: "#1890ff" }}>{text}</a>,
             },
             {
-                title: "头像",
+                title: t("user:table.columns.avatar"),
                 dataIndex: "avatar",
                 width: 80,
                 align: "center",
@@ -267,37 +261,37 @@ const User: FC = () => {
             },
 
             {
-                title: "密码",
+                title: t("user:table.columns.password"),
                 dataIndex: "password",
                 width: 120,
             },
             {
-                title: "姓名",
+                title: t("user:table.columns.name"),
                 dataIndex: "name",
                 width: 100,
             },
             {
-                title: "角色",
+                title: t("user:table.columns.role"),
                 dataIndex: "role",
                 width: 100,
             },
             {
-                title: "手机号",
+                title: t("user:table.columns.phone"),
                 dataIndex: "phone",
                 width: 130,
             },
             {
-                title: "邮箱",
+                title: t("user:table.columns.email"),
                 dataIndex: "email",
                 width: 200,
             },
             {
-                title: "状态",
+                title: t("user:table.columns.status"),
                 dataIndex: "status",
                 width: 80,
                 filters: [
-                    { text: "启用", value: 1 },
-                    { text: "停用", value: 0 },
+                    { text: t("user:table.status.enabled"), value: 1 },
+                    { text: t("user:table.status.disabled"), value: 0 },
                 ],
                 render: (status: number) => (
                     <span>
@@ -312,12 +306,14 @@ const User: FC = () => {
                                 marginRight: 8,
                             }}
                         />
-                        {status === 1 ? "启用" : "停用"}
+                        {status === 1
+                            ? t("user:table.status.enabled")
+                            : t("user:table.status.disabled")}
                     </span>
                 ),
             },
             {
-                title: "创建时间",
+                title: t("user:table.columns.createTime"),
                 dataIndex: "createTime",
                 width: 180,
                 sorter: true,
@@ -325,7 +321,7 @@ const User: FC = () => {
                     text ? dayjs(text).format("YYYY-MM-DD HH:mm:ss") : "-",
             },
             {
-                title: "操作",
+                title: t("user:table.columns.actions"),
                 key: "action",
                 width: 200,
                 fixed: "right",
@@ -346,7 +342,7 @@ const User: FC = () => {
                             icon={<EditOutlined />}
                             onClick={() => handleEditUser(record)}
                         >
-                            编辑
+                            {t("user:table.actions.edit")}
                         </AuthButton>
                         <AuthButton
                             code="user:disabled"
@@ -362,7 +358,9 @@ const User: FC = () => {
                             }
                             onClick={() => handleFreeze(record)}
                         >
-                            {record.status === 1 ? "停用" : "启用"}
+                            {record.status === 1
+                                ? t("user:table.actions.disable")
+                                : t("user:table.actions.enable")}
                         </AuthButton>
                         <AuthButton
                             code="user:delete"
@@ -373,13 +371,13 @@ const User: FC = () => {
                             icon={<DeleteOutlined />}
                             onClick={() => handleDelete(record)}
                         >
-                            删除
+                            {t("user:table.actions.delete")}
                         </AuthButton>
                     </Space>
                 ),
             },
         ],
-        [tText],
+        [t],
     );
 
     return (
@@ -417,7 +415,7 @@ const User: FC = () => {
                     }}
                 >
                     <Title level={5} style={{ margin: 0, fontWeight: 600 }}>
-                        用户管理
+                        {t("user:title")}
                     </Title>
                     <Space size="middle">
                         <AuthButton
@@ -426,7 +424,7 @@ const User: FC = () => {
                             icon={<PlusOutlined />}
                             onClick={handleCreateUser}
                         >
-                            新增
+                            {t("user:toolbar.add")}
                         </AuthButton>
                         <AuthButton
                             code="user:export"
@@ -434,7 +432,7 @@ const User: FC = () => {
                             onClick={handleExport}
                             loading={isPending}
                         >
-                            导出Excel
+                            {t("user:toolbar.export")}
                         </AuthButton>
                         <Upload
                             name="file"
@@ -450,7 +448,7 @@ const User: FC = () => {
                                 icon={<UploadOutlined />}
                                 loading={importLoading}
                             >
-                                导入Excel
+                                {t("user:toolbar.import")}
                             </AuthButton>
                         </Upload>
                         <SyncOutlined
@@ -478,7 +476,11 @@ const User: FC = () => {
                         showSizeChanger: false,
                         showQuickJumper: false,
                         showTotal: (total, range) =>
-                            `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
+                            t("user:pagination.total", {
+                                start: range[0],
+                                end: range[1],
+                                total,
+                            }),
                         size: "middle" as const,
                     }}
                     scroll={{ x: 1400 }}

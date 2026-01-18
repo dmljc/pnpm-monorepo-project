@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { Navigate, RouteObject } from "react-router-dom";
 import { AuthComponent, WithLoadingComponent } from "@/components";
+import { withI18nLoader } from "@/components/WithI18nLoader";
 import Layout from "../layout";
 
 // 路由懒加载
@@ -32,11 +33,17 @@ const routes: RouteObject[] = [
         children: [
             {
                 path: "/dashboard/workplace",
-                element: WithLoadingComponent(<Workplace />),
+                element: withI18nLoader(
+                    WithLoadingComponent(<Workplace />),
+                    "workplace",
+                ),
             },
             {
                 path: "/dashboard/analysis",
-                element: WithLoadingComponent(<Analysis />),
+                element: withI18nLoader(
+                    WithLoadingComponent(<Analysis />),
+                    "analysis",
+                ),
             },
         ],
     },
@@ -46,23 +53,32 @@ const routes: RouteObject[] = [
         children: [
             {
                 path: "/system/user",
-                element: WithLoadingComponent(<User />),
+                element: withI18nLoader(WithLoadingComponent(<User />), "user"),
             },
             {
                 path: "/system/role",
-                element: WithLoadingComponent(<Role />),
+                element: withI18nLoader(WithLoadingComponent(<Role />), [
+                    "role",
+                    "menu",
+                ]),
             },
             {
                 path: "/system/menu",
-                element: WithLoadingComponent(<Menu />),
+                element: withI18nLoader(WithLoadingComponent(<Menu />), "menu"),
             },
             {
                 path: "/system/config",
-                element: WithLoadingComponent(<Config />),
+                element: withI18nLoader(
+                    WithLoadingComponent(<Config />),
+                    "systemConfig",
+                ),
             },
             {
                 path: "/system/profile",
-                element: WithLoadingComponent(<Profile />),
+                element: withI18nLoader(
+                    WithLoadingComponent(<Profile />),
+                    "profile",
+                ),
             },
             {
                 path: "/system/server",
