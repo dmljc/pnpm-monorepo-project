@@ -105,6 +105,9 @@ export class ThreeApp {
     protected deltaTime: number = 0;
     protected elapsedTime: number = 0;
 
+    /** 帧更新回调列表（用于天气系统等扩展） */
+    private frameUpdaters: Array<(dt: number, t: number) => void> = [];
+
     /**
      * 创建 ThreeApp 实例
      *
@@ -538,11 +541,64 @@ export class ThreeApp {
         // 更新控制器
         this.cameraController.update();
 
+        // 调用帧更新回调（天气系统等扩展）
+        for (const updater of this.frameUpdaters) {
+            updater(this.deltaTime, this.elapsedTime);
+        }
+
         // 渲染场景
         this.renderEngine.render(this.scene, this.camera);
 
         // 更新 Stats（在渲染后）
         this.stats?.update();
+    }
+
+    /**
+     * 注册帧更新回调
+     *
+     * 用于天气系统、动画系统等需要每帧更新的扩展模块
+     *
+     * @param updater - 每帧调用的回调函数，参数为 (deltaTime, elapsedTime)
+     * @returns this - 支持链式调用
+     *
+     * @example
+     * ```typescript
+     * // 注册天气系统的 tick 方法
+     * app.addFrameUpdater((dt, t) => weatherSystem.tick(dt, t));
+     *
+     * // 或者直接绑定
+     * app.addFrameUpdater(weatherSystem.tick.bind(weatherSystem));
+     * ```
+     */
+    public addFrameUpdater(updater: (dt: number, t: number) => void): this {
+        if (!this.frameUpdaters.includes(updater)) {
+            this.frameUpdaters.push(updater);
+        }
+        return this;
+    }
+
+    /**
+     * 移除帧更新回调
+     *
+     * @param updater - 要移除的回调函数
+     * @returns this - 支持链式调用
+     */
+    public removeFrameUpdater(updater: (dt: number, t: number) => void): this {
+        const index = this.frameUpdaters.indexOf(updater);
+        if (index !== -1) {
+            this.frameUpdaters.splice(index, 1);
+        }
+        return this;
+    }
+
+    /**
+     * 清空所有帧更新回调
+     *
+     * @returns this - 支持链式调用
+     */
+    public clearFrameUpdaters(): this {
+        this.frameUpdaters = [];
+        return this;
     }
 
     /**
@@ -564,6 +620,9 @@ export class ThreeApp {
         this.initialized = false;
 
         this.stop();
+
+        // 清空帧更新回调
+        this.clearFrameUpdaters();
 
         // 清理尺寸观察器
         if (this.resizeObserver) {

@@ -324,6 +324,82 @@ animate(): this;
 
 this - 支持链式调用
 
+<a id="addframeupdater"></a>
+
+##### addFrameUpdater()
+
+```ts
+addFrameUpdater(updater): this;
+```
+
+注册帧更新回调
+
+用于天气系统、动画系统等需要每帧更新的扩展模块
+
+###### Parameters
+
+###### updater
+
+(`dt`, `t`) => `void`
+
+每帧调用的回调函数，参数为 (deltaTime, elapsedTime)
+
+###### Returns
+
+`this`
+
+this - 支持链式调用
+
+###### Example
+
+```typescript
+// 注册天气系统的 tick 方法
+app.addFrameUpdater((dt, t) => weatherSystem.tick(dt, t));
+
+// 或者直接绑定
+app.addFrameUpdater(weatherSystem.tick.bind(weatherSystem));
+```
+
+<a id="removeframeupdater"></a>
+
+##### removeFrameUpdater()
+
+```ts
+removeFrameUpdater(updater): this;
+```
+
+移除帧更新回调
+
+###### Parameters
+
+###### updater
+
+(`dt`, `t`) => `void`
+
+要移除的回调函数
+
+###### Returns
+
+`this`
+
+this - 支持链式调用
+
+<a id="clearframeupdaters"></a>
+
+##### clearFrameUpdaters()
+
+```ts
+clearFrameUpdaters(): this;
+```
+
+清空所有帧更新回调
+
+###### Returns
+
+`this`
+
+this - 支持链式调用
+
 <a id="stop"></a>
 
 ##### stop()
