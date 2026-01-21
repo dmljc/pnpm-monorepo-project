@@ -209,9 +209,9 @@ export class LoadingManager {
     }
 
     /**
-     * 销毁加载管理器
+     * 释放加载管理器占用的资源
      */
-    public destroy(): void {
+    public dispose(): void {
         // 清理回调
         this.manager.onStart = () => {};
         this.manager.onProgress = () => {};

@@ -211,15 +211,15 @@ getIsRunning(): boolean;
 
 是否正在运行
 
-<a id="destroy"></a>
+<a id="dispose"></a>
 
-##### destroy()
+##### dispose()
 
 ```ts
-destroy(): void;
+dispose(): void;
 ```
 
-销毁渲染引擎
+释放渲染引擎占用的资源
 
 ###### Returns
 

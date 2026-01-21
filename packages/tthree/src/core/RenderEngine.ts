@@ -168,9 +168,9 @@ export class RenderEngine {
     }
 
     /**
-     * 销毁渲染引擎
+     * 释放渲染引擎占用的资源
      */
-    public destroy(): void {
+    public dispose(): void {
         this.stop();
 
         if (this.renderer) {

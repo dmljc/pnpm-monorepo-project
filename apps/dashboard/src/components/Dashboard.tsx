@@ -16,7 +16,7 @@ const Dashboard: FC = () => {
         app.init();
 
         // 一行挂载雨天效果（内部自动创建 WeatherSystem + Rain + 帧更新）
-        const disposeRain = setupRainWeather(app);
+        const rain = setupRainWeather(app);
 
         // 先启动渲染循环（重要！这样天气效果才能立即开始更新）
         app.animate();
@@ -26,8 +26,8 @@ const Dashboard: FC = () => {
 
         // 在组件卸载时清理资源
         return () => {
-            disposeRain();
-            app.destroy();
+            rain.dispose();
+            app.dispose();
         };
     }, []);
 

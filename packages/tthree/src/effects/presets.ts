@@ -33,6 +33,24 @@ export interface SetupRainWeatherOptions {
 }
 
 /**
+ * `setupRainWeather` 的返回句柄。
+ *
+ * @remarks
+ * 返回“句柄对象”而不是直接返回函数，便于调用端使用 `handle.dispose()` 的方式清理资源，
+ * 并在需要时获取内部实例做进一步配置。
+ *
+ * @public
+ */
+export interface RainWeatherHandle {
+    /** 天气系统实例（当 app 未初始化时为 `null`） */
+    weatherSystem: WeatherSystem | null;
+    /** 雨效果实例（当 app 未初始化时为 `null`） */
+    rain: Rain | null;
+    /** 释放资源：销毁天气系统并解绑帧更新器 */
+    dispose: () => void;
+}
+
+/**
  * 为指定的 {@link ThreeApp} 快速挂载一个基础雨天效果。
  *
  * @remarks
@@ -41,14 +59,14 @@ export interface SetupRainWeatherOptions {
  * - 自动创建 {@link WeatherSystem}；
  * - 自动注册 {@link Rain} 粒子雨；
  * - 自动通过 {@link ThreeApp.addFrameUpdater} 绑定每帧更新；
- * - 返回销毁函数，便于在组件卸载时清理。
+ * - 返回可调用 `dispose()` 的句柄对象，便于在组件卸载时清理。
  *
  * @example 在 React 组件中使用
  * ```ts
  * const app = new ThreeApp({ container: div });
  * app.init();
  *
- * const disposeRain = setupRainWeather(app, {
+ * const rainHandle = setupRainWeather(app, {
  *   areaHalfSize: 220,
  *   rain: { count: 30000, size: 0.35 },
  * });
@@ -56,24 +74,28 @@ export interface SetupRainWeatherOptions {
  * app.animate();
  *
  * return () => {
- *   disposeRain();
- *   app.destroy();
+ *   rainHandle.dispose();
+ *   app.dispose();
  * };
  * ```
  *
  * @param app - 已初始化的 {@link ThreeApp} 实例。
  * @param options - 可选的雨天配置。
- * @returns 调用后会清理天气系统并移除帧更新器的销毁函数。
+ * @returns 可调用 `dispose()` 清理天气系统并移除帧更新器的句柄对象。
  *
  * @public
  */
 export function setupRainWeather(
     app: ThreeApp,
     options: SetupRainWeatherOptions = {},
-): () => void {
+): RainWeatherHandle {
     if (!app.scene || !app.camera || !app.renderer) {
         console.warn("[setupRainWeather] app 未初始化完成，跳过天气系统初始化");
-        return () => {};
+        return {
+            weatherSystem: null,
+            rain: null,
+            dispose: () => {},
+        };
     }
 
     const {
@@ -120,9 +142,13 @@ export function setupRainWeather(
     weatherSystem.setActive("rain");
     weatherSystem.setWind({ vector: windVector });
 
-    // 6. 返回销毁函数
-    return () => {
-        weatherSystem.destroy();
-        app.removeFrameUpdater(frameUpdater);
+    // 6. 返回句柄对象（包含 dispose 方法）
+    return {
+        weatherSystem,
+        rain,
+        dispose: () => {
+            weatherSystem.dispose();
+            app.removeFrameUpdater(frameUpdater);
+        },
     };
 }

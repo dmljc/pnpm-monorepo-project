@@ -309,9 +309,9 @@ export class ModelLoader {
     }
 
     /**
-     * 销毁模型加载器
+     * 释放模型加载器占用的资源
      */
-    public destroy(): void {
+    public dispose(): void {
         // 清除所有缓存
         this.clearAllCache();
 
@@ -322,6 +322,6 @@ export class ModelLoader {
         }
 
         // 销毁加载管理器
-        this.loadingManager?.destroy();
+        this.loadingManager?.dispose();
     }
 }

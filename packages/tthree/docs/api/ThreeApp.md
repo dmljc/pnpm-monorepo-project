@@ -34,7 +34,7 @@ const result = await app.loadModel("/models/character.glb");
 app.animate();
 
 // 5. 清理资源
-app.destroy();
+app.dispose();
 ```
 
 #### Properties
@@ -416,15 +416,15 @@ stop(): this;
 
 this - 支持链式调用
 
-<a id="destroy"></a>
+<a id="dispose"></a>
 
-##### destroy()
+##### dispose()
 
 ```ts
-destroy(): void;
+dispose(): void;
 ```
 
-销毁应用
+释放应用占用的所有资源
 
 ###### Returns
 

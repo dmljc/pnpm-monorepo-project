@@ -122,9 +122,9 @@ export class CameraController {
     }
 
     /**
-     * 销毁相机控制器
+     * 释放相机控制器占用的资源
      */
-    public destroy(): void {
+    public dispose(): void {
         if (this.controls) {
             this.controls.dispose();
             this.controls = undefined;

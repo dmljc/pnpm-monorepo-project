@@ -48,4 +48,5 @@ export type {
     WeatherSystemConfig,
     WeatherSwitchStrategy,
     SetupRainWeatherOptions,
+    RainWeatherHandle,
 } from "./effects";

@@ -107,15 +107,15 @@ removeMesh(mesh): void;
 
 `void`
 
-<a id="destroy"></a>
+<a id="dispose"></a>
 
-##### destroy()
+##### dispose()
 
 ```ts
-destroy(): void;
+dispose(): void;
 ```
 
-销毁场景管理器
+释放场景管理器占用的资源
 
 ###### Returns
 

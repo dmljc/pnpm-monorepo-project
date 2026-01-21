@@ -25,4 +25,4 @@ export type {
 
 // 预设工具方法：一键搭建常用天气场景
 export { setupRainWeather } from "./presets";
-export type { SetupRainWeatherOptions } from "./presets";
+export type { SetupRainWeatherOptions, RainWeatherHandle } from "./presets";

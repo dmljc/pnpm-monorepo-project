@@ -53,7 +53,7 @@ app.animate();
 ### 5. 清理资源
 
 ```typescript
-app.destroy();
+app.dispose();
 ```
 
 ## 完整示例
@@ -84,7 +84,7 @@ app.addMesh(cube);
 app.animate();
 
 // 在组件卸载时清理资源
-// app.destroy();
+// app.dispose();
 ```
 
 ## 配置选项

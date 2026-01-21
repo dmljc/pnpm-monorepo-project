@@ -151,9 +151,9 @@ export class SceneManager {
     }
 
     /**
-     * 销毁场景管理器
+     * 释放场景管理器占用的资源
      */
-    public destroy(): void {
+    public dispose(): void {
         if (this.scene) {
             // 使用递归释放场景中所有对象的资源
             disposeObject(this.scene);

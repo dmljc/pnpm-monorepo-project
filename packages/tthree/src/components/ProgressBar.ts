@@ -381,9 +381,9 @@ export class ProgressBar {
     }
 
     /**
-     * 销毁进度条
+     * 释放进度条占用的资源
      */
-    public destroy(): void {
+    public dispose(): void {
         // 从 DOM 中移除
         if (this.progressBarElement.parentNode) {
             this.progressBarElement.parentNode.removeChild(

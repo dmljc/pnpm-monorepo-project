@@ -349,9 +349,9 @@ export class WeatherSystem {
     }
 
     /**
-     * 销毁天气系统。
+     * 释放天气系统占用的所有资源。
      */
-    public destroy(): void {
+    public dispose(): void {
         this.disposeAll();
     }
 }

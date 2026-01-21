@@ -67,7 +67,7 @@ export interface ThreeAppConfig {
  * app.animate();
  *
  * // 5. 清理资源
- * app.destroy();
+ * app.dispose();
  * ```
  */
 export class ThreeApp {
@@ -612,11 +612,11 @@ export class ThreeApp {
     }
 
     /**
-     * 销毁应用
+     * 释放应用占用的所有资源
      *
      * @returns void
      */
-    public destroy(): void {
+    public dispose(): void {
         this.initialized = false;
 
         this.stop();
@@ -630,15 +630,15 @@ export class ThreeApp {
             this.resizeObserver = undefined;
         }
 
-        // 销毁进度条
+        // 释放进度条
         if (this.progressBar) {
-            this.progressBar.destroy();
+            this.progressBar.dispose();
             this.progressBar = undefined;
         }
 
-        // 销毁模型加载器
+        // 释放模型加载器
         if (this.modelLoader) {
-            this.modelLoader.destroy();
+            this.modelLoader.dispose();
             this.modelLoader = undefined;
         }
 
@@ -648,9 +648,9 @@ export class ThreeApp {
             this.stats = undefined;
         }
 
-        // 销毁各个模块
-        this.renderEngine.destroy();
-        this.sceneManager.destroy();
-        this.cameraController.destroy();
+        // 释放各个模块
+        this.renderEngine.dispose();
+        this.sceneManager.dispose();
+        this.cameraController.dispose();
     }
 }

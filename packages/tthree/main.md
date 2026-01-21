@@ -47,7 +47,7 @@
 - **优化**：定义更精准的类型（如 `MaterialWithTextures` 等），增强 IDE 的补全提示和编译期错误检查。
 
 ### ♻️ 递归资源回收
-- **现状**：`SceneManager.ts` 中的 `destroy` 方法对场景对象的遍历和清理可以更彻底。
+- **现状**：`SceneManager.ts` 中的 `dispose` 方法对场景对象的遍历和清理可以更彻底。
 - **建议**：优化 `disposeMesh`，支持递归清理 `children` 中的资源，并处理 `Light`、`Points` 等非 `Mesh` 类型对象的 `dispose`。 -->
 
 ---

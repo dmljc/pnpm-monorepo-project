@@ -134,15 +134,15 @@ getEnableControls(): boolean;
 
 是否启用控制器
 
-<a id="destroy"></a>
+<a id="dispose"></a>
 
-##### destroy()
+##### dispose()
 
 ```ts
-destroy(): void;
+dispose(): void;
 ```
 
-销毁相机控制器
+释放相机控制器占用的资源
 
 ###### Returns
 
