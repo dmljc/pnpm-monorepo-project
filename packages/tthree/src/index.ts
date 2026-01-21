@@ -1,6 +1,6 @@
 // 核心模块：应用入口与基础控制器
 export { ThreeApp } from "./core/ThreeApp";
-export type { ThreeAppConfig } from "./core/ThreeApp";
+export type { ThreeAppConfig } from "./core/interface";
 
 export { CameraController } from "./core/CameraController";
 export type { CameraControllerConfig } from "./core/CameraController";

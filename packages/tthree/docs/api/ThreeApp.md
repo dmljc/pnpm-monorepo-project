@@ -30,10 +30,7 @@ app.init();
 // 3. 加载模型（新增）
 const result = await app.loadModel("/models/character.glb");
 
-// 4. 启动动画
-app.animate();
-
-// 5. 清理资源
+// 4. 清理资源
 app.dispose();
 ```
 

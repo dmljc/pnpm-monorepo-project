@@ -1,48 +1,20 @@
-import { Mesh, PerspectiveCamera, WebGLRenderer } from "three";
+import { Mesh } from "three";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
 import { CameraController } from "./CameraController";
+import type { ThreeAppConfig } from "./interface";
+import {
+    setupRainWeather,
+    type RainWeatherHandle,
+    type SetupRainWeatherOptions,
+} from "../effects/presets";
 import {
     ModelLoader,
     type ModelLoadResult,
     type ModelLoadProgress,
 } from "../loaders/ModelLoader";
 import { ProgressBar } from "../components/ProgressBar";
-
-/**
- * Three.js 应用实例配置选项
- */
-export interface ThreeAppConfig {
-    /** 挂载的DOM元素 */
-    container: HTMLElement;
-    /** 是否启用抗锯齿 */
-    antialias?: boolean;
-    /** 是否启用控制器 */
-    controls?: boolean;
-    /** 自定义相机 */
-    camera?: PerspectiveCamera;
-    /** 自定义渲染器 */
-    renderer?: WebGLRenderer;
-    /** 是否显示网格 */
-    showGrid?: boolean;
-    /** 是否显示坐标轴 */
-    showAxes?: boolean;
-    /** 是否显示模型加载进度条（默认 false） */
-    showProgressBar?: boolean;
-    /** 是否启用 Draco 压缩（默认 false） */
-    enableDraco?: boolean;
-    /** Draco 解码器路径 */
-    dracoDecoderPath?: string;
-    /** 模型加载进度回调 */
-    onLoadProgress?: (progress: ModelLoadProgress) => void;
-    /** 模型加载完成回调 */
-    onLoadComplete?: () => void;
-    /** 模型加载错误回调 */
-    onLoadError?: (url: string, error: Error) => void;
-    /** 是否启用 Stats 性能监测（默认 false） */
-    showStats?: boolean;
-}
 
 /**
  * Three.js 应用类：负责 Three.js 应用的创建、初始化、渲染和销毁
@@ -63,10 +35,7 @@ export interface ThreeAppConfig {
  * // 3. 加载模型（新增）
  * const result = await app.loadModel('/models/character.glb');
  *
- * // 4. 启动动画
- * app.animate();
- *
- * // 5. 清理资源
+ * // 4. 清理资源
  * app.dispose();
  * ```
  */
@@ -107,6 +76,15 @@ export class ThreeApp {
 
     /** 帧更新回调列表（用于天气系统等扩展） */
     private frameUpdaters: Array<(dt: number, t: number) => void> = [];
+
+    /**
+     * 统一资源释放回调列表。
+     *
+     * @remarks
+     * 用于把“外部挂载的扩展/效果”的清理逻辑内置到 app 生命周期里，
+     * 从而让调用端只需要 `app.dispose()`。
+     */
+    private disposers: Array<() => void> = [];
 
     /**
      * 创建 ThreeApp 实例
@@ -233,6 +211,22 @@ export class ThreeApp {
 
         this.initialized = true;
 
+        // 启动渲染循环（对外不暴露 animate，外部只需调用 init）
+        this.animate();
+
+        return this;
+    }
+
+    /**
+     * 一键启动：初始化 + 开始渲染循环。
+     *
+     * @remarks
+     * 常见页面只需要调用 {@link ThreeApp.init} 即可（init 内部会自动启动渲染循环）。
+     *
+     * @deprecated 请直接使用 {@link ThreeApp.init}
+     */
+    public start(): this {
+        this.init();
         return this;
     }
 
@@ -505,24 +499,20 @@ export class ThreeApp {
     }
 
     /**
-     * 启动动画循环（使用 WebGLRenderer.setAnimationLoop 实现）
+     * 启动渲染循环（内部方法）。
      *
-     * @returns this - 支持链式调用
+     * @remarks
+     * 外部调用请使用 {@link ThreeApp.init}，该方法会在初始化完成后自动启动渲染循环。
      */
-    public animate(): this {
-        // 保证已初始化
-        if (!this.initialized) {
-            this.init();
-        }
+    private animate(): void {
+        // 避免重复启动
+        if (this.renderEngine.getIsRunning()) return;
 
         if (!this.scene || !this.camera) {
             throw new Error("场景或相机未初始化，请先调用 init() 方法");
         }
 
-        // 启动渲染循环
         this.renderEngine.start(() => this.renderFrame());
-
-        return this;
     }
 
     /**
@@ -578,6 +568,41 @@ export class ThreeApp {
     }
 
     /**
+     * 注册一个在 {@link ThreeApp.dispose} 时执行的清理函数。
+     *
+     * @remarks
+     * 用于把 `setupRainWeather` 之类返回的 `handle.dispose()` 自动挂到 app 的生命周期里。
+     */
+    public addDisposer(disposer: () => void): this {
+        this.disposers.push(disposer);
+        return this;
+    }
+
+    /**
+     * 预设：一行挂载雨天效果，并自动随 app 一起销毁。
+     *
+     * @remarks
+     * - 内部会确保 app 已初始化（会调用 {@link ThreeApp.init}）
+     * - 会调用 {@link setupRainWeather} 并自动把 `handle.dispose()` 注册到 app
+     *
+     * @returns 雨天句柄（仍可供调用端进一步配置，例如调整强度）
+     */
+    public useRainWeather(
+        options: SetupRainWeatherOptions = {},
+    ): RainWeatherHandle {
+        if (!this.initialized) {
+            this.init();
+        }
+
+        const handle = setupRainWeather(this, options);
+
+        // 自动挂载到 app 生命周期，调用端无需手动 dispose()
+        this.addDisposer(() => handle.dispose());
+
+        return handle;
+    }
+
+    /**
      * 移除帧更新回调
      *
      * @param updater - 要移除的回调函数
@@ -620,6 +645,18 @@ export class ThreeApp {
         this.initialized = false;
 
         this.stop();
+
+        // 先执行外部扩展的清理（例如天气系统、后处理等）
+        if (this.disposers.length) {
+            for (const disposer of this.disposers) {
+                try {
+                    disposer();
+                } catch (err) {
+                    console.warn("[ThreeApp] disposer 执行失败", err);
+                }
+            }
+            this.disposers = [];
+        }
 
         // 清空帧更新回调
         this.clearFrameUpdaters();

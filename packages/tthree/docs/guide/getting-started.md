@@ -32,6 +32,8 @@ const app = new ThreeApp({
 app.init();
 ```
 
+> `init()` 内部会自动启动渲染循环，一般不需要再手动调用额外的“开始渲染”方法。
+
 ### 3. 添加网格对象
 
 ```typescript
@@ -44,13 +46,7 @@ const cube = new Mesh(geometry, material);
 app.addMesh(cube);
 ```
 
-### 4. 启动动画循环
-
-```typescript
-app.animate();
-```
-
-### 5. 清理资源
+### 4. 清理资源
 
 ```typescript
 app.dispose();
@@ -79,9 +75,6 @@ const geometry = new BoxGeometry(1, 1, 1);
 const material = new MeshStandardMaterial({ color: 0x00ff00 });
 const cube = new Mesh(geometry, material);
 app.addMesh(cube);
-
-// 启动动画循环
-app.animate();
 
 // 在组件卸载时清理资源
 // app.dispose();

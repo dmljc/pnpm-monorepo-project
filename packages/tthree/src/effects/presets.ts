@@ -71,7 +71,7 @@ export interface RainWeatherHandle {
  *   rain: { count: 30000, size: 0.35 },
  * });
  *
- * app.animate();
+ * // app.init() 内部会自动启动渲染循环，无需再手动调用 animate()
  *
  * return () => {
  *   rainHandle.dispose();
