@@ -9,7 +9,7 @@ tthree 库的核心功能由以下模块提供，每个模块都有独立的文�
 - [SceneManager](./SceneManager) - 场景管理器模块
 - [CameraController](./CameraController) - 相机控制器模块
 - [RenderEngine](./RenderEngine) - 渲染引擎模块
-- [ThreeApp](./ThreeApp) - 主应用类模块
+- [Tthree](./Tthree) - 主应用类模块
 
 ## 模块说明
 
@@ -46,9 +46,9 @@ tthree 库的核心功能由以下模块提供，每个模块都有独立的文�
 - 帧时间数据获取
 - 自动像素比适配
 
-### ThreeApp
+### Tthree
 
-ThreeApp 是 tthree 库的核心应用类，整合了上述三个模块，提供完整的 Three.js 应用生命周期管理。
+Tthree 是 tthree 库的核心应用类，整合了上述三个模块，提供完整的 Three.js 应用生命周期管理。
 
 **主要功能：**
 

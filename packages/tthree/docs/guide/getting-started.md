@@ -17,9 +17,9 @@ yarn add tthree
 ### 1. 创建应用实例
 
 ```typescript
-import { ThreeApp } from "tthree";
+import { Tthree } from "tthree";
 
-const app = new ThreeApp({
+const app = new Tthree({
     container: document.getElementById("canvas-container"),
     showGrid: true,
     showAxes: true,
@@ -55,11 +55,11 @@ app.dispose();
 ## 完整示例
 
 ```typescript
-import { ThreeApp } from "tthree";
+import { Tthree } from "tthree";
 import { Mesh, BoxGeometry, MeshStandardMaterial } from "three";
 
 // 创建应用实例
-const app = new ThreeApp({
+const app = new Tthree({
     container: document.getElementById("canvas-container"),
     showGrid: true,
     showAxes: true,
@@ -82,7 +82,7 @@ app.addMesh(cube);
 
 ## 配置选项
 
-ThreeApp 支持以下配置选项：
+Tthree 支持以下配置选项：
 
 - `container`: 挂载的 DOM 元素（必需）
 - `antialias`: 是否启用抗锯齿（可选，默认 true）
@@ -99,4 +99,4 @@ ThreeApp 支持以下配置选项：
     - [SceneManager](/api/SceneManager) - 场景管理
     - [CameraController](/api/CameraController) - 相机控制
     - [RenderEngine](/api/RenderEngine) - 渲染引擎
-    - [ThreeApp](/api/ThreeApp) - 主应用类
+    - [Tthree](/api/Tthree) - 主应用类

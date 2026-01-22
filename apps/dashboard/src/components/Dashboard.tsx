@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from "react";
-import { ThreeApp } from "tthree";
+import { Tthree } from "tthree";
 import { wrapperStyle, containerStyle } from "./style";
 
 const Dashboard: FC = () => {
@@ -9,7 +9,7 @@ const Dashboard: FC = () => {
         if (!containerRef.current) return;
 
         // 使用 containerRef 外部传入的 dom 元素创建 Three.js 应用
-        const app = new ThreeApp({
+        const app = new Tthree({
             container: containerRef.current,
             showStats: true,
         });

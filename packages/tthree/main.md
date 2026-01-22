@@ -6,7 +6,7 @@
 
 ## 1. 架构完备性与可视化核心能力
 
-当前项目已经建立了良好的 `ThreeApp`、`RenderEngine`、`SceneManager` 模块化结构，但在应对复杂的“大屏项目”时，仍需扩充以下核心模块：
+当前项目已经建立了良好的 `Tthree`、`RenderEngine`、`SceneManager` 模块化结构，但在应对复杂的“大屏项目”时，仍需扩充以下核心模块：
 
 ### 📸 后期处理系统 (Post-processing)
 
@@ -21,7 +21,7 @@
 
 ### 🖱️ 交互与拾取系统 (Interaction/Raycaster)
 
-- **建议**：大屏项目需要点击建筑、设备弹出详情。目前的 `ThreeApp` 缺乏对 `Raycaster` 的封装。
+- **建议**：大屏项目需要点击建筑、设备弹出详情。目前的 `Tthree` 缺乏对 `Raycaster` 的封装。
 - **优化点**：建立一个事件分发器，允许在 `Mesh` 对象上直接绑定类似 `onClick`、`onPointerOver` 的回调。
 
 ---

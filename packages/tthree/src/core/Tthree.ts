@@ -3,7 +3,7 @@ import Stats from "three/examples/jsm/libs/stats.module";
 import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
 import { CameraController } from "./CameraController";
-import type { ThreeAppConfig } from "./interface";
+import type { TthreeConfig } from "./interface";
 import {
     setupRainWeather,
     type RainWeatherHandle,
@@ -23,7 +23,7 @@ import { ProgressBar } from "../components/ProgressBar";
  * @example
  * ```typescript
  * // 1. 创建实例
- * const app = new ThreeApp({
+ * const app = new Tthree({
  *   container: document.getElementById('canvas-container'),
  *   showGrid: true,
  *   showAxes: true
@@ -39,7 +39,7 @@ import { ProgressBar } from "../components/ProgressBar";
  * app.dispose();
  * ```
  */
-export class ThreeApp {
+export class Tthree {
     /** 场景管理器实例 */
     public sceneManager: SceneManager;
 
@@ -65,7 +65,7 @@ export class ThreeApp {
     private container: HTMLElement;
 
     /** 初始化配置缓存（用于延迟初始化） */
-    private initOptions: ThreeAppConfig | undefined;
+    private initOptions: TthreeConfig | undefined;
 
     /** 尺寸观察器 */
     private resizeObserver: ResizeObserver | undefined;
@@ -81,17 +81,17 @@ export class ThreeApp {
      * 统一资源释放回调列表。
      *
      * @remarks
-     * 用于把“外部挂载的扩展/效果”的清理逻辑内置到 app 生命周期里，
+     * 用于把"外部挂载的扩展/效果"的清理逻辑内置到 app 生命周期里，
      * 从而让调用端只需要 `app.dispose()`。
      */
     private disposers: Array<() => void> = [];
 
     /**
-     * 创建 ThreeApp 实例
+     * 创建 Tthree 实例
      *
      * @param config - 应用配置选项
      */
-    constructor(config: ThreeAppConfig) {
+    constructor(config: TthreeConfig) {
         this.container = config.container;
         this.initOptions = config;
 
@@ -221,9 +221,9 @@ export class ThreeApp {
      * 一键启动：初始化 + 开始渲染循环。
      *
      * @remarks
-     * 常见页面只需要调用 {@link ThreeApp.init} 即可（init 内部会自动启动渲染循环）。
+     * 常见页面只需要调用 {@link Tthree.init} 即可（init 内部会自动启动渲染循环）。
      *
-     * @deprecated 请直接使用 {@link ThreeApp.init}
+     * @deprecated 请直接使用 {@link Tthree.init}
      */
     public start(): this {
         this.init();
@@ -290,7 +290,7 @@ export class ThreeApp {
      * @param mesh 要添加的网格对象
      * @example
      * ```typescript
-     * const app = new ThreeApp({
+     * const app = new Tthree({
      *   container: el
      * });
      *
@@ -396,12 +396,12 @@ export class ThreeApp {
      * @example
      * ```typescript
      * // 基础使用（无需 try-catch）
-     * const app = new ThreeApp({ container: el });
+     * const app = new Tthree({ container: el });
      * app.init();
      * await app.loadModel('/models/character.glb');
      *
      * // 带错误处理
-     * const app = new ThreeApp({
+     * const app = new Tthree({
      *   container: el,
      *   onLoadError: (url, error) => {
      *     console.error('加载失败:', url, error);
@@ -444,7 +444,7 @@ export class ThreeApp {
                 this.initOptions.onLoadError(url, err);
             } else {
                 // 如果用户没有提供错误回调，输出到控制台
-                console.error(`[ThreeApp] 模型加载失败: ${url}`, err);
+                console.error(`[Tthree] 模型加载失败: ${url}`, err);
             }
 
             return null;
@@ -465,7 +465,7 @@ export class ThreeApp {
      *
      * @example
      * ```typescript
-     * const app = new ThreeApp({ container: el });
+     * const app = new Tthree({ container: el });
      * app.init();
      *
      * // 批量加载，即使部分失败也不会中断
@@ -502,7 +502,7 @@ export class ThreeApp {
      * 启动渲染循环（内部方法）。
      *
      * @remarks
-     * 外部调用请使用 {@link ThreeApp.init}，该方法会在初始化完成后自动启动渲染循环。
+     * 外部调用请使用 {@link Tthree.init}，该方法会在初始化完成后自动启动渲染循环。
      */
     private animate(): void {
         // 避免重复启动
@@ -568,7 +568,7 @@ export class ThreeApp {
     }
 
     /**
-     * 注册一个在 {@link ThreeApp.dispose} 时执行的清理函数。
+     * 注册一个在 {@link Tthree.dispose} 时执行的清理函数。
      *
      * @remarks
      * 用于把 `setupRainWeather` 之类返回的 `handle.dispose()` 自动挂到 app 的生命周期里。
@@ -582,7 +582,7 @@ export class ThreeApp {
      * 预设：一行挂载雨天效果，并自动随 app 一起销毁。
      *
      * @remarks
-     * - 内部会确保 app 已初始化（会调用 {@link ThreeApp.init}）
+     * - 内部会确保 app 已初始化（会调用 {@link Tthree.init}）
      * - 会调用 {@link setupRainWeather} 并自动把 `handle.dispose()` 注册到 app
      *
      * @returns 雨天句柄（仍可供调用端进一步配置，例如调整强度）
@@ -652,7 +652,7 @@ export class ThreeApp {
                 try {
                     disposer();
                 } catch (err) {
-                    console.warn("[ThreeApp] disposer 执行失败", err);
+                    console.warn("[Tthree] disposer 执行失败", err);
                 }
             }
             this.disposers = [];

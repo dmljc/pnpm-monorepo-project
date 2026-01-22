@@ -278,7 +278,7 @@ export class WeatherSystem {
     }
 
     /**
-     * 每帧更新（由 {@link ThreeApp.addFrameUpdater} 注册的钩子调用）。
+     * 每帧更新（由 {@link Tthree.addFrameUpdater} 注册的钩子调用）。
      *
      * @param dt - 距离上一帧的时间间隔（秒）。
      * @param t - 总运行时间（秒）。

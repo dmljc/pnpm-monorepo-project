@@ -4,7 +4,7 @@
         "src/core/CameraController.ts",
         "src/core/RenderEngine.ts",
         "src/core/SceneManager.ts",
-        "src/core/ThreeApp.ts"
+        "src/core/Tthree.ts"
     ],
     "tsconfig": "./tsconfig.json",
     "plugin": ["typedoc-plugin-markdown"],

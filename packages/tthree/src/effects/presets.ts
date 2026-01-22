@@ -1,5 +1,5 @@
 import { Box3, Vector3 } from "three";
-import type { ThreeApp } from "../core/ThreeApp";
+import type { Tthree } from "../core/Tthree";
 import { Rain } from "./Rain";
 import { WeatherSystem } from "./WeatherSystem";
 
@@ -51,19 +51,19 @@ export interface RainWeatherHandle {
 }
 
 /**
- * 为指定的 {@link ThreeApp} 快速挂载一个基础雨天效果。
+ * 为指定的 {@link Tthree} 快速挂载一个基础雨天效果。
  *
  * @remarks
  * 该辅助函数会：
  *
  * - 自动创建 {@link WeatherSystem}；
  * - 自动注册 {@link Rain} 粒子雨；
- * - 自动通过 {@link ThreeApp.addFrameUpdater} 绑定每帧更新；
+ * - 自动通过 {@link Tthree.addFrameUpdater} 绑定每帧更新；
  * - 返回可调用 `dispose()` 的句柄对象，便于在组件卸载时清理。
  *
  * @example 在 React 组件中使用
  * ```ts
- * const app = new ThreeApp({ container: div });
+ * const app = new Tthree({ container: div });
  * app.init();
  *
  * const rainHandle = setupRainWeather(app, {
@@ -79,14 +79,14 @@ export interface RainWeatherHandle {
  * };
  * ```
  *
- * @param app - 已初始化的 {@link ThreeApp} 实例。
+ * @param app - 已初始化的 {@link Tthree} 实例。
  * @param options - 可选的雨天配置。
  * @returns 可调用 `dispose()` 清理天气系统并移除帧更新器的句柄对象。
  *
  * @public
  */
 export function setupRainWeather(
-    app: ThreeApp,
+    app: Tthree,
     options: SetupRainWeatherOptions = {},
 ): RainWeatherHandle {
     if (!app.scene || !app.camera || !app.renderer) {
@@ -132,7 +132,7 @@ export function setupRainWeather(
     });
     weatherSystem.register(rain);
 
-    // 4. 帧更新：接入 ThreeApp 的 frameUpdaters
+    // 4. 帧更新：接入 Tthree 的 frameUpdaters
     const frameUpdater = (dt: number, t: number) => {
         weatherSystem.tick(dt, t);
     };

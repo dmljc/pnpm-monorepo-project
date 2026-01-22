@@ -2,13 +2,13 @@
 
 ---
 
-# ThreeApp
+# Tthree
 
 ## Classes
 
-<a id="threeapp"></a>
+<a id="tthree"></a>
 
-### ThreeApp
+### Tthree
 
 Three.js 应用类：负责 Three.js 应用的创建、初始化、渲染和销毁
 
@@ -18,7 +18,7 @@ Three.js 应用类：负责 Three.js 应用的创建、初始化、渲染和销�
 
 ```typescript
 // 1. 创建实例
-const app = new ThreeApp({
+const app = new Tthree({
     container: document.getElementById("canvas-container"),
     showGrid: true,
     showAxes: true,
@@ -101,6 +101,28 @@ init(): this;
 
 this - 支持链式调用
 
+<a id="start"></a>
+
+##### ~~start()~~
+
+```ts
+start(): this;
+```
+
+一键启动：初始化 + 开始渲染循环。
+
+###### Returns
+
+`this`
+
+###### Remarks
+
+常见页面只需要调用 [Tthree.init](#init) 即可（init 内部会自动启动渲染循环）。
+
+###### Deprecated
+
+请直接使用 [Tthree.init](#init)
+
 <a id="getisrunning"></a>
 
 ##### getIsRunning()
@@ -163,7 +185,7 @@ addMesh(mesh): void;
 ###### Example
 
 ```typescript
-const app = new ThreeApp({
+const app = new Tthree({
     container: el,
 });
 
@@ -241,12 +263,12 @@ Promise<ModelLoadResult | null> 加载结果，失败时返回 null
 
 ```typescript
 // 基础使用（无需 try-catch）
-const app = new ThreeApp({ container: el });
+const app = new Tthree({ container: el });
 app.init();
 await app.loadModel("/models/character.glb");
 
 // 带错误处理
-const app = new ThreeApp({
+const app = new Tthree({
     container: el,
     onLoadError: (url, error) => {
         console.error("加载失败:", url, error);
@@ -294,7 +316,7 @@ Promise<ModelLoadResult[]> 成功加载的模型结果数组
 ###### Example
 
 ```typescript
-const app = new ThreeApp({ container: el });
+const app = new Tthree({ container: el });
 app.init();
 
 // 批量加载，即使部分失败也不会中断
@@ -304,22 +326,6 @@ await app.loadModels([
     "/models/model3.glb",
 ]);
 ```
-
-<a id="animate"></a>
-
-##### animate()
-
-```ts
-animate(): this;
-```
-
-启动动画循环（使用 WebGLRenderer.setAnimationLoop 实现）
-
-###### Returns
-
-`this`
-
-this - 支持链式调用
 
 <a id="addframeupdater"></a>
 
@@ -356,6 +362,57 @@ app.addFrameUpdater((dt, t) => weatherSystem.tick(dt, t));
 // 或者直接绑定
 app.addFrameUpdater(weatherSystem.tick.bind(weatherSystem));
 ```
+
+<a id="adddisposer"></a>
+
+##### addDisposer()
+
+```ts
+addDisposer(disposer): this;
+```
+
+注册一个在 [Tthree.dispose](#dispose) 时执行的清理函数。
+
+###### Parameters
+
+###### disposer
+
+() => `void`
+
+###### Returns
+
+`this`
+
+###### Remarks
+
+用于把 `setupRainWeather` 之类返回的 `handle.dispose()` 自动挂到 app 的生命周期里。
+
+<a id="userainweather"></a>
+
+##### useRainWeather()
+
+```ts
+useRainWeather(options): RainWeatherHandle;
+```
+
+预设：一行挂载雨天效果，并自动随 app 一起销毁。
+
+###### Parameters
+
+###### options
+
+`SetupRainWeatherOptions` = `{}`
+
+###### Returns
+
+`RainWeatherHandle`
+
+雨天句柄（仍可供调用端进一步配置，例如调整强度）
+
+###### Remarks
+
+- 内部会确保 app 已初始化（会调用 [Tthree.init](#init)）
+- 会调用 setupRainWeather 并自动把 `handle.dispose()` 注册到 app
 
 <a id="removeframeupdater"></a>
 
@@ -449,7 +506,7 @@ get scene(): Scene<Object3DEventMap> | undefined;
 
 场景实例(Scene)
 
-<a id="camera-1"></a>
+<a id="camera"></a>
 
 ##### camera
 
@@ -467,7 +524,7 @@ get camera(): PerspectiveCamera | undefined;
 
 相机实例(PerspectiveCamera)
 
-<a id="renderer-1"></a>
+<a id="renderer"></a>
 
 ##### renderer
 
@@ -485,7 +542,7 @@ get renderer(): WebGLRenderer | undefined;
 
 渲染器实例(WebGLRenderer)
 
-<a id="controls-1"></a>
+<a id="controls"></a>
 
 ##### controls
 
@@ -510,197 +567,19 @@ get controls(): OrbitControls | undefined;
 ##### Constructor
 
 ```ts
-new ThreeApp(config): ThreeApp;
+new Tthree(config): Tthree;
 ```
 
-创建 ThreeApp 实例
+创建 Tthree 实例
 
 ###### Parameters
 
 ###### config
 
-[`ThreeAppConfig`](#threeappconfig)
+`TthreeConfig`
 
 应用配置选项
 
 ###### Returns
 
-[`ThreeApp`](#threeapp)
-
-## Interfaces
-
-<a id="threeappconfig"></a>
-
-### ThreeAppConfig
-
-Three.js 应用实例配置选项
-
-#### Properties
-
-<a id="container"></a>
-
-##### container
-
-```ts
-container: HTMLElement;
-```
-
-挂载的DOM元素
-
-<a id="antialias"></a>
-
-##### antialias?
-
-```ts
-optional antialias: boolean;
-```
-
-是否启用抗锯齿
-
-<a id="controls"></a>
-
-##### controls?
-
-```ts
-optional controls: boolean;
-```
-
-是否启用控制器
-
-<a id="camera"></a>
-
-##### camera?
-
-```ts
-optional camera: PerspectiveCamera;
-```
-
-自定义相机
-
-<a id="renderer"></a>
-
-##### renderer?
-
-```ts
-optional renderer: WebGLRenderer;
-```
-
-自定义渲染器
-
-<a id="showgrid"></a>
-
-##### showGrid?
-
-```ts
-optional showGrid: boolean;
-```
-
-是否显示网格
-
-<a id="showaxes"></a>
-
-##### showAxes?
-
-```ts
-optional showAxes: boolean;
-```
-
-是否显示坐标轴
-
-<a id="showprogressbar"></a>
-
-##### showProgressBar?
-
-```ts
-optional showProgressBar: boolean;
-```
-
-是否显示模型加载进度条（默认 false）
-
-<a id="enabledraco"></a>
-
-##### enableDraco?
-
-```ts
-optional enableDraco: boolean;
-```
-
-是否启用 Draco 压缩（默认 false）
-
-<a id="dracodecoderpath"></a>
-
-##### dracoDecoderPath?
-
-```ts
-optional dracoDecoderPath: string;
-```
-
-Draco 解码器路径
-
-<a id="onloadprogress"></a>
-
-##### onLoadProgress()?
-
-```ts
-optional onLoadProgress: (progress) => void;
-```
-
-模型加载进度回调
-
-###### Parameters
-
-###### progress
-
-`ModelLoadProgress`
-
-###### Returns
-
-`void`
-
-<a id="onloadcomplete"></a>
-
-##### onLoadComplete()?
-
-```ts
-optional onLoadComplete: () => void;
-```
-
-模型加载完成回调
-
-###### Returns
-
-`void`
-
-<a id="onloaderror"></a>
-
-##### onLoadError()?
-
-```ts
-optional onLoadError: (url, error) => void;
-```
-
-模型加载错误回调
-
-###### Parameters
-
-###### url
-
-`string`
-
-###### error
-
-`Error`
-
-###### Returns
-
-`void`
-
-<a id="showstats"></a>
-
-##### showStats?
-
-```ts
-optional showStats: boolean;
-```
-
-是否启用 Stats 性能监测（默认 false）
+[`Tthree`](#tthree)

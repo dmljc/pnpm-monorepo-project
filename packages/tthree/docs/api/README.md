@@ -9,4 +9,4 @@
 - [CameraController](CameraController.md)
 - [RenderEngine](RenderEngine.md)
 - [SceneManager](SceneManager.md)
-- [ThreeApp](ThreeApp.md)
+- [Tthree](Tthree.md)

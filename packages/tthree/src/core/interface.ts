@@ -1,7 +1,7 @@
 /**
  * Three.js 应用实例配置选项
  */
-export interface ThreeAppConfig {
+export interface TthreeConfig {
     /** 挂载的DOM元素 */
     container: HTMLElement;
     /** 是否启用抗锯齿 */

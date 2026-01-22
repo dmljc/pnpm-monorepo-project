@@ -4,7 +4,7 @@
 tthree/
 ├── src/
 │   ├── core/                      # 核心 3D 引擎
-│   │   ├── ThreeApp.ts            # 主应用类
+│   │   ├── Tthree.ts            # 主应用类
 │   │   ├── RenderEngine.ts        # 渲染引擎
 │   │   ├── SceneManager.ts        # 场景管理器
 │   │   └── CameraController.ts    # 相机控制器
@@ -42,7 +42,7 @@ packages/tthree/src/
 │   ├── CameraController.ts
 │   ├── RenderEngine.ts
 │   ├── SceneManager.ts
-│   └── ThreeApp.ts
+│   └── Tthree.ts
 ├── loaders/
 │   ├── LoadingManager.ts
 │   └── ModelLoader.ts
@@ -137,7 +137,7 @@ packages/tthree/src/
 
 ---
 
-## `WeatherSystem`（系统管理器：挂到 `ThreeApp`）
+## `WeatherSystem`（系统管理器：挂到 `Tthree`）
 
 ### 6) `WeatherSystem`
 
@@ -147,6 +147,6 @@ packages/tthree/src/
     - `tick(dt, t)`：每帧调用当前 active weather 的 `update`
     - `disposeAll()`：统一释放
 
-### 7) 接入 `ThreeApp` 的方式（需要落地的一点）
+### 7) 接入 `Tthree` 的方式（需要落地的一点）
 
-因为目前 `ThreeApp.renderFrame()` 是内部私有逻辑，天气系统要在每帧更新，需要在 `ThreeApp` 增加一个“每帧扩展点（frame hook / updater）”，供 `WeatherSystem.tick()` 注册执行。
+因为目前 `Tthree.renderFrame()` 是内部私有逻辑，天气系统要在每帧更新，需要在 `Tthree` 增加一个“每帧扩展点（frame hook / updater）”，供 `WeatherSystem.tick()` 注册执行。
