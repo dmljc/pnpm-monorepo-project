@@ -34,8 +34,10 @@ interface Disposable {
 }
 
 /**
- * 释放材质上的纹理资源
- * @param material 材质实例
+ * 释放材质上的纹理资源。
+ *
+ * @param material - 材质实例。
+ * @public
  */
 export function disposeMaterialTextures(material: Material): void {
     if (!material) return;
@@ -52,8 +54,10 @@ export function disposeMaterialTextures(material: Material): void {
 }
 
 /**
- * 释放材质资源
- * @param material 材质或材质数组
+ * 释放材质资源。
+ *
+ * @param material - 材质或材质数组。
+ * @public
  */
 export function disposeMaterial(
     material: Material | Material[] | undefined,
@@ -70,8 +74,10 @@ export function disposeMaterial(
 }
 
 /**
- * 释放几何体资源
- * @param geometry 几何体
+ * 释放几何体资源。
+ *
+ * @param geometry - 几何体。
+ * @public
  */
 export function disposeGeometry(geometry: BufferGeometry | undefined): void {
     if (geometry) {
@@ -80,8 +86,10 @@ export function disposeGeometry(geometry: BufferGeometry | undefined): void {
 }
 
 /**
- * 递归释放 Object3D 及其子对象的所有资源（几何体、材质、纹理）
- * @param object 要释放的对象
+ * 递归释放 Object3D 及其子对象的所有资源（几何体、材质、纹理）。
+ *
+ * @param object - 要释放的对象。
+ * @public
  */
 export function disposeObject(object: Object3D): void {
     if (!object) return;

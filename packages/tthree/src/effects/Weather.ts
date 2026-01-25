@@ -190,6 +190,8 @@ export abstract class Weather {
 
     /**
      * 获取当前启用状态。
+     *
+     * @returns 是否处于激活状态。
      */
     public get active(): boolean {
         return this._active;
@@ -201,6 +203,8 @@ export abstract class Weather {
      * @remarks
      * 取值范围为 `0 ~ 1`，具体含义由子类自行解释
      *（例如雨量、风速、闪电频率等）。
+     *
+     * @returns 当前强度值。
      */
     public get intensity(): number {
         return this._intensity;
@@ -227,7 +231,7 @@ export abstract class Weather {
      * 默认实现为空，子类可以重写此方法以响应强度变化，
      * 例如更新材质不透明度、粒子发射速率等。
      *
-     * @param intensity - 归一化后的强度值（`0 ~ 1`）。
+     * @param _intensity - 归一化后的强度值（`0 ~ 1`）。
      */
     protected onIntensityChange(_intensity: number): void {
         // 默认空实现，子类可重写
@@ -263,7 +267,7 @@ export abstract class Weather {
      * 每帧更新。
      *
      * @remarks
-     * 仅在 `active === true` 时由 {@link WeatherSystem.tick} 调用。
+     * 仅在 `active === true` 时由 {@link WeatherSystem.update} 调用。
      *
      * @param dt - 距离上一帧的时间间隔（秒）。
      * @param t - 自系统启动以来的总运行时间（秒）。

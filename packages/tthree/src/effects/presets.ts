@@ -57,7 +57,7 @@ export interface RainWeatherHandle {
  * 该辅助函数会：
  *
  * - 自动创建 {@link WeatherSystem}；
- * - 自动注册 {@link Rain} 粒子雨；
+ * - 自动添加 {@link Rain} 粒子雨；
  * - 自动通过 {@link Tthree.addFrameUpdater} 绑定每帧更新；
  * - 返回可调用 `dispose()` 的句柄对象，便于在组件卸载时清理。
  *
@@ -123,23 +123,23 @@ export function setupRainWeather(
         bounds,
     });
 
-    // 3. 注册雨效果（调大尺寸和密度，适合当前城市场景）
+    // 3. 添加雨效果（调大尺寸和密度，适合当前城市场景）
     const rain = new Rain({
         count: rainOptions.count ?? 25000,
         speed: rainOptions.speed ?? 30,
         size: rainOptions.size ?? 0.3,
         opacity: rainOptions.opacity ?? 0.9,
     });
-    weatherSystem.register(rain);
+    weatherSystem.add(rain);
 
     // 4. 帧更新：接入 Tthree 的 frameUpdaters
-    const frameUpdater = (dt: number, t: number) => {
-        weatherSystem.tick(dt, t);
+    const frameUpdater = (delta: number) => {
+        weatherSystem.update(delta);
     };
     app.addFrameUpdater(frameUpdater);
 
-    // 5. 启动雨效果 & 设置风向
-    weatherSystem.setActive("rain");
+    // 5. 播放雨效果 & 设置风向
+    weatherSystem.play("rain");
     weatherSystem.setWind({ vector: windVector });
 
     // 6. 返回句柄对象（包含 dispose 方法）

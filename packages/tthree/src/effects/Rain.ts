@@ -51,8 +51,8 @@ const DEFAULT_RAIN_CONFIG: Required<RainConfig> = {
  * const rain = new Rain({ count: 10000, speed: 30 });
  *
  * // 由 WeatherSystem 负责调用 init/start/update/dispose
- * weatherSystem.register(rain);
- * weatherSystem.setActive("rain");
+ * weatherSystem.add(rain);
+ * weatherSystem.play("rain");
  * ```
  *
  * @public

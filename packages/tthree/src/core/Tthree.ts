@@ -4,17 +4,11 @@ import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
 import { CameraController } from "./CameraController";
 import type { TthreeConfig } from "./interface";
-import {
-    setupRainWeather,
-    type RainWeatherHandle,
-    type SetupRainWeatherOptions,
-} from "../effects/presets";
-import {
-    ModelLoader,
-    type ModelLoadResult,
-    type ModelLoadProgress,
-} from "../loaders/ModelLoader";
-import { ProgressBar } from "../components/ProgressBar";
+import type { ModelLoadResult } from "../loaders/ModelLoader";
+import { LifecycleManager } from "../managers/LifecycleManager";
+import { ResizeManager } from "../managers/ResizeManager";
+import { AnimationManager } from "../managers/AnimationManager";
+import { AssetLoadManager } from "../managers/AssetLoadManager";
 
 /**
  * Three.js 应用类：负责 Three.js 应用的创建、初始化、渲染和销毁
@@ -49,42 +43,26 @@ export class Tthree {
     /** 渲染引擎实例 */
     public renderEngine: RenderEngine;
 
-    /** 模型加载器实例 */
-    private modelLoader: ModelLoader | undefined;
+    /** 生命周期管理器实例 */
+    private lifecycleManager: LifecycleManager;
 
-    /** 进度条实例（独立管理） */
-    private progressBar: ProgressBar | undefined;
+    /** 尺寸管理器实例 */
+    private resizeManager: ResizeManager | undefined;
+
+    /** 动画管理器实例 */
+    private animationManager: AnimationManager | undefined;
+
+    /** 资源加载管理器实例 */
+    private assetLoadManager: AssetLoadManager | undefined;
 
     /** Stats 性能监测实例 */
     public stats: Stats | undefined;
-
-    /** 是否已初始化（延迟初始化标记） */
-    private initialized: boolean = false;
 
     /** 挂载容器 */
     private container: HTMLElement;
 
     /** 初始化配置缓存（用于延迟初始化） */
     private initOptions: TthreeConfig | undefined;
-
-    /** 尺寸观察器 */
-    private resizeObserver: ResizeObserver | undefined;
-
-    /** 帧时间数据 */
-    protected deltaTime: number = 0;
-    protected elapsedTime: number = 0;
-
-    /** 帧更新回调列表（用于天气系统等扩展） */
-    private frameUpdaters: Array<(dt: number, t: number) => void> = [];
-
-    /**
-     * 统一资源释放回调列表。
-     *
-     * @remarks
-     * 用于把"外部挂载的扩展/效果"的清理逻辑内置到 app 生命周期里，
-     * 从而让调用端只需要 `app.dispose()`。
-     */
-    private disposers: Array<() => void> = [];
 
     /**
      * 创建 Tthree 实例
@@ -95,16 +73,17 @@ export class Tthree {
         this.container = config.container;
         this.initOptions = config;
 
+        // 初始化生命周期管理器
+        this.lifecycleManager = new LifecycleManager();
+
         // 初始化场景管理器
         this.sceneManager = new SceneManager({
             showGrid: config.showGrid,
             showAxes: config.showAxes,
         });
 
-        // 获取容器尺寸
-        const containerSize = this.getContainerSize();
-
         // 初始化相机控制器
+        const containerSize = this.getContainerSize();
         this.cameraController = new CameraController({
             containerSize,
             camera: config.camera,
@@ -113,45 +92,22 @@ export class Tthree {
 
         // 初始化渲染引擎
         this.renderEngine = new RenderEngine({ container: config.container });
-
-        // 初始化模型加载器（延迟创建，在首次使用时创建）
     }
 
     /**
      * 设置尺寸自适应
-     *
-     * 解释 ResizeObserver 与 window resize 的区别，以及为什么这里使用 ResizeObserver
-     *
-     * 1. 监听范围不同
-     * window resize 事件：
-     * - 仅在浏览器窗口大小改变时触发
-     * - 无法检测容器元素本身的尺寸变化
-     * ResizeObserver：
-     * - 可监听任意 DOM 元素的尺寸变化
-     * - 不仅响应窗口大小变化，还响应容器元素本身尺寸的变化
-     * 2. 性能优势
-     * - ResizeObserver 由浏览器优化，性能更好
-     * - 回调在布局完成后触发，避免重复计算
-     * - 可精确监听特定元素，减少不必要的处理
-     * @returns void
      */
     private setupAutoResize(): void {
-        this.resizeObserver = new ResizeObserver(() => {
-            this.handleResize();
-        });
-
-        this.resizeObserver.observe(this.container);
-    }
-
-    // 处理容器尺寸变化
-    private handleResize(): void {
-        const { width, height } = this.getContainerSize();
-
-        // 更新相机尺寸
-        this.cameraController.updateSize(width, height);
-
-        // 更新渲染器尺寸
-        this.renderEngine.setSize(width, height);
+        this.resizeManager = new ResizeManager(
+            this.container,
+            (width, height) => {
+                // 更新相机尺寸
+                this.cameraController.updateSize(width, height);
+                // 更新渲染器尺寸
+                this.renderEngine.setSize(width, height);
+            },
+        );
+        this.resizeManager.start();
     }
 
     /**
@@ -166,7 +122,9 @@ export class Tthree {
      * @returns this - 支持链式调用
      */
     public init(): this {
-        if (this.initialized) return this;
+        if (this.lifecycleManager.isInitialized()) {
+            return this;
+        }
 
         if (!this.initOptions) {
             throw new Error("初始化失败：缺少必要的配置参数");
@@ -209,9 +167,18 @@ export class Tthree {
             document.body.appendChild(this.stats.dom);
         }
 
-        this.initialized = true;
+        // 初始化动画管理器
+        this.animationManager = new AnimationManager(
+            this.renderEngine,
+            this.cameraController,
+            () => this.scene,
+            () => this.camera,
+            this.stats,
+        );
 
-        // 启动渲染循环（对外不暴露 animate，外部只需调用 init）
+        this.lifecycleManager.setInitialized(true);
+
+        // 启动渲染循环
         this.animate();
 
         return this;
@@ -299,7 +266,7 @@ export class Tthree {
      * ```
      */
     public addMesh(mesh: Mesh): void {
-        if (!this.initialized) {
+        if (!this.lifecycleManager.isInitialized()) {
             this.init();
         }
 
@@ -312,6 +279,10 @@ export class Tthree {
      * @returns 容器宽度和高度(number, number)
      */
     public getContainerSize(): { width: number; height: number } {
+        if (this.resizeManager) {
+            return this.resizeManager.getContainerSize();
+        }
+        // 初始化前的回退方案
         const rect = this.container.getBoundingClientRect();
         return {
             width: rect.width,
@@ -320,63 +291,31 @@ export class Tthree {
     }
 
     /**
-     * 获取或创建进度条实例
-     *
-     * @returns ProgressBar 实例
+     * 获取或创建资源加载管理器实例
      */
-    private getProgressBar(): ProgressBar {
-        if (!this.progressBar) {
-            // ProgressBar 内部已包含默认配置，无需传递参数
-            this.progressBar = new ProgressBar();
-        }
-        return this.progressBar;
-    }
-
-    /**
-     * 获取或创建模型加载器实例
-     *
-     * @returns ModelLoader 实例
-     */
-    private getModelLoader(): ModelLoader {
-        if (!this.modelLoader) {
+    private getAssetLoadManager(): AssetLoadManager {
+        if (!this.assetLoadManager) {
             const config = this.initOptions;
-            const shouldShowProgressBar = config?.showProgressBar ?? true;
-
-            this.modelLoader = new ModelLoader({
-                enableDraco: config?.enableDraco,
-                dracoDecoderPath: config?.dracoDecoderPath,
-                onProgress: (progress: ModelLoadProgress) => {
-                    // 如果启用进度条，更新进度条
-                    if (shouldShowProgressBar) {
-                        const progressBar = this.getProgressBar();
-                        progressBar.update({
-                            url: progress.url,
-                            loaded: progress.loaded,
-                            total: progress.total,
-                            progress: progress.progress,
-                        });
-                    }
-                    // 调用用户的进度回调
-                    config?.onLoadProgress?.(progress);
+            this.assetLoadManager = new AssetLoadManager(
+                {
+                    enableDraco: config?.enableDraco,
+                    dracoDecoderPath: config?.dracoDecoderPath,
+                    showProgressBar: config?.showProgressBar,
+                    onLoadProgress: config?.onLoadProgress,
+                    onLoadComplete: () => {
+                        // 先调用用户的回调（如果有）
+                        config?.onLoadComplete?.();
+                        // 如果用户没有提供回调，自动启动动画
+                        if (!config?.onLoadComplete) {
+                            this.animate();
+                        }
+                    },
+                    onLoadError: config?.onLoadError,
                 },
-                onLoadComplete: () => {
-                    // 如果启用进度条，完成进度条
-                    if (shouldShowProgressBar && this.progressBar) {
-                        this.progressBar.complete();
-                    }
-
-                    // 先调用用户的回调（如果有）
-                    config?.onLoadComplete?.();
-
-                    // 如果用户没有提供回调，自动启动动画
-                    if (!config?.onLoadComplete) {
-                        this.animate();
-                    }
-                },
-                onLoadError: config?.onLoadError,
-            });
+                () => this.scene,
+            );
         }
-        return this.modelLoader;
+        return this.assetLoadManager;
     }
 
     /**
@@ -414,41 +353,13 @@ export class Tthree {
         url: string,
         autoAddToScene: boolean = true,
     ): Promise<ModelLoadResult | null> {
-        try {
-            // 确保已初始化
-            if (!this.initialized) {
-                this.init();
-            }
-
-            // 获取模型加载器
-            const loader = this.getModelLoader();
-
-            // 加载模型
-            const result = await loader.loadModel(url);
-
-            // 自动添加到场景
-            if (autoAddToScene && this.scene) {
-                this.scene.add(result.model);
-            }
-
-            return result;
-        } catch (error) {
-            // 内部错误处理
-            const err =
-                error instanceof Error
-                    ? error
-                    : new Error(`Failed to load model: ${url}`);
-
-            // 调用用户的错误回调（如果有）
-            if (this.initOptions?.onLoadError) {
-                this.initOptions.onLoadError(url, err);
-            } else {
-                // 如果用户没有提供错误回调，输出到控制台
-                console.error(`[Tthree] 模型加载失败: ${url}`, err);
-            }
-
-            return null;
+        // 确保已初始化
+        if (!this.lifecycleManager.isInitialized()) {
+            this.init();
         }
+
+        const manager = this.getAssetLoadManager();
+        return manager.loadModel(url, autoAddToScene);
     }
 
     /**
@@ -481,66 +392,25 @@ export class Tthree {
         autoAddToScene: boolean = true,
     ): Promise<ModelLoadResult[]> {
         // 确保已初始化
-        if (!this.initialized) {
+        if (!this.lifecycleManager.isInitialized()) {
             this.init();
         }
 
-        // 逐个加载模型，收集成功的结果
-        const results: ModelLoadResult[] = [];
-
-        for (const url of urls) {
-            const result = await this.loadModel(url, autoAddToScene);
-            if (result) {
-                results.push(result);
-            }
-        }
-
-        return results;
+        const manager = this.getAssetLoadManager();
+        return manager.loadModels(urls, autoAddToScene);
     }
 
     /**
-     * 启动渲染循环（内部方法）。
+     * 启动渲染循环（内部方法）
      *
      * @remarks
      * 外部调用请使用 {@link Tthree.init}，该方法会在初始化完成后自动启动渲染循环。
      */
     private animate(): void {
-        // 避免重复启动
-        if (this.renderEngine.getIsRunning()) return;
-
-        if (!this.scene || !this.camera) {
-            throw new Error("场景或相机未初始化，请先调用 init() 方法");
+        if (!this.animationManager) {
+            throw new Error("动画管理器未初始化");
         }
-
-        this.renderEngine.start(() => this.renderFrame());
-    }
-
-    /**
-     * 渲染帧
-     *
-     * @returns void
-     */
-    private renderFrame(): void {
-        if (!this.scene || !this.camera) return;
-
-        // 更新时间数据
-        const timeData = this.renderEngine.getTimeData();
-        this.deltaTime = timeData.deltaTime;
-        this.elapsedTime = timeData.elapsedTime;
-
-        // 更新控制器
-        this.cameraController.update();
-
-        // 调用帧更新回调（天气系统等扩展）
-        for (const updater of this.frameUpdaters) {
-            updater(this.deltaTime, this.elapsedTime);
-        }
-
-        // 渲染场景
-        this.renderEngine.render(this.scene, this.camera);
-
-        // 更新 Stats（在渲染后）
-        this.stats?.update();
+        this.animationManager.start();
     }
 
     /**
@@ -553,53 +423,27 @@ export class Tthree {
      *
      * @example
      * ```typescript
-     * // 注册天气系统的 tick 方法
-     * app.addFrameUpdater((dt, t) => weatherSystem.tick(dt, t));
-     *
-     * // 或者直接绑定
-     * app.addFrameUpdater(weatherSystem.tick.bind(weatherSystem));
+     * // 注册天气系统的 update 方法
+     * app.addFrameUpdater((delta) => weatherSystem.update(delta));
      * ```
      */
     public addFrameUpdater(updater: (dt: number, t: number) => void): this {
-        if (!this.frameUpdaters.includes(updater)) {
-            this.frameUpdaters.push(updater);
+        if (!this.animationManager) {
+            throw new Error("动画管理器未初始化，请先调用 init()");
         }
+        this.animationManager.addFrameUpdater(updater);
         return this;
     }
 
     /**
-     * 注册一个在 {@link Tthree.dispose} 时执行的清理函数。
+     * 注册一个在 {@link Tthree.dispose} 时执行的清理函数
      *
      * @remarks
      * 用于把 `setupRainWeather` 之类返回的 `handle.dispose()` 自动挂到 app 的生命周期里。
      */
     public addDisposer(disposer: () => void): this {
-        this.disposers.push(disposer);
+        this.lifecycleManager.addDisposer(disposer);
         return this;
-    }
-
-    /**
-     * 预设：一行挂载雨天效果，并自动随 app 一起销毁。
-     *
-     * @remarks
-     * - 内部会确保 app 已初始化（会调用 {@link Tthree.init}）
-     * - 会调用 {@link setupRainWeather} 并自动把 `handle.dispose()` 注册到 app
-     *
-     * @returns 雨天句柄（仍可供调用端进一步配置，例如调整强度）
-     */
-    public useRainWeather(
-        options: SetupRainWeatherOptions = {},
-    ): RainWeatherHandle {
-        if (!this.initialized) {
-            this.init();
-        }
-
-        const handle = setupRainWeather(this, options);
-
-        // 自动挂载到 app 生命周期，调用端无需手动 dispose()
-        this.addDisposer(() => handle.dispose());
-
-        return handle;
     }
 
     /**
@@ -609,9 +453,8 @@ export class Tthree {
      * @returns this - 支持链式调用
      */
     public removeFrameUpdater(updater: (dt: number, t: number) => void): this {
-        const index = this.frameUpdaters.indexOf(updater);
-        if (index !== -1) {
-            this.frameUpdaters.splice(index, 1);
+        if (this.animationManager) {
+            this.animationManager.removeFrameUpdater(updater);
         }
         return this;
     }
@@ -622,7 +465,9 @@ export class Tthree {
      * @returns this - 支持链式调用
      */
     public clearFrameUpdaters(): this {
-        this.frameUpdaters = [];
+        if (this.animationManager) {
+            this.animationManager.clearFrameUpdaters();
+        }
         return this;
     }
 
@@ -632,51 +477,41 @@ export class Tthree {
      * @returns this - 支持链式调用
      */
     public stop(): this {
-        this.renderEngine.stop();
+        if (this.animationManager) {
+            this.animationManager.stop();
+        } else {
+            this.renderEngine.stop();
+        }
         return this;
     }
 
     /**
      * 释放应用占用的所有资源
-     *
-     * @returns void
      */
     public dispose(): void {
-        this.initialized = false;
+        this.lifecycleManager.setInitialized(false);
 
         this.stop();
 
         // 先执行外部扩展的清理（例如天气系统、后处理等）
-        if (this.disposers.length) {
-            for (const disposer of this.disposers) {
-                try {
-                    disposer();
-                } catch (err) {
-                    console.warn("[Tthree] disposer 执行失败", err);
-                }
-            }
-            this.disposers = [];
+        this.lifecycleManager.dispose();
+
+        // 释放动画管理器
+        if (this.animationManager) {
+            this.animationManager.dispose();
+            this.animationManager = undefined;
         }
 
-        // 清空帧更新回调
-        this.clearFrameUpdaters();
-
-        // 清理尺寸观察器
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-            this.resizeObserver = undefined;
+        // 释放尺寸管理器
+        if (this.resizeManager) {
+            this.resizeManager.dispose();
+            this.resizeManager = undefined;
         }
 
-        // 释放进度条
-        if (this.progressBar) {
-            this.progressBar.dispose();
-            this.progressBar = undefined;
-        }
-
-        // 释放模型加载器
-        if (this.modelLoader) {
-            this.modelLoader.dispose();
-            this.modelLoader = undefined;
+        // 释放资源加载管理器
+        if (this.assetLoadManager) {
+            this.assetLoadManager.dispose();
+            this.assetLoadManager = undefined;
         }
 
         // 销毁 Stats
@@ -685,7 +520,7 @@ export class Tthree {
             this.stats = undefined;
         }
 
-        // 释放各个模块
+        // 释放核心模块
         this.renderEngine.dispose();
         this.sceneManager.dispose();
         this.cameraController.dispose();

@@ -6,7 +6,11 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "development": "./src/index.ts",
+            "development": {
+                "types": "./src/index.ts",
+                "import": "./src/index.ts",
+                "default": "./src/index.ts"
+            },
             "import": "./dist/three-base.esm.js",
             "default": "./dist/three-base.esm.js"
         }
