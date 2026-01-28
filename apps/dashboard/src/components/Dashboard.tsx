@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from "react";
-import { Tthree, setupRainWeather } from "tthree";
+import { Tthree, setupSnowWeather } from "tthree";
 import { wrapperStyle, containerStyle } from "./style";
 
 const Dashboard: FC = () => {
@@ -17,15 +17,15 @@ const Dashboard: FC = () => {
         // 初始化（内部会自动启动渲染循环）
         app.init();
 
-        // 使用辅助函数快速挂载雨天效果（独立扩展）
-        const rainHandle = setupRainWeather(app);
+        // 使用辅助函数快速挂载雪天效果（独立扩展）
+        const snowHandle = setupSnowWeather(app);
 
         // 然后加载模型（模型会在加载完成后自动添加到场景）
         app.loadModel("/park.glb");
 
         // 在组件卸载时清理资源
         return () => {
-            rainHandle.dispose();
+            snowHandle.dispose();
             app.dispose();
         };
     }, []);

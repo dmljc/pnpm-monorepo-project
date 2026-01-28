@@ -29,12 +29,14 @@ export type {
 export { ProgressBar } from "./components/ProgressBar";
 export type { ProgressBarConfig } from "./components/ProgressBar";
 
-// 效果系统：天气与雨效果相关导出
+// 效果系统：天气效果相关导出
 export {
     Weather,
     Rain,
+    Snow,
     WeatherSystem,
     setupRainWeather,
+    setupSnowWeather,
     createDefaultWeatherState,
     createDefaultWeatherBounds,
 } from "./effects";
@@ -45,8 +47,11 @@ export type {
     WindState,
     LightningState,
     RainConfig,
+    SnowConfig,
     WeatherSystemConfig,
     WeatherSwitchStrategy,
     SetupRainWeatherOptions,
     RainWeatherHandle,
+    SetupSnowWeatherOptions,
+    SnowWeatherHandle,
 } from "./effects";
