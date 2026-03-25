@@ -37,7 +37,9 @@ export class RequestLogInterceptor implements NestInterceptor {
             return response.data.addr;
         } catch (error) {
             // 如果IP查询失败，返回默认值，不影响主流程
-            this.logger.warn(`IP地址查询失败: ${ip}, 错误: ${error.message}`);
+            const message =
+                error instanceof Error ? error.message : String(error);
+            this.logger.warn(`IP地址查询失败: ${ip}, 错误: ${message}`);
             return "未知地区";
         }
     }
@@ -58,7 +60,9 @@ export class RequestLogInterceptor implements NestInterceptor {
                 this.logger.debug(`${clientIp}: ${city}`);
             })
             .catch((error) => {
-                this.logger.warn(`获取IP地址信息失败: ${error.message}`);
+                const message =
+                    error instanceof Error ? error.message : String(error);
+                this.logger.warn(`获取IP信息失败: ${message}`);
             });
 
         this.logger.debug(

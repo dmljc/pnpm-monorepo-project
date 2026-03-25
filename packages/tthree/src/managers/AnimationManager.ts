@@ -1,7 +1,7 @@
 import type { Scene, PerspectiveCamera } from "three";
 import type { RenderEngine } from "../core/RenderEngine";
 import type { CameraController } from "../core/CameraController";
-import type Stats from "three/examples/jsm/libs/stats.module";
+import type Stats from "three/examples/jsm/libs/stats.module.js";
 
 /**
  * 动画管理器

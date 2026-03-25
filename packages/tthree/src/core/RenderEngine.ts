@@ -58,9 +58,6 @@ export class RenderEngine {
     /** 挂载容器 */
     private container: HTMLElement;
 
-    /** 渲染回调函数 */
-    private renderCallback: (() => void) | null = null;
-
     /**
      * 创建 RenderEngine 实例
      *
@@ -129,7 +126,6 @@ export class RenderEngine {
 
         this.isRunning = true;
         this.clock.start();
-        this.renderCallback = callback;
         this.renderer.setAnimationLoop(callback);
     }
 
@@ -142,7 +138,6 @@ export class RenderEngine {
         this.isRunning = false;
         this.clock.stop();
         this.renderer?.setAnimationLoop(null);
-        this.renderCallback = null;
     }
 
     /**

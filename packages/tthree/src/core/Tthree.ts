@@ -1,5 +1,5 @@
 import { Mesh } from "three";
-import Stats from "three/examples/jsm/libs/stats.module";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 import { RenderEngine } from "./RenderEngine";
 import { SceneManager } from "./SceneManager";
 import { CameraController } from "./CameraController";

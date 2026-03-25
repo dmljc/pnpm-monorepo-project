@@ -23,7 +23,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
                 return await this.authService.validateUser(login, code);
             }
         } catch (error) {
-            throw new UnauthorizedException(error.message);
+            const message =
+                error instanceof Error ? error.message : String(error);
+            throw new UnauthorizedException(message);
         }
     }
 }
