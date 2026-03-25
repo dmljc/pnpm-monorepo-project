@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Form, Upload, Input, message } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
@@ -8,10 +8,14 @@ import useStyles from "./style";
 import { useSystemStore } from "@/store/systemStore";
 import { create } from "./api";
 import { usePermission } from "@/utils/utils";
+import { upload } from "@/components/OSSUpload/api";
 
 const { Item } = Form;
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+type UploadRequestOption = Parameters<
+    NonNullable<UploadProps["customRequest"]>
+>[0];
 
 const Config: FC = () => {
     const { t } = useTranslation();
@@ -24,25 +28,38 @@ const Config: FC = () => {
     const permission = usePermission("system_config:save");
 
     // 文件上传相关状态
-    const [fileList, setFileList] = useState<UploadFile[]>([
-        {
-            uid: "-1",
-            name: "image.png",
-            status: "done",
-            url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-        },
-    ]);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const logoFileList = useMemo<UploadFile[]>(
+        () =>
+            systemConfig?.logo
+                ? [
+                      {
+                          uid: "-1",
+                          name:
+                              systemConfig.logo.split("/").pop() || "logo.png",
+                          status: "done",
+                          url: systemConfig.logo,
+                      },
+                  ]
+                : [],
+        [systemConfig?.logo],
+    );
 
     // ==================== 副作用钩子 ====================
     useEffect(() => {
         form.setFieldsValue(systemConfig);
-    }, [systemConfig]);
+        setFileList(logoFileList);
+    }, [form, logoFileList, systemConfig]);
 
     // ==================== 事件处理函数 ====================
     const handleFileChange: UploadProps["onChange"] = ({
         fileList: newFileList,
     }) => {
         setFileList(newFileList);
+        if (newFileList.length === 0) {
+            form.setFieldValue("logo", "");
+        }
     };
 
     const handleFilePreview = async (file: UploadFile) => {
@@ -60,13 +77,44 @@ const Config: FC = () => {
         imgWindow?.document.write(image.outerHTML);
     };
 
+    const handleFileUpload = async (options: UploadRequestOption) => {
+        const { file, onSuccess, onError } = options;
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file as File);
+            const response = await upload(formData);
+            const logoUrl = response?.data?.url;
+
+            if (!logoUrl) {
+                throw new Error("上传成功但未返回图片地址");
+            }
+
+            const uploadedFile: UploadFile = {
+                uid: String((file as File & { uid?: string }).uid || "-1"),
+                name: (file as File).name,
+                status: "done",
+                url: logoUrl,
+            };
+
+            setFileList([uploadedFile]);
+            form.setFieldValue("logo", logoUrl);
+            onSuccess?.(response);
+        } catch (error) {
+            onError?.(error as Error);
+        }
+    };
+
     const handleSubmit = async () => {
         try {
             // 验证表单字段
             const values = await form.validateFields();
 
-            // 处理logo字段 - 从fileList中获取URL
-            const logoUrl = fileList[0]?.url || fileList[0]?.response?.url;
+            const logoUrl =
+                fileList[0]?.url ||
+                fileList[0]?.response?.data?.url ||
+                values.logo ||
+                "";
             const submitData = {
                 ...values,
                 logo: logoUrl,
@@ -104,12 +152,13 @@ const Config: FC = () => {
                 >
                     <ImgCrop rotationSlider>
                         <Upload
-                            action="ttp://localhost:3000/api/minio/upload"
+                            action="http://localhost:3000/api/minio/upload"
                             listType="picture-card"
                             disabled={!permission}
                             fileList={fileList}
                             onChange={handleFileChange}
                             onPreview={handleFilePreview}
+                            customRequest={handleFileUpload}
                         >
                             {fileList.length < 1 &&
                                 t("systemConfig:form.logo.upload")}

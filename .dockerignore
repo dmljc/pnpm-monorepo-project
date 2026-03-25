@@ -1,0 +1,13 @@
+.git
+.cursor
+.idea
+node_modules
+**/node_modules
+dist
+**/dist
+coverage
+**/coverage
+.DS_Store
+*.log
+docs/.vitepress/cache
+docs/.vitepress/dist

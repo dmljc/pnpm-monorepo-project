@@ -275,13 +275,13 @@ export function setupSnowWeather(
         bounds,
     });
 
-    // 3. 添加雪效果
+    // 3. 添加雪效果（使用精灵图纹理）
     const snow = new Snow({
-        count: snowOptions.count ?? 8000,
-        speed: snowOptions.speed ?? 5,
-        size: snowOptions.size ?? 0.3,
-        opacity: snowOptions.opacity ?? 0.8,
-        drift: snowOptions.drift ?? 0.5,
+        count: snowOptions.count ?? 10000,
+        speed: snowOptions.speed ?? 3,
+        size: snowOptions.size ?? 10,
+        opacity: snowOptions.opacity ?? 0.9,
+        drift: snowOptions.drift ?? 0.8,
     });
     weatherSystem.add(snow);
 

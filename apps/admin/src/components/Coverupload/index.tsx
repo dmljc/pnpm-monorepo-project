@@ -6,7 +6,7 @@ const { Dragger } = Upload;
 
 interface CoverUploadProps {
     value?: string;
-    onChange?: () => void;
+    onChange?: (url: string) => void;
 }
 
 let onChange: (data: any) => void;
@@ -18,7 +18,10 @@ const props: UploadProps = {
     onChange(info) {
         const { status } = info.file;
         if (status === "done") {
-            onChange(info.file.response.data);
+            const url = info.file.response?.data?.url;
+            if (url) {
+                onChange(url);
+            }
             message.success(`${info.file.name} 文件上传成功`);
         } else if (status === "error") {
             message.error(`${info.file.name} 文件上传失败`);
@@ -40,12 +43,7 @@ const CoverUpload = (props: CoverUploadProps) => {
 
     return props?.value ? (
         <div>
-            <img
-                src={"http://localhost:3000/" + props.value}
-                alt="封面"
-                width="100"
-                height="100"
-            />
+            <img src={props.value} alt="封面" width="100" height="100" />
             {dragger}
         </div>
     ) : (

@@ -1,0 +1,69 @@
+services:
+  client:
+    profiles: ["app"]
+    image: pnpm-monorepo-project-client
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - "1111:1111"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  server:
+    profiles: ["app"]
+    image: pnpm-monorepo-project-server
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    env_file:
+      - apps/server/.env.development
+    environment:
+      PORT: 3000
+      DB_HOST: host.docker.internal
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_BUCKET: nestjs
+      MINIO_PUBLIC_URL: http://localhost:9000
+    ports:
+      - "3001:3000"
+    depends_on:
+      - redis
+      - minio
+    restart: unless-stopped
+
+  minio:
+    image: pnpm-monorepo-project-minio
+    build:
+      context: .
+      dockerfile: docker/minio/Dockerfile
+    environment:
+      MINIO_ROOT_USER: WPUA09FpnoAIiikgxTmV
+      MINIO_ROOT_PASSWORD: pBL8zSRU8XJRukjg82r5bdcGqf0mtXThGrM8fZhg
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+  redis:
+    image: pnpm-monorepo-project-redis
+    build:
+      context: .
+      dockerfile: docker/redis/Dockerfile
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+volumes:
+  minio-data:
+  redis-data:
