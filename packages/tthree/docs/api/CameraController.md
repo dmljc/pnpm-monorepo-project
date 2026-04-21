@@ -209,7 +209,7 @@ height: number;
 ##### camera?
 
 ```ts
-optional camera: PerspectiveCamera;
+optional camera?: PerspectiveCamera;
 ```
 
 自定义相机
@@ -219,7 +219,7 @@ optional camera: PerspectiveCamera;
 ##### controls?
 
 ```ts
-optional controls: boolean;
+optional controls?: boolean;
 ```
 
 是否启用控制器

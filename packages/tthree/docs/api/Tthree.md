@@ -226,7 +226,7 @@ height: number;
 ##### loadModel()
 
 ```ts
-loadModel(url, autoAddToScene): Promise<ModelLoadResult | null>;
+loadModel(url, autoAddToScene?): Promise<ModelLoadResult | null>;
 ```
 
 加载 GLTF/GLB 3D 模型
@@ -247,7 +247,7 @@ loadModel(url, autoAddToScene): Promise<ModelLoadResult | null>;
 
 模型文件的 URL
 
-###### autoAddToScene
+###### autoAddToScene?
 
 `boolean` = `true`
 
@@ -282,7 +282,7 @@ await app.loadModel("/models/character.glb");
 ##### loadModels()
 
 ```ts
-loadModels(urls, autoAddToScene): Promise<ModelLoadResult[]>;
+loadModels(urls, autoAddToScene?): Promise<ModelLoadResult[]>;
 ```
 
 批量加载多个模型
@@ -301,7 +301,7 @@ loadModels(urls, autoAddToScene): Promise<ModelLoadResult[]>;
 
 模型文件 URL 数组
 
-###### autoAddToScene
+###### autoAddToScene?
 
 `boolean` = `true`
 
@@ -356,11 +356,8 @@ this - 支持链式调用
 ###### Example
 
 ```typescript
-// 注册天气系统的 tick 方法
-app.addFrameUpdater((dt, t) => weatherSystem.tick(dt, t));
-
-// 或者直接绑定
-app.addFrameUpdater(weatherSystem.tick.bind(weatherSystem));
+// 注册天气系统的 update 方法
+app.addFrameUpdater((delta) => weatherSystem.update(delta));
 ```
 
 <a id="adddisposer"></a>
@@ -371,7 +368,7 @@ app.addFrameUpdater(weatherSystem.tick.bind(weatherSystem));
 addDisposer(disposer): this;
 ```
 
-注册一个在 [Tthree.dispose](#dispose) 时执行的清理函数。
+注册一个在 [Tthree.dispose](#dispose) 时执行的清理函数
 
 ###### Parameters
 
@@ -386,33 +383,6 @@ addDisposer(disposer): this;
 ###### Remarks
 
 用于把 `setupRainWeather` 之类返回的 `handle.dispose()` 自动挂到 app 的生命周期里。
-
-<a id="userainweather"></a>
-
-##### useRainWeather()
-
-```ts
-useRainWeather(options): RainWeatherHandle;
-```
-
-预设：一行挂载雨天效果，并自动随 app 一起销毁。
-
-###### Parameters
-
-###### options
-
-`SetupRainWeatherOptions` = `{}`
-
-###### Returns
-
-`RainWeatherHandle`
-
-雨天句柄（仍可供调用端进一步配置，例如调整强度）
-
-###### Remarks
-
-- 内部会确保 app 已初始化（会调用 [Tthree.init](#init)）
-- 会调用 setupRainWeather 并自动把 `handle.dispose()` 注册到 app
 
 <a id="removeframeupdater"></a>
 
@@ -483,8 +453,6 @@ dispose(): void;
 ###### Returns
 
 `void`
-
-void
 
 #### Accessors
 

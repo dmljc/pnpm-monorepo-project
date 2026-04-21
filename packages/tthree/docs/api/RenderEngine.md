@@ -274,7 +274,7 @@ container: HTMLElement;
 ##### antialias?
 
 ```ts
-optional antialias: boolean;
+optional antialias?: boolean;
 ```
 
 是否启用抗锯齿

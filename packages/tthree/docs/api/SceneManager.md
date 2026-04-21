@@ -128,14 +128,14 @@ dispose(): void;
 ##### Constructor
 
 ```ts
-new SceneManager(config): SceneManager;
+new SceneManager(config?): SceneManager;
 ```
 
 创建 SceneManager 实例
 
 ###### Parameters
 
-###### config
+###### config?
 
 [`SceneManagerConfig`](#scenemanagerconfig) = `{}`
 
@@ -160,7 +160,7 @@ new SceneManager(config): SceneManager;
 ##### showGrid?
 
 ```ts
-optional showGrid: boolean;
+optional showGrid?: boolean;
 ```
 
 是否显示网格
@@ -170,7 +170,7 @@ optional showGrid: boolean;
 ##### showAxes?
 
 ```ts
-optional showAxes: boolean;
+optional showAxes?: boolean;
 ```
 
 是否显示坐标轴
